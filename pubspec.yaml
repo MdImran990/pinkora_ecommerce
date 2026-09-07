@@ -1,0 +1,44 @@
+name: pinkora_ecommerce
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # State Management
+  get: ^4.6.6
+
+  # Fonts
+  google_fonts: ^6.2.1
+
+  # Images
+  cached_network_image: ^3.4.1
+
+  # Banner Slider
+  carousel_slider: ^5.0.0
+
+  # SVG
+  flutter_svg: ^2.0.10+1
+
+  # Animation
+  lottie: ^3.1.2
+
+  # Screen Responsive
+  flutter_screenutil: ^5.9.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
