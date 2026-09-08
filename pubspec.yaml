@@ -1,44 +1,60 @@
 name: pinkora_ecommerce
-description: "A new Flutter project."
+description: Pinkora - Shop Your Happiness. A trendy e-commerce app.
 publish_to: 'none'
-
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.11.0
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-
-  cupertino_icons: ^1.0.8
+  cupertino_icons: ^1.0.6
 
   # State Management
   get: ^4.6.6
 
-  # Fonts
-  google_fonts: ^6.2.1
+  # Network
+  dio: ^5.4.0
 
-  # Images
-  cached_network_image: ^3.4.1
+  # Local Storage
+  shared_preferences: ^2.2.2
+  get_storage: ^2.1.1
 
-  # Banner Slider
-  carousel_slider: ^5.0.0
+  # Image
+  cached_network_image: ^3.3.1
+  flutter_svg: ^2.0.9
 
-  # SVG
-  flutter_svg: ^2.0.10+1
+  # UI
+  shimmer: ^3.0.0
+  smooth_page_indicator: ^1.1.0
+  carousel_slider: ^4.2.1
+  badges: ^3.1.2
 
-  # Animation
-  lottie: ^3.1.2
-
-  # Screen Responsive
-  flutter_screenutil: ^5.9.3
+  # Utils
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-  flutter_lints: ^6.0.0
+  flutter_lints: ^3.0.0
 
 flutter:
   uses-material-design: true
+
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/animations/
