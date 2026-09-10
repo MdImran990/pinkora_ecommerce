@@ -1,5 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../data/model/product_model.dart';
+import '../../../app/theme/app_colors.dart';
+import '../../../app/routes/app_routes.dart';
 
 class ProductController extends GetxController {
   final product = Rxn<ProductModel>();
@@ -21,7 +24,6 @@ class ProductController extends GetxController {
         selectedSize.value = product.value!.sizes.first;
       }
     } else {
-      // dummy product for testing
       product.value = ProductModel(
         id: '1',
         name: 'Trendy Handbag',
@@ -40,7 +42,6 @@ class ProductController extends GetxController {
   void selectColor(String color) => selectedColor.value = color;
   void selectSize(String size) => selectedSize.value = size;
   void toggleWishlist() => isWishlisted.toggle();
-
   void increaseQty() => quantity.value++;
   void decreaseQty() {
     if (quantity.value > 1) quantity.value--;
@@ -61,7 +62,5 @@ class ProductController extends GetxController {
     );
   }
 
-  void buyNow() {
-    Get.toNamed(AppRoutes.checkout);
-  }
+  void buyNow() => Get.toNamed(AppRoutes.checkout);
 }

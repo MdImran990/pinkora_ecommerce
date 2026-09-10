@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import '../../../data/model/product_model.dart';
-import '../../../app/theme/app_colors.dart';
-import '../../../app/routes/app_routes.dart';
+
 class AppTheme {
   static ThemeData get light => ThemeData(
     useMaterial3: true,
     scaffoldBackgroundColor: AppColors.scaffoldBg,
     primaryColor: AppColors.primary,
-    colorScheme: ColorScheme.light(
+    colorScheme: const ColorScheme.light(
       primary: AppColors.primary,
       secondary: AppColors.primaryLight,
       surface: AppColors.white,
@@ -78,13 +74,11 @@ class AppTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide:
-        const BorderSide(color: AppColors.primary, width: 1.5),
+        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide:
-        const BorderSide(color: AppColors.error, width: 1.5),
+        borderSide: const BorderSide(color: AppColors.error, width: 1.5),
       ),
       hintStyle: GoogleFonts.poppins(
         color: AppColors.grey,

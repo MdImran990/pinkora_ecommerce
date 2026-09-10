@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import '../../../data/model/product_model.dart';
-import '../../../app/theme/app_colors.dart';
-import '../../../app/routes/app_routes.dart';
+
 class AppColors {
   static const Color primary      = Color(0xFFE91E8C);
   static const Color primaryDark  = Color(0xFFD81B86);

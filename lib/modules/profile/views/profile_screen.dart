@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import '../../../app/theme/app_colors.dart';
+import '../../../widgets/bottom_nav_bar.dart';
 
-import '../controllers/profile_controller.dart';
-
-class ProfileScreen extends GetView<ProfileController> {
+class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-      ),
-      body: const Center(
-        child: Text('Profile Screen'),
-      ),
+      backgroundColor: AppColors.scaffoldBg,
+      appBar: AppBar(title: const Text('Profile')),
+      body: const Center(child: Text('Profile Screen - Coming Soon')),
+      bottomNavigationBar: const PinkoraBottomNav(),
     );
   }
 }

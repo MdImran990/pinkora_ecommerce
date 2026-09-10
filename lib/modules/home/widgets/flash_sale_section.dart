@@ -17,7 +17,6 @@ class FlashSaleSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Header
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
@@ -46,8 +45,6 @@ class FlashSaleSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 14),
-
-        // Products
         SizedBox(
           height: 230,
           child: ListView.separated(

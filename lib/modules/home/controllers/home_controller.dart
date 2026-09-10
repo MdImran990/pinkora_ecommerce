@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../../../data/model/product_model.dart';
 import '../../../data/model/category_model.dart';
 
 class HomeController extends GetxController {

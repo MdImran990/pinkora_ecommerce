@@ -1,10 +1,3 @@
-
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import '../../../data/model/product_model.dart';
-import '../../../app/theme/app_colors.dart';
-import '../../../app/routes/app_routes.dart';
-
 abstract class AppRoutes {
   static const splash         = '/';
   static const login          = '/login';

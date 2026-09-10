@@ -1,9 +1,5 @@
 import 'package:get/get.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import '../../../data/model/product_model.dart';
-import '../../../app/theme/app_colors.dart';
-import '../../../app/routes/app_routes.dart';
+
 import '../../modules/splash/bindings/splash_binding.dart';
 import '../../modules/splash/views/splash_screen.dart';
 import '../../modules/auth/bindings/auth_binding.dart';

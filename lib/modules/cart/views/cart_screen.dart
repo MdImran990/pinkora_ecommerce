@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../app/theme/app_colors.dart';
+import '../../../widgets/bottom_nav_bar.dart';
 
-import '../controllers/cart_controller.dart';
-
-class CartScreen extends GetView<CartController> {
+class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Cart'),
-      ),
-      body: const Center(
-        child: Text('Cart Screen'),
-      ),
+      backgroundColor: AppColors.scaffoldBg,
+      appBar: AppBar(title: const Text('My Cart')),
+      body: const Center(child: Text('Cart Screen - Coming Soon')),
+      bottomNavigationBar: const PinkoraBottomNav(),
     );
   }
 }

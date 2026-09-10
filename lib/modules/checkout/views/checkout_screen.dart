@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import '../../../app/theme/app_colors.dart';
 
-import '../controllers/checkout_controller.dart';
-
-class CheckoutScreen extends GetView<CheckoutController> {
+class CheckoutScreen extends StatelessWidget {
   const CheckoutScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Checkout'),
-      ),
-      body: const Center(
-        child: Text('Checkout Screen'),
-      ),
+      backgroundColor: AppColors.scaffoldBg,
+      appBar: AppBar(title: const Text('Checkout')),
+      body: const Center(child: Text('Checkout Screen - Coming Soon')),
     );
   }
 }

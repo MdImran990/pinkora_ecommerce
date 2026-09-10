@@ -20,7 +20,7 @@ class ProductCardHome extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -29,7 +29,6 @@ class ProductCardHome extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image area
             Stack(
               children: [
                 Container(
@@ -44,14 +43,12 @@ class ProductCardHome extends StatelessWidget {
                     child: Icon(
                       Icons.shopping_bag_outlined,
                       size: 60,
-                      color: AppColors.primary.withOpacity(0.4),
+                      color: AppColors.primary.withValues(alpha: 0.4),
                     ),
                   ),
                 ),
-                // Discount badge
                 Positioned(
-                  top: 8,
-                  left: 8,
+                  top: 8, left: 8,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 8, vertical: 4),
@@ -69,19 +66,16 @@ class ProductCardHome extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Wishlist
                 Positioned(
-                  top: 8,
-                  right: 8,
+                  top: 8, right: 8,
                   child: Container(
-                    width: 30,
-                    height: 30,
+                    width: 30, height: 30,
                     decoration: BoxDecoration(
                       color: AppColors.white,
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
+                          color: Colors.black.withValues(alpha: 0.08),
                           blurRadius: 4,
                         ),
                       ],
@@ -95,8 +89,6 @@ class ProductCardHome extends StatelessWidget {
                 ),
               ],
             ),
-
-            // Info
             Padding(
               padding: const EdgeInsets.all(10),
               child: Column(
