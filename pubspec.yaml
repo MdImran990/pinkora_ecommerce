@@ -20,8 +20,8 @@ dependencies:
   # HTTP
   dio: ^5.4.0
 
-  # UI
-  carousel_slider: ^4.2.1
+  # UI — carousel_slider বাদ দিয়ে flutter_carousel_widget দাও
+  flutter_carousel_widget: ^2.2.0
   smooth_page_indicator: ^1.1.0
   cached_network_image: ^3.3.1
   shimmer: ^3.0.0

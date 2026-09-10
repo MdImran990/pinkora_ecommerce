@@ -1,5 +1,5 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../controllers/home_controller.dart';
@@ -11,20 +11,21 @@ class BannerCarousel extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     final banners = [
-      {'title': 'Big Sale', 'sub': 'Up to 70% OFF', 'btn': 'Shop Now'},
-      {'title': 'New Arrivals', 'sub': 'Fresh Styles', 'btn': 'Explore'},
-      {'title': 'Flash Deal', 'sub': 'Limited Time', 'btn': 'Grab Now'},
+      {'title': 'Big Sale',     'sub': 'Up to 70% OFF', 'btn': 'Shop Now'},
+      {'title': 'New Arrivals', 'sub': 'Fresh Styles',  'btn': 'Explore'},
+      {'title': 'Flash Deal',   'sub': 'Limited Time',  'btn': 'Grab Now'},
     ];
 
     return Column(
       children: [
-        CarouselSlider.builder(
+        FlutterCarousel.builder(
           itemCount: banners.length,
           options: CarouselOptions(
             height: 160,
             viewportFraction: 1.0,
             autoPlay: true,
             autoPlayInterval: const Duration(seconds: 3),
+            showIndicator: false,
             onPageChanged: (i, _) => controller.changeBannerIndex(i),
           ),
           itemBuilder: (_, i, __) {
@@ -38,7 +39,6 @@ class BannerCarousel extends GetView<HomeController> {
               ),
               child: Stack(
                 children: [
-                  // Pink wave decoration
                   Positioned(
                     right: -20,
                     bottom: -20,
@@ -46,7 +46,7 @@ class BannerCarousel extends GetView<HomeController> {
                       width: 160,
                       height: 160,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
+                        color: Colors.white.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -58,12 +58,11 @@ class BannerCarousel extends GetView<HomeController> {
                       width: 120,
                       height: 120,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.08),
+                        color: Colors.white.withValues(alpha: 0.08),
                         shape: BoxShape.circle,
                       ),
                     ),
                   ),
-                  // Content
                   Padding(
                     padding: const EdgeInsets.all(20),
                     child: Column(
@@ -111,7 +110,9 @@ class BannerCarousel extends GetView<HomeController> {
             );
           },
         ),
+
         const SizedBox(height: 10),
+
         Obx(() => AnimatedSmoothIndicator(
           activeIndex: controller.bannerIndex.value,
           count: banners.length,

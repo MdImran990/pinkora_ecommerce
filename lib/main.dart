@@ -32,6 +32,8 @@ class PinkoraApp extends StatelessWidget {
       theme: AppTheme.light,
       initialRoute: AppRoutes.splash,
       getPages: AppPages.pages,
+      defaultTransition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 300),
     );
   }
 }

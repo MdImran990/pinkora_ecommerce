@@ -12,7 +12,7 @@ class SplashController extends GetxController {
   void _navigate() async {
     await Future.delayed(const Duration(seconds: 3));
     final box = GetStorage();
-    final isLoggedIn = box.read('isLoggedIn') ?? false;
+    final isLoggedIn = box.read<bool>('isLoggedIn') ?? false;
     if (isLoggedIn) {
       Get.offAllNamed(AppRoutes.home);
     } else {
