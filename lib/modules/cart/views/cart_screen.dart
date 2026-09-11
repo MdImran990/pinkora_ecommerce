@@ -4,6 +4,7 @@ import '../controllers/cart_controller.dart';
 import '../widgets/cart_item_tile.dart';
 import '../widgets/coupon_input_field.dart';
 import '../../../app/theme/app_colors.dart';
+import '../../../app/routes/app_routes.dart';
 import '../../../widgets/bottom_nav_bar.dart';
 
 class CartScreen extends GetView<CartController> {
@@ -16,6 +17,22 @@ class CartScreen extends GetView<CartController> {
       appBar: AppBar(
         backgroundColor: AppColors.scaffoldBg,
         elevation: 0,
+        leading: GestureDetector(
+          onTap: () => Get.back(),
+          child: Container(
+            margin: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              size: 16,
+              color: AppColors.black,
+            ),
+          ),
+        ),
         title: Obx(() => Text(
           'My Cart (${controller.cartItems.length})',
           style: const TextStyle(
@@ -80,7 +97,7 @@ class CartScreen extends GetView<CartController> {
                 ),
                 const SizedBox(height: 28),
                 ElevatedButton(
-                  onPressed: () => Get.back(),
+                  onPressed: () => Get.offAllNamed(AppRoutes.home),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     padding: const EdgeInsets.symmetric(
@@ -104,7 +121,7 @@ class CartScreen extends GetView<CartController> {
 
         return Column(
           children: [
-            // ── Cart Items List ──
+            // ── Cart Items ──
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
@@ -149,17 +166,19 @@ class CartScreen extends GetView<CartController> {
                   const Divider(color: AppColors.border),
                   const SizedBox(height: 12),
 
-                  // Price breakdown
+                  // Price rows
                   Obx(() => Column(
                     children: [
                       _PriceRow(
                         label: 'Subtotal',
-                        value: '৳ ${controller.subtotal.toInt()}',
+                        value:
+                        '৳ ${controller.subtotal.toInt()}',
                       ),
                       const SizedBox(height: 8),
                       _PriceRow(
                         label: 'Delivery Fee',
-                        value: '৳ ${controller.deliveryFee.toInt()}',
+                        value:
+                        '৳ ${controller.deliveryFee.toInt()}',
                       ),
                       if (controller.discount.value > 0) ...[
                         const SizedBox(height: 8),
@@ -183,7 +202,7 @@ class CartScreen extends GetView<CartController> {
 
                   const SizedBox(height: 16),
 
-                  // Checkout button
+                  // Checkout Button
                   SizedBox(
                     width: double.infinity,
                     height: 52,
@@ -219,6 +238,7 @@ class CartScreen extends GetView<CartController> {
   }
 }
 
+// ignore: unused_element
 class _PriceRow extends StatelessWidget {
   final String label;
   final String value;

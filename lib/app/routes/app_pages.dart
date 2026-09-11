@@ -49,11 +49,13 @@ class AppPages {
       name: AppRoutes.home,
       page: () => const HomeScreen(),
       binding: HomeBinding(),
+      transition: Transition.fadeIn,
     ),
     GetPage(
       name: AppRoutes.category,
       page: () => const CategoryScreen(),
       binding: CategoryBinding(),
+      transition: Transition.fadeIn,
     ),
     GetPage(
       name: AppRoutes.productList,
@@ -69,6 +71,7 @@ class AppPages {
       name: AppRoutes.cart,
       page: () => const CartScreen(),
       binding: CartBinding(),
+      transition: Transition.fadeIn,
     ),
     GetPage(
       name: AppRoutes.checkout,
@@ -79,11 +82,13 @@ class AppPages {
       name: AppRoutes.wishlist,
       page: () => const WishlistScreen(),
       binding: WishlistBinding(),
+      transition: Transition.fadeIn,
     ),
     GetPage(
       name: AppRoutes.profile,
       page: () => const ProfileScreen(),
       binding: ProfileBinding(),
+      transition: Transition.fadeIn,
     ),
   ];
 }

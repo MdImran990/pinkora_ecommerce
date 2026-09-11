@@ -20,13 +20,13 @@ class CartController extends GetxController {
   double get total => subtotal + deliveryFee - discount.value;
 
   @override
-  void onInit() {
-    super.onInit();
+  void onReady() {
+    super.onReady();
     _loadDummyCart();
   }
 
   void _loadDummyCart() {
-    cartItems.value = [
+    final items = [
       CartItemModel(
         product: ProductModel(
           id: '1',
@@ -75,6 +75,7 @@ class CartController extends GetxController {
         selectedColor: 'Black',
       ),
     ];
+    cartItems.assignAll(items);
   }
 
   void increaseQty(int index) {

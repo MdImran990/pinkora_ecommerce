@@ -9,14 +9,12 @@ class PinkoraBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final current = Get.currentRoute;
-
     return Container(
       decoration: BoxDecoration(
         color: AppColors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, -4),
           ),
@@ -24,7 +22,8 @@ class PinkoraBottomNav extends StatelessWidget {
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          padding:
+          const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -32,37 +31,43 @@ class PinkoraBottomNav extends StatelessWidget {
                 icon: Iconsax.home,
                 activeIcon: Iconsax.home_15,
                 label: 'Home',
-                isActive: current == AppRoutes.home,
+                isActive: Get.currentRoute == AppRoutes.home,
                 onTap: () => Get.offAllNamed(AppRoutes.home),
               ),
               _NavItem(
                 icon: Iconsax.category,
                 activeIcon: Iconsax.category5,
                 label: 'Category',
-                isActive: current == AppRoutes.category,
-                onTap: () => Get.toNamed(AppRoutes.category),
+                isActive:
+                Get.currentRoute == AppRoutes.category,
+                onTap: () =>
+                    Get.offAllNamed(AppRoutes.category),
               ),
               _NavItem(
                 icon: Iconsax.shopping_cart,
                 activeIcon: Iconsax.shopping_cart5,
                 label: 'Cart',
-                isActive: current == AppRoutes.cart,
-                onTap: () => Get.toNamed(AppRoutes.cart),
+                isActive: Get.currentRoute == AppRoutes.cart,
+                onTap: () => Get.offAllNamed(AppRoutes.cart),
                 badge: 3,
               ),
               _NavItem(
                 icon: Iconsax.heart,
                 activeIcon: Iconsax.heart5,
                 label: 'Wishlist',
-                isActive: current == AppRoutes.wishlist,
-                onTap: () => Get.toNamed(AppRoutes.wishlist),
+                isActive:
+                Get.currentRoute == AppRoutes.wishlist,
+                onTap: () =>
+                    Get.offAllNamed(AppRoutes.wishlist),
               ),
               _NavItem(
                 icon: Iconsax.user,
                 activeIcon: Iconsax.user5,
                 label: 'Profile',
-                isActive: current == AppRoutes.profile,
-                onTap: () => Get.toNamed(AppRoutes.profile),
+                isActive:
+                Get.currentRoute == AppRoutes.profile,
+                onTap: () =>
+                    Get.offAllNamed(AppRoutes.profile),
               ),
             ],
           ),
@@ -102,7 +107,9 @@ class _NavItem extends StatelessWidget {
             children: [
               Icon(
                 isActive ? activeIcon : icon,
-                color: isActive ? AppColors.primary : AppColors.grey,
+                color: isActive
+                    ? AppColors.primary
+                    : AppColors.grey,
                 size: 24,
               ),
               if (badge != null)
@@ -135,9 +142,12 @@ class _NavItem extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 10,
-              fontWeight:
-              isActive ? FontWeight.w600 : FontWeight.w400,
-              color: isActive ? AppColors.primary : AppColors.grey,
+              fontWeight: isActive
+                  ? FontWeight.w600
+                  : FontWeight.w400,
+              color: isActive
+                  ? AppColors.primary
+                  : AppColors.grey,
             ),
           ),
         ],

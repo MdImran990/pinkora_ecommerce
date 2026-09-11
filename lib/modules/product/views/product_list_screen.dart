@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controllers/product_controller.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../data/model/product_model.dart';
 import '../../../widgets/bottom_nav_bar.dart';
 
-class ProductListScreen extends GetView<ProductController> {
+class ProductListScreen extends StatelessWidget {
   const ProductListScreen({super.key});
-
-  final _dummyProducts = const [
-    // populated via controller in real app
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -57,11 +52,14 @@ class ProductListScreen extends GetView<ProductController> {
                 size: 16, color: AppColors.black),
           ),
         ),
-        title: const Text('All Products',
-            style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: AppColors.black)),
+        title: const Text(
+          'All Products',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: AppColors.black,
+          ),
+        ),
       ),
       body: GridView.builder(
         padding: const EdgeInsets.all(16),
@@ -69,21 +67,22 @@ class ProductListScreen extends GetView<ProductController> {
           crossAxisCount: 2,
           crossAxisSpacing: 14,
           mainAxisSpacing: 14,
-          childAspectRatio: 0.72,
+          childAspectRatio: 0.68,
         ),
         itemCount: products.length,
         itemBuilder: (_, i) {
           final p = products[i];
           return GestureDetector(
-            onTap: () =>
-                Get.toNamed(AppRoutes.productDetail, arguments: p),
+            onTap: () => Get.toNamed(
+                AppRoutes.productDetail,
+                arguments: p),
             child: Container(
               decoration: BoxDecoration(
                 color: AppColors.white,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.06),
+                    color: Colors.black.withValues(alpha: 0.06),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -92,20 +91,23 @@ class ProductListScreen extends GetView<ProductController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Image
                   Stack(
                     children: [
                       Container(
-                        height: 140,
+                        height: 130,
                         decoration: BoxDecoration(
                           color: AppColors.primaryLight,
                           borderRadius: const BorderRadius.vertical(
                               top: Radius.circular(16)),
                         ),
                         child: Center(
-                          child: Icon(Icons.shopping_bag_outlined,
-                              size: 64,
-                              color:
-                              AppColors.primary.withOpacity(0.35)),
+                          child: Icon(
+                            Icons.shopping_bag_outlined,
+                            size: 64,
+                            color: AppColors.primary
+                                .withValues(alpha: 0.35),
+                          ),
                         ),
                       ),
                       Positioned(
@@ -117,11 +119,14 @@ class ProductListScreen extends GetView<ProductController> {
                             color: AppColors.sale,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Text('-${p.discountPercent}%',
-                              style: const TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white)),
+                          child: Text(
+                            '-${p.discountPercent}%',
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ),
                       Positioned(
@@ -133,46 +138,55 @@ class ProductListScreen extends GetView<ProductController> {
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.08),
+                                color: Colors.black
+                                    .withValues(alpha: 0.08),
                                 blurRadius: 4,
-                              )
+                              ),
                             ],
                           ),
                           child: const Icon(
-                              Icons.favorite_border_rounded,
-                              size: 16, color: AppColors.grey),
+                            Icons.favorite_border_rounded,
+                            size: 16,
+                            color: AppColors.grey,
+                          ),
                         ),
                       ),
                     ],
                   ),
+
+                  // Info
                   Padding(
                     padding: const EdgeInsets.all(10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(p.name,
-                            style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.black),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis),
+                        Text(
+                          p.name,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.black,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                         const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Text('৳ ${p.price.toInt()}',
-                                style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.primary)),
-                            const SizedBox(width: 6),
-                            Text('৳ ${p.originalPrice.toInt()}',
-                                style: const TextStyle(
-                                    fontSize: 11,
-                                    color: AppColors.grey,
-                                    decoration:
-                                    TextDecoration.lineThrough)),
-                          ],
+                        Text(
+                          '৳ ${p.price.toInt()}',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '৳ ${p.originalPrice.toInt()}',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: AppColors.grey,
+                            decoration: TextDecoration.lineThrough,
+                          ),
                         ),
                         const SizedBox(height: 4),
                         Row(
@@ -180,10 +194,13 @@ class ProductListScreen extends GetView<ProductController> {
                             const Icon(Icons.star_rounded,
                                 color: AppColors.star, size: 13),
                             const SizedBox(width: 2),
-                            Text('${p.rating} (${p.reviewCount})',
-                                style: const TextStyle(
-                                    fontSize: 11,
-                                    color: AppColors.grey)),
+                            Text(
+                              '${p.rating}',
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: AppColors.grey,
+                              ),
+                            ),
                           ],
                         ),
                       ],
