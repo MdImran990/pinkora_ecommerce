@@ -1,10 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controllers/splash_controller.dart';
 import '../../../app/theme/app_colors.dart';
+import '../../../app/routes/app_routes.dart';
 
-class SplashScreen extends GetView<SplashController> {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _dotController;
+
+  @override
+  void initState() {
+    super.initState();
+    _dotController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..repeat();
+
+    // Navigate after 3 seconds
+    Future.delayed(const Duration(seconds: 3), () {
+      Get.offAllNamed(AppRoutes.login);
+    });
+  }
+
+  @override
+  void dispose() {
+    _dotController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +62,7 @@ class SplashScreen extends GetView<SplashController> {
                 borderRadius: BorderRadius.circular(28),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.35),
+                    color: AppColors.primary.withValues(alpha: 0.35),
                     blurRadius: 30,
                     offset: const Offset(0, 12),
                   ),
@@ -76,7 +104,31 @@ class SplashScreen extends GetView<SplashController> {
             const SizedBox(height: 80),
 
             // ── LOADING DOTS ──
-            const _LoadingDots(),
+            AnimatedBuilder(
+              animation: _dotController,
+              builder: (_, __) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(3, (i) {
+                    final delay = i * 0.3;
+                    final value =
+                    (_dotController.value - delay).clamp(0.0, 1.0);
+                    final opacity =
+                    (value < 0.5 ? value * 2 : (1 - value) * 2)
+                        .clamp(0.3, 1.0);
+                    return Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: opacity),
+                        shape: BoxShape.circle,
+                      ),
+                    );
+                  }),
+                );
+              },
+            ),
 
             const SizedBox(height: 24),
 
@@ -92,63 +144,6 @@ class SplashScreen extends GetView<SplashController> {
           ],
         ),
       ),
-    );
-  }
-}
-
-// ── Animated Dots ──
-class _LoadingDots extends StatefulWidget {
-  const _LoadingDots();
-
-  @override
-  State<_LoadingDots> createState() => _LoadingDotsState();
-}
-
-class _LoadingDotsState extends State<_LoadingDots>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 900),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (_, __) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(3, (i) {
-            final delay = i * 0.3;
-            final value = (_controller.value - delay).clamp(0.0, 1.0);
-            final opacity = (value < 0.5
-                ? value * 2
-                : (1 - value) * 2)
-                .clamp(0.3, 1.0);
-            return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 4),
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(opacity),
-                shape: BoxShape.circle,
-              ),
-            );
-          }),
-        );
-      },
     );
   }
 }

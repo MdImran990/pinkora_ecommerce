@@ -58,42 +58,39 @@ class HomeScreen extends GetView<HomeController> {
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
-                child: GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: AppColors.border),
-                    ),
-                    child: Row(
-                      children: [
-                        const SizedBox(width: 14),
-                        const Icon(Icons.search_rounded,
-                            color: AppColors.grey, size: 22),
-                        const SizedBox(width: 10),
-                        const Expanded(
-                          child: Text(
-                            'Search products...',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppColors.grey,
-                            ),
+                child: Container(
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: AppColors.border),
+                  ),
+                  child: Row(
+                    children: [
+                      const SizedBox(width: 14),
+                      const Icon(Icons.search_rounded,
+                          color: AppColors.grey, size: 22),
+                      const SizedBox(width: 10),
+                      const Expanded(
+                        child: Text(
+                          'Search products...',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: AppColors.grey,
                           ),
                         ),
-                        Container(
-                          margin: const EdgeInsets.all(6),
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryLight,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(Icons.camera_alt_outlined,
-                              color: AppColors.primary, size: 16),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.all(6),
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryLight,
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                      ],
-                    ),
+                        child: const Icon(Icons.camera_alt_outlined,
+                            color: AppColors.primary, size: 16),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -111,9 +108,11 @@ class HomeScreen extends GetView<HomeController> {
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.only(top: 20),
-                child: Obx(() => CategoryChipRow(
-                  categories: controller.categories,
-                )),
+                child: GetBuilder<HomeController>(
+                  builder: (ctrl) => CategoryChipRow(
+                    categories: ctrl.categories,
+                  ),
+                ),
               ),
             ),
 
@@ -121,15 +120,18 @@ class HomeScreen extends GetView<HomeController> {
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.only(top: 20),
-                child: Obx(() => FlashSaleSection(
-                  products: controller.flashSaleProducts,
-                  onSeeAll: () =>
-                      Get.toNamed(AppRoutes.productList),
-                )),
+                child: GetBuilder<HomeController>(
+                  builder: (ctrl) => FlashSaleSection(
+                    products: ctrl.flashSaleProducts,
+                    onSeeAll: () => Get.toNamed(AppRoutes.productList),
+                  ),
+                ),
               ),
             ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 100)),
+            const SliverToBoxAdapter(
+              child: SizedBox(height: 100),
+            ),
           ],
         ),
       ),

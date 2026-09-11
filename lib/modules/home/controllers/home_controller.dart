@@ -3,21 +3,18 @@ import '../../../data/model/product_model.dart';
 import '../../../data/model/category_model.dart';
 
 class HomeController extends GetxController {
-  final currentIndex = 0.obs;
   final bannerIndex = 0.obs;
 
-  final categories = <CategoryModel>[].obs;
-  final flashSaleProducts = <ProductModel>[].obs;
-  final featuredProducts = <ProductModel>[].obs;
+  List<CategoryModel> categories = [];
+  List<ProductModel> flashSaleProducts = [];
 
   @override
   void onInit() {
     super.onInit();
     loadData();
   }
-
   void loadData() {
-    categories.value = [
+    categories = [
       CategoryModel(id: '1', name: 'Fashion',     image: '', itemCount: 1200),
       CategoryModel(id: '2', name: 'Beauty',      image: '', itemCount: 800),
       CategoryModel(id: '3', name: 'Electronics', image: '', itemCount: 1000),
@@ -25,7 +22,7 @@ class HomeController extends GetxController {
       CategoryModel(id: '5', name: 'Watches',     image: '', itemCount: 600),
     ];
 
-    flashSaleProducts.value = [
+    flashSaleProducts = [
       ProductModel(
         id: '1',
         name: 'Trendy Handbag',
@@ -64,8 +61,8 @@ class HomeController extends GetxController {
         isFlashSale: true,
       ),
     ];
-  }
 
+    update();
+  }
   void changeBannerIndex(int index) => bannerIndex.value = index;
-  void changeTab(int index) => currentIndex.value = index;
 }
