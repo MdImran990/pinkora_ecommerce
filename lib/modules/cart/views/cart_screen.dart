@@ -7,18 +7,20 @@ import '../../../app/theme/app_colors.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../widgets/bottom_nav_bar.dart';
 
-class CartScreen extends GetView<CartController> {
+class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<CartController>();
+
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg,
       appBar: AppBar(
         backgroundColor: AppColors.scaffoldBg,
         elevation: 0,
         leading: GestureDetector(
-          onTap: () => Get.back(),
+          onTap: () => Get.offAllNamed(AppRoutes.home),
           child: Container(
             margin: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -26,11 +28,8 @@ class CartScreen extends GetView<CartController> {
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: AppColors.border),
             ),
-            child: const Icon(
-              Icons.arrow_back_ios_new_rounded,
-              size: 16,
-              color: AppColors.black,
-            ),
+            child: const Icon(Icons.arrow_back_ios_new_rounded,
+                size: 16, color: AppColors.black),
           ),
         ),
         title: Obx(() => Text(
@@ -45,16 +44,9 @@ class CartScreen extends GetView<CartController> {
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: GestureDetector(
-              onTap: () {
-                if (controller.cartItems.isNotEmpty) {
-                  controller.cartItems.clear();
-                }
-              },
-              child: const Icon(
-                Icons.delete_outline_rounded,
-                color: AppColors.black,
-                size: 24,
-              ),
+              onTap: () => controller.cartItems.clear(),
+              child: const Icon(Icons.delete_outline_rounded,
+                  color: AppColors.black, size: 24),
             ),
           ),
         ],
@@ -72,29 +64,19 @@ class CartScreen extends GetView<CartController> {
                     color: AppColors.primaryLight,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
-                    Icons.shopping_cart_outlined,
-                    size: 50,
-                    color: AppColors.primary,
-                  ),
+                  child: const Icon(Icons.shopping_cart_outlined,
+                      size: 50, color: AppColors.primary),
                 ),
                 const SizedBox(height: 20),
-                const Text(
-                  'Your cart is empty',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.black,
-                  ),
-                ),
+                const Text('Your cart is empty',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.black)),
                 const SizedBox(height: 8),
-                const Text(
-                  'Add items to get started',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppColors.grey,
-                  ),
-                ),
+                const Text('Add items to get started',
+                    style: TextStyle(
+                        fontSize: 14, color: AppColors.grey)),
                 const SizedBox(height: 28),
                 ElevatedButton(
                   onPressed: () => Get.offAllNamed(AppRoutes.home),
@@ -103,16 +85,12 @@ class CartScreen extends GetView<CartController> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 32, vertical: 14),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
+                        borderRadius: BorderRadius.circular(30)),
                   ),
-                  child: const Text(
-                    'Shop Now',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  child: const Text('Shop Now',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600)),
                 ),
               ],
             ),
@@ -121,7 +99,7 @@ class CartScreen extends GetView<CartController> {
 
         return Column(
           children: [
-            // ── Cart Items ──
+            // ── Items ──
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
@@ -138,14 +116,13 @@ class CartScreen extends GetView<CartController> {
               ),
             ),
 
-            // ── Bottom Summary ──
+            // ── Summary ──
             Container(
               padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
               decoration: BoxDecoration(
                 color: AppColors.white,
                 borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(24),
-                ),
+                    top: Radius.circular(24)),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.06),
@@ -156,30 +133,24 @@ class CartScreen extends GetView<CartController> {
               ),
               child: Column(
                 children: [
-                  // Coupon
                   CouponInputField(
                     controller: controller.couponController,
                     onApply: controller.applyCoupon,
                   ),
-
                   const SizedBox(height: 16),
                   const Divider(color: AppColors.border),
                   const SizedBox(height: 12),
-
-                  // Price rows
                   Obx(() => Column(
                     children: [
                       _PriceRow(
-                        label: 'Subtotal',
-                        value:
-                        '৳ ${controller.subtotal.toInt()}',
-                      ),
+                          label: 'Subtotal',
+                          value:
+                          '৳ ${controller.subtotal.toInt()}'),
                       const SizedBox(height: 8),
                       _PriceRow(
-                        label: 'Delivery Fee',
-                        value:
-                        '৳ ${controller.deliveryFee.toInt()}',
-                      ),
+                          label: 'Delivery Fee',
+                          value:
+                          '৳ ${controller.deliveryFee.toInt()}'),
                       if (controller.discount.value > 0) ...[
                         const SizedBox(height: 8),
                         _PriceRow(
@@ -193,16 +164,13 @@ class CartScreen extends GetView<CartController> {
                       const Divider(color: AppColors.border),
                       const SizedBox(height: 12),
                       _PriceRow(
-                        label: 'Total',
-                        value: '৳ ${controller.total.toInt()}',
-                        isBold: true,
-                      ),
+                          label: 'Total',
+                          value:
+                          '৳ ${controller.total.toInt()}',
+                          isBold: true),
                     ],
                   )),
-
                   const SizedBox(height: 16),
-
-                  // Checkout Button
                   SizedBox(
                     width: double.infinity,
                     height: 52,
@@ -211,21 +179,16 @@ class CartScreen extends GetView<CartController> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
+                            borderRadius: BorderRadius.circular(30)),
                         elevation: 0,
                       ),
-                      child: const Text(
-                        'Proceed to Checkout',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
+                      child: const Text('Proceed to Checkout',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white)),
                     ),
                   ),
-
                   const SizedBox(height: 16),
                 ],
               ),
@@ -238,7 +201,6 @@ class CartScreen extends GetView<CartController> {
   }
 }
 
-// ignore: unused_element
 class _PriceRow extends StatelessWidget {
   final String label;
   final String value;
@@ -257,25 +219,21 @@ class _PriceRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: isBold ? 16 : 14,
-            fontWeight:
-            isBold ? FontWeight.w700 : FontWeight.w400,
-            color: AppColors.darkGrey,
-          ),
-        ),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: isBold ? 16 : 14,
-            fontWeight:
-            isBold ? FontWeight.w700 : FontWeight.w500,
-            color: valueColor ??
-                (isBold ? AppColors.black : AppColors.darkGrey),
-          ),
-        ),
+        Text(label,
+            style: TextStyle(
+                fontSize: isBold ? 16 : 14,
+                fontWeight:
+                isBold ? FontWeight.w700 : FontWeight.w400,
+                color: AppColors.darkGrey)),
+        Text(value,
+            style: TextStyle(
+                fontSize: isBold ? 16 : 14,
+                fontWeight:
+                isBold ? FontWeight.w700 : FontWeight.w500,
+                color: valueColor ??
+                    (isBold
+                        ? AppColors.black
+                        : AppColors.darkGrey))),
       ],
     );
   }

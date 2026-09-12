@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
 class AppTheme {
@@ -7,38 +6,39 @@ class AppTheme {
     useMaterial3: true,
     scaffoldBackgroundColor: AppColors.scaffoldBg,
     primaryColor: AppColors.primary,
+    fontFamily: 'Poppins',
     colorScheme: const ColorScheme.light(
       primary: AppColors.primary,
       secondary: AppColors.primaryLight,
       surface: AppColors.white,
     ),
-    textTheme: GoogleFonts.poppinsTextTheme().copyWith(
-      displayLarge: GoogleFonts.poppins(
+    textTheme: const TextTheme(
+      displayLarge: TextStyle(
         fontSize: 28,
         fontWeight: FontWeight.w700,
         color: AppColors.black,
       ),
-      titleLarge: GoogleFonts.poppins(
+      titleLarge: TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.w600,
         color: AppColors.black,
       ),
-      titleMedium: GoogleFonts.poppins(
+      titleMedium: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w600,
         color: AppColors.black,
       ),
-      bodyLarge: GoogleFonts.poppins(
+      bodyLarge: TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.w400,
         color: AppColors.black,
       ),
-      bodyMedium: GoogleFonts.poppins(
+      bodyMedium: TextStyle(
         fontSize: 13,
         fontWeight: FontWeight.w400,
         color: AppColors.darkGrey,
       ),
-      labelSmall: GoogleFonts.poppins(
+      labelSmall: TextStyle(
         fontSize: 11,
         fontWeight: FontWeight.w400,
         color: AppColors.grey,
@@ -52,9 +52,10 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
         ),
-        textStyle: GoogleFonts.poppins(
+        textStyle: const TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
+          fontFamily: 'Poppins',
         ),
         elevation: 0,
       ),
@@ -74,27 +75,31 @@ class AppTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+        borderSide:
+        const BorderSide(color: AppColors.primary, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: AppColors.error, width: 1.5),
+        borderSide:
+        const BorderSide(color: AppColors.error, width: 1.5),
       ),
-      hintStyle: GoogleFonts.poppins(
+      hintStyle: const TextStyle(
         color: AppColors.grey,
         fontSize: 14,
+        fontFamily: 'Poppins',
       ),
     ),
-    appBarTheme: AppBarTheme(
+    appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.scaffoldBg,
       elevation: 0,
       centerTitle: true,
-      titleTextStyle: GoogleFonts.poppins(
+      titleTextStyle: TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.w600,
         color: AppColors.black,
+        fontFamily: 'Poppins',
       ),
-      iconTheme: const IconThemeData(color: AppColors.black),
+      iconTheme: IconThemeData(color: AppColors.black),
     ),
     checkboxTheme: CheckboxThemeData(
       fillColor: WidgetStateProperty.resolveWith(

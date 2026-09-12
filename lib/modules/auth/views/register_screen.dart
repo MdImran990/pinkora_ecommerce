@@ -1,3 +1,4 @@
+import '../../../app/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
@@ -26,7 +27,31 @@ class RegisterScreen extends GetView<AuthController> {
               key: controller.formKey,
               child: Column(
                 children: [
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 16),
+
+                  // ── BACK BUTTON ──
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: GestureDetector(
+                      onTap: () => Get.offAllNamed(AppRoutes.login),
+                      child: Container(
+                        width: 42,
+                        height: 42,
+                        decoration: BoxDecoration(
+                          color: AppColors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.border),
+                        ),
+                        child: const Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          size: 18,
+                          color: AppColors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
 
                   // ── LOGO ──
                   Container(
@@ -37,7 +62,7 @@ class RegisterScreen extends GetView<AuthController> {
                       borderRadius: BorderRadius.circular(24),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primary.withOpacity(0.3),
+                          color: AppColors.primary.withValues(alpha: 0.3),
                           blurRadius: 20,
                           offset: const Offset(0, 8),
                         ),
@@ -72,7 +97,7 @@ class RegisterScreen extends GetView<AuthController> {
                     ),
                   ),
 
-                  const SizedBox(height: 36),
+                  const SizedBox(height: 32),
 
                   // ── NAME ──
                   AuthTextField(
@@ -103,15 +128,17 @@ class RegisterScreen extends GetView<AuthController> {
                     hint: 'Password',
                     prefixIcon: Icons.lock_outline,
                     isPassword: true,
-                    isPasswordHidden: controller.isPasswordHidden.value,
+                    isPasswordHidden:
+                    controller.isPasswordHidden.value,
                     onTogglePassword: controller.togglePassword,
-                    validator: (v) =>
-                    v!.length < 6 ? 'Min 6 characters' : null,
+                    validator: (v) => v!.length < 6
+                        ? 'Min 6 characters'
+                        : null,
                   )),
 
                   const SizedBox(height: 28),
 
-                  // ── REGISTER BUTTON ──
+                  // ── SIGN UP BUTTON ──
                   Obx(() => SizedBox(
                     width: double.infinity,
                     height: 52,
@@ -154,7 +181,8 @@ class RegisterScreen extends GetView<AuthController> {
                       const Expanded(
                           child: Divider(color: AppColors.border)),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        padding:
+                        const EdgeInsets.symmetric(horizontal: 12),
                         child: Text(
                           'OR CONTINUE WITH',
                           style: TextStyle(
@@ -206,7 +234,7 @@ class RegisterScreen extends GetView<AuthController> {
                     ],
                   ),
 
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 28),
 
                   // ── LOGIN LINK ──
                   Row(
@@ -220,7 +248,8 @@ class RegisterScreen extends GetView<AuthController> {
                         ),
                       ),
                       GestureDetector(
-                        onTap: controller.goToLogin,
+                        onTap: () =>
+                            Get.offAllNamed(AppRoutes.login),
                         child: const Text(
                           'Login',
                           style: TextStyle(

@@ -3,12 +3,16 @@ import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import '../app/theme/app_colors.dart';
 import '../app/routes/app_routes.dart';
+import '../modules/cart/controllers/cart_controller.dart';
 
 class PinkoraBottomNav extends StatelessWidget {
   const PinkoraBottomNav({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final cart = Get.find<CartController>();
+    final current = Get.currentRoute;
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.white,
@@ -22,52 +26,113 @@ class PinkoraBottomNav extends StatelessWidget {
       ),
       child: SafeArea(
         child: Padding(
-          padding:
-          const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          padding: const EdgeInsets.symmetric(
+              horizontal: 8, vertical: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _NavItem(
-                icon: Iconsax.home,
-                activeIcon: Iconsax.home_15,
+              // Home
+              _item(
+                icon: current == AppRoutes.home
+                    ? Iconsax.home_15
+                    : Iconsax.home,
                 label: 'Home',
-                isActive: Get.currentRoute == AppRoutes.home,
+                isActive: current == AppRoutes.home,
                 onTap: () => Get.offAllNamed(AppRoutes.home),
               ),
-              _NavItem(
-                icon: Iconsax.category,
-                activeIcon: Iconsax.category5,
+
+              // Category
+              _item(
+                icon: current == AppRoutes.category
+                    ? Iconsax.category5
+                    : Iconsax.category,
                 label: 'Category',
-                isActive:
-                Get.currentRoute == AppRoutes.category,
-                onTap: () =>
-                    Get.offAllNamed(AppRoutes.category),
+                isActive: current == AppRoutes.category,
+                onTap: () => Get.offAllNamed(AppRoutes.category),
               ),
-              _NavItem(
-                icon: Iconsax.shopping_cart,
-                activeIcon: Iconsax.shopping_cart5,
-                label: 'Cart',
-                isActive: Get.currentRoute == AppRoutes.cart,
+
+              // Cart with badge
+              GestureDetector(
                 onTap: () => Get.offAllNamed(AppRoutes.cart),
-                badge: 3,
+                behavior: HitTestBehavior.opaque,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Icon(
+                          current == AppRoutes.cart
+                              ? Iconsax.shopping_cart5
+                              : Iconsax.shopping_cart,
+                          color: current == AppRoutes.cart
+                              ? AppColors.primary
+                              : AppColors.grey,
+                          size: 24,
+                        ),
+                        Obx(() {
+                          final count = cart.cartItems.length;
+                          if (count == 0) return const SizedBox();
+                          return Positioned(
+                            top: -4,
+                            right: -6,
+                            child: Container(
+                              width: 16,
+                              height: 16,
+                              decoration: const BoxDecoration(
+                                color: AppColors.sale,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '$count',
+                                  style: const TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Cart',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: current == AppRoutes.cart
+                            ? FontWeight.w600
+                            : FontWeight.w400,
+                        color: current == AppRoutes.cart
+                            ? AppColors.primary
+                            : AppColors.grey,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              _NavItem(
-                icon: Iconsax.heart,
-                activeIcon: Iconsax.heart5,
+
+              // Wishlist
+              _item(
+                icon: current == AppRoutes.wishlist
+                    ? Iconsax.heart5
+                    : Iconsax.heart,
                 label: 'Wishlist',
-                isActive:
-                Get.currentRoute == AppRoutes.wishlist,
-                onTap: () =>
-                    Get.offAllNamed(AppRoutes.wishlist),
+                isActive: current == AppRoutes.wishlist,
+                onTap: () => Get.offAllNamed(AppRoutes.wishlist),
               ),
-              _NavItem(
-                icon: Iconsax.user,
-                activeIcon: Iconsax.user5,
+
+              // Profile
+              _item(
+                icon: current == AppRoutes.profile
+                    ? Iconsax.user5
+                    : Iconsax.user,
                 label: 'Profile',
-                isActive:
-                Get.currentRoute == AppRoutes.profile,
-                onTap: () =>
-                    Get.offAllNamed(AppRoutes.profile),
+                isActive: current == AppRoutes.profile,
+                onTap: () => Get.offAllNamed(AppRoutes.profile),
               ),
             ],
           ),
@@ -75,79 +140,32 @@ class PinkoraBottomNav extends StatelessWidget {
       ),
     );
   }
-}
 
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final IconData activeIcon;
-  final String label;
-  final bool isActive;
-  final VoidCallback onTap;
-  final int? badge;
-
-  const _NavItem({
-    required this.icon,
-    required this.activeIcon,
-    required this.label,
-    required this.isActive,
-    required this.onTap,
-    this.badge,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _item({
+    required IconData icon,
+    required String label,
+    required bool isActive,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Icon(
-                isActive ? activeIcon : icon,
-                color: isActive
-                    ? AppColors.primary
-                    : AppColors.grey,
-                size: 24,
-              ),
-              if (badge != null)
-                Positioned(
-                  top: -4,
-                  right: -6,
-                  child: Container(
-                    width: 16,
-                    height: 16,
-                    decoration: const BoxDecoration(
-                      color: AppColors.sale,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Text(
-                        '$badge',
-                        style: const TextStyle(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-            ],
+          Icon(
+            icon,
+            color: isActive ? AppColors.primary : AppColors.grey,
+            size: 24,
           ),
           const SizedBox(height: 4),
           Text(
             label,
             style: TextStyle(
               fontSize: 10,
-              fontWeight: isActive
-                  ? FontWeight.w600
-                  : FontWeight.w400,
-              color: isActive
-                  ? AppColors.primary
-                  : AppColors.grey,
+              fontWeight:
+              isActive ? FontWeight.w600 : FontWeight.w400,
+              color: isActive ? AppColors.primary : AppColors.grey,
             ),
           ),
         ],

@@ -5,13 +5,18 @@ import 'package:get_storage/get_storage.dart';
 import 'app/routes/app_pages.dart';
 import 'app/routes/app_routes.dart';
 import 'app/theme/app_theme.dart';
+import 'modules/cart/controllers/cart_controller.dart';
+import 'modules/wishlist/controllers/wishlist_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
-  SystemChrome.setPreferredOrientations(
-    [DeviceOrientation.portraitUp],
-  );
+
+  // permanent — survive all navigation
+  Get.put<CartController>(CartController(), permanent: true);
+  Get.put<WishlistController>(WishlistController(), permanent: true);
+
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,

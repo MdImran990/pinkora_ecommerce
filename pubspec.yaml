@@ -20,7 +20,7 @@ dependencies:
   # HTTP
   dio: ^5.4.0
 
-  # UI — carousel_slider বাদ দিয়ে flutter_carousel_widget দাও
+  # UI
   flutter_carousel_widget: ^2.2.0
   smooth_page_indicator: ^1.1.0
   cached_network_image: ^3.3.1
@@ -29,9 +29,6 @@ dependencies:
 
   # Icons
   iconsax: ^0.0.8
-
-  # Fonts
-  google_fonts: ^6.1.0
 
   # Utils
   intl: ^0.19.0
@@ -45,3 +42,13 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
