@@ -21,7 +21,7 @@ class CartItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 14),
+      margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppColors.white,
@@ -29,8 +29,8 @@ class CartItemTile extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -38,36 +38,31 @@ class CartItemTile extends StatelessWidget {
         children: [
           // Checkbox
           Container(
-            width: 22,
-            height: 22,
+            width: 20,
+            height: 20,
             margin: const EdgeInsets.only(right: 10),
             decoration: BoxDecoration(
               color: AppColors.primary,
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: BorderRadius.circular(5),
             ),
-            child: const Icon(
-              Icons.check_rounded,
-              color: Colors.white,
-              size: 14,
-            ),
+            child: const Icon(Icons.check_rounded,
+                color: Colors.white, size: 13),
           ),
 
           // Image
           Container(
-            width: 75,
-            height: 75,
+            width: 72,
+            height: 72,
             decoration: BoxDecoration(
               color: AppColors.primaryLight,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(
-              Icons.shopping_bag_outlined,
-              color: AppColors.primary.withValues(alpha: 0.5),
-              size: 36,
-            ),
+            child: Icon(Icons.shopping_bag_outlined,
+                color: AppColors.primary.withValues(alpha: 0.5),
+                size: 34),
           ),
 
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
 
           // Info
           Expanded(
@@ -80,10 +75,9 @@ class CartItemTile extends StatelessWidget {
                       child: Text(
                         item.product.name,
                         style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.black,
-                        ),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.black),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -91,32 +85,21 @@ class CartItemTile extends StatelessWidget {
                     GestureDetector(
                       onTap: onRemove,
                       child: const Icon(
-                        Icons.delete_outline_rounded,
-                        color: AppColors.grey,
-                        size: 20,
-                      ),
+                          Icons.delete_outline_rounded,
+                          color: AppColors.grey,
+                          size: 18),
                     ),
                   ],
                 ),
 
-                const SizedBox(height: 3),
-
                 if (item.selectedSize.isNotEmpty)
-                  Text(
-                    item.selectedSize,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: AppColors.grey,
-                    ),
-                  )
+                  Text(item.selectedSize,
+                      style: const TextStyle(
+                          fontSize: 11, color: AppColors.grey))
                 else if (item.selectedColor.isNotEmpty)
-                  Text(
-                    item.selectedColor,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: AppColors.grey,
-                    ),
-                  ),
+                  Text(item.selectedColor,
+                      style: const TextStyle(
+                          fontSize: 11, color: AppColors.grey)),
 
                 const SizedBox(height: 8),
 
@@ -126,39 +109,29 @@ class CartItemTile extends StatelessWidget {
                     // Stepper
                     Row(
                       children: [
-                        _StepBtn(
-                          icon: Icons.remove,
-                          onTap: onDecrease,
-                          isDisabled: item.quantity <= 1,
-                        ),
+                        _Btn(
+                            icon: Icons.remove,
+                            onTap: onDecrease,
+                            disabled: item.quantity <= 1),
                         Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 12),
-                          child: Text(
-                            '${item.quantity}',
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.black,
-                            ),
-                          ),
+                              horizontal: 10),
+                          child: Text('${item.quantity}',
+                              style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.black)),
                         ),
-                        _StepBtn(
-                          icon: Icons.add,
-                          onTap: onIncrease,
-                        ),
+                        _Btn(icon: Icons.add, onTap: onIncrease),
                       ],
                     ),
 
                     // Price
-                    Text(
-                      '৳ ${item.totalPrice.toInt()}',
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.primary,
-                      ),
-                    ),
+                    Text('৳ ${item.totalPrice.toInt()}',
+                        style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.primary)),
                   ],
                 ),
               ],
@@ -170,35 +143,34 @@ class CartItemTile extends StatelessWidget {
   }
 }
 
-class _StepBtn extends StatelessWidget {
+class _Btn extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
-  final bool isDisabled;
+  final bool disabled;
 
-  const _StepBtn({
+  const _Btn({
     required this.icon,
     required this.onTap,
-    this.isDisabled = false,
+    this.disabled = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: isDisabled ? null : onTap,
+      onTap: disabled ? null : onTap,
       child: Container(
-        width: 28,
-        height: 28,
+        width: 26,
+        height: 26,
         decoration: BoxDecoration(
-          color: isDisabled
+          color: disabled
               ? AppColors.lightGrey
               : AppColors.primaryLight,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(7),
         ),
-        child: Icon(
-          icon,
-          size: 16,
-          color: isDisabled ? AppColors.grey : AppColors.primary,
-        ),
+        child: Icon(icon,
+            size: 15,
+            color:
+            disabled ? AppColors.grey : AppColors.primary),
       ),
     );
   }

@@ -35,8 +35,10 @@ class ProductDetailScreen extends GetView<ProductController> {
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: AppColors.border),
                   ),
-                  child: const Icon(Icons.arrow_back_ios_new_rounded,
-                      size: 16, color: AppColors.black),
+                  child: const Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      size: 16,
+                      color: AppColors.black),
                 ),
               ),
               actions: [
@@ -77,33 +79,30 @@ class ProductDetailScreen extends GetView<ProductController> {
               ],
             ),
 
-            // ── IMAGE GALLERY ──
+            // ── IMAGE ──
             const SliverToBoxAdapter(
               child: ProductImageGallery(),
             ),
 
-            // ── PRODUCT INFO ──
+            // ── INFO ──
             SliverToBoxAdapter(
               child: Container(
                 margin: const EdgeInsets.only(top: 8),
                 padding: const EdgeInsets.all(20),
                 decoration: const BoxDecoration(
                   color: AppColors.white,
-                  borderRadius:
-                  BorderRadius.vertical(top: Radius.circular(24)),
+                  borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(24)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Name
-                    Text(
-                      p.name,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.black,
-                      ),
-                    ),
+                    Text(p.name,
+                        style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.black)),
 
                     const SizedBox(height: 8),
 
@@ -114,26 +113,22 @@ class ProductDetailScreen extends GetView<ProductController> {
 
                     const SizedBox(height: 14),
 
-                    // Price row
+                    // Price
                     Row(
                       children: [
-                        Text(
-                          '৳ ${p.price.toInt()}',
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.primary,
-                          ),
-                        ),
+                        Text('৳ ${p.price.toInt()}',
+                            style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w800,
+                                color: AppColors.primary)),
                         const SizedBox(width: 10),
-                        Text(
-                          '৳ ${p.originalPrice.toInt()}',
-                          style: const TextStyle(
-                            fontSize: 15,
-                            color: AppColors.grey,
-                            decoration: TextDecoration.lineThrough,
-                          ),
-                        ),
+                        Text('৳ ${p.originalPrice.toInt()}',
+                            style: const TextStyle(
+                                fontSize: 15,
+                                color: AppColors.grey,
+                                decoration:
+                                TextDecoration.lineThrough,
+                                decorationColor: AppColors.grey)),
                         const SizedBox(width: 10),
                         Container(
                           padding: const EdgeInsets.symmetric(
@@ -145,10 +140,9 @@ class ProductDetailScreen extends GetView<ProductController> {
                           child: Text(
                             '${p.discountPercent}% OFF',
                             style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.primary,
-                            ),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.primary),
                           ),
                         ),
                       ],
@@ -160,14 +154,11 @@ class ProductDetailScreen extends GetView<ProductController> {
 
                     // Color
                     if (p.colors.isNotEmpty) ...[
-                      const Text(
-                        'Color',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.black,
-                        ),
-                      ),
+                      const Text('Color',
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.black)),
                       const SizedBox(height: 10),
                       Obx(() => ColorSelector(
                         colors: p.colors,
@@ -183,14 +174,11 @@ class ProductDetailScreen extends GetView<ProductController> {
                       mainAxisAlignment:
                       MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Quantity',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.black,
-                          ),
-                        ),
+                        const Text('Quantity',
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.black)),
                         Obx(() => QuantityStepper(
                           quantity: controller.quantity.value,
                           onIncrease: controller.increaseQty,
@@ -219,13 +207,11 @@ class ProductDetailScreen extends GetView<ProductController> {
                               padding: const EdgeInsets.symmetric(
                                   vertical: 14),
                               shape: RoundedRectangleBorder(
-                                borderRadius:
-                                BorderRadius.circular(30),
-                              ),
+                                  borderRadius:
+                                  BorderRadius.circular(30)),
                               textStyle: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600),
                             ),
                           ),
                         ),
@@ -238,19 +224,15 @@ class ProductDetailScreen extends GetView<ProductController> {
                               padding: const EdgeInsets.symmetric(
                                   vertical: 14),
                               shape: RoundedRectangleBorder(
-                                borderRadius:
-                                BorderRadius.circular(30),
-                              ),
+                                  borderRadius:
+                                  BorderRadius.circular(30)),
                               elevation: 0,
                             ),
-                            child: const Text(
-                              'Buy Now',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
+                            child: const Text('Buy Now',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white)),
                           ),
                         ),
                       ],

@@ -56,12 +56,10 @@ class WishlistController extends GetxController {
       _saveToStorage();
     }
   }
-
   void removeItem(ProductModel product) {
     wishlistItems.removeWhere((e) => e.id == product.id);
     _saveToStorage();
   }
-
   bool isWished(String id) =>
       wishlistItems.any((e) => e.id == id);
 
