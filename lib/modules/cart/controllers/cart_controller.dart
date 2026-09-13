@@ -1,56 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../../data/model/cart_item_model.dart';
 import '../../../data/model/product_model.dart';
+import '../../../app/theme/app_colors.dart';
 import '../../../app/routes/app_routes.dart';
 
 class CartController extends GetxController {
-  // CART ITEMS
-
-  final ValueNotifier<List<CartItemModel>> cartItems =
-  ValueNotifier<List<CartItemModel>>([]);
-
-  // COUPON
-
-  final TextEditingController couponController =
-  TextEditingController();
-
-  double discount = 0.0;
-
+  final RxList<CartItemModel> cartItems = <CartItemModel>[].obs;
+  final RxDouble discount = 0.0.obs;
+  final couponController = TextEditingController();
   final double deliveryFee = 80.0;
 
-  // PRICE
+  int get itemCount => cartItems.length;
 
-  double get subtotal {
-    return cartItems.value.fold(
-      0.0,
-          (sum, item) => sum + item.totalPrice,
-    );
-  }
+  double get subtotal =>
+      cartItems.fold(0.0, (sum, item) => sum + item.totalPrice);
 
   double get total {
-    final result = subtotal + deliveryFee - discount;
-
-    if (result < 0) {
-      return 0;
-    }
-
-    return result;
+    final computedTotal = subtotal + deliveryFee - discount.value;
+    return computedTotal < 0 ? 0 : computedTotal;
   }
-
-  // =========================================================
-  // TOTAL ITEM COUNT
-  // =========================================================
-
-  int get itemCount {
-    return cartItems.value.fold(
-      0,
-          (sum, item) => sum + item.quantity,
-    );
-  }
-
-  // ADD TO CART
 
   void addToCart(
       ProductModel product, {
@@ -58,25 +27,18 @@ class CartController extends GetxController {
         String size = '',
         int qty = 1,
       }) {
-    final List<CartItemModel> list = [
-      ...cartItems.value,
-    ];
-
-    final int index = list.indexWhere(
-          (item) => item.product.id == product.id,
-    );
+    final index = cartItems.indexWhere((e) => e.product.id == product.id);
 
     if (index >= 0) {
-      final oldItem = list[index];
-
-      list[index] = CartItemModel(
-        product: oldItem.product,
-        quantity: oldItem.quantity + qty,
-        selectedColor: oldItem.selectedColor,
-        selectedSize: oldItem.selectedSize,
+      final existingItem = cartItems[index];
+      cartItems[index] = CartItemModel(
+        product: existingItem.product,
+        quantity: existingItem.quantity + qty,
+        selectedColor: existingItem.selectedColor,
+        selectedSize: existingItem.selectedSize,
       );
     } else {
-      list.add(
+      cartItems.add(
         CartItemModel(
           product: product,
           quantity: qty,
@@ -85,129 +47,76 @@ class CartController extends GetxController {
         ),
       );
     }
-
-    // Update ValueNotifier
-    cartItems.value = list;
-
-    // IMPORTANT:
-    // No Get.snackbar here.
-    // Snackbar/overlay removed to prevent touch blocking.
   }
-
-  // INCREASE QUANTITY
 
   void increaseQty(int index) {
-    final List<CartItemModel> list = [
-      ...cartItems.value,
-    ];
-
-    if (index < 0 || index >= list.length) {
-      return;
+    if (index >= 0 && index < cartItems.length) {
+      final item = cartItems[index];
+      cartItems[index] = CartItemModel(
+        product: item.product,
+        quantity: item.quantity + 1,
+        selectedColor: item.selectedColor,
+        selectedSize: item.selectedSize,
+      );
     }
-
-    final item = list[index];
-
-    list[index] = CartItemModel(
-      product: item.product,
-      quantity: item.quantity + 1,
-      selectedColor: item.selectedColor,
-      selectedSize: item.selectedSize,
-    );
-
-    cartItems.value = list;
   }
-
-  // DECREASE QUANTITY
 
   void decreaseQty(int index) {
-    final List<CartItemModel> list = [
-      ...cartItems.value,
-    ];
-
-    if (index < 0 || index >= list.length) {
-      return;
+    if (index >= 0 && index < cartItems.length && cartItems[index].quantity > 1) {
+      final item = cartItems[index];
+      cartItems[index] = CartItemModel(
+        product: item.product,
+        quantity: item.quantity - 1,
+        selectedColor: item.selectedColor,
+        selectedSize: item.selectedSize,
+      );
     }
-
-    final item = list[index];
-
-    if (item.quantity <= 1) {
-      return;
-    }
-
-    list[index] = CartItemModel(
-      product: item.product,
-      quantity: item.quantity - 1,
-      selectedColor: item.selectedColor,
-      selectedSize: item.selectedSize,
-    );
-
-    cartItems.value = list;
   }
-
-  // =========================================================
-  // REMOVE ITEM
-  // =========================================================
 
   void removeItem(int index) {
-    final List<CartItemModel> list = [
-      ...cartItems.value,
-    ];
-
-    if (index < 0 || index >= list.length) {
-      return;
+    if (index >= 0 && index < cartItems.length) {
+      cartItems.removeAt(index);
     }
-
-    list.removeAt(index);
-
-    cartItems.value = list;
   }
 
-  // =========================================================
-  // CLEAR CART
-  // =========================================================
-
   void clearCart() {
-    cartItems.value = [];
-    discount = 0.0;
+    cartItems.clear();
+    discount.value = 0.0;
     couponController.clear();
   }
 
-  // =========================================================
-  // COUPON
-  // =========================================================
-
   void applyCoupon() {
-    final String code =
-    couponController.text.trim().toUpperCase();
-
+    final code = couponController.text.trim().toUpperCase();
     if (code == 'PINKORA50') {
-      discount = 500.0;
-
-      // No snackbar.
-      return;
+      discount.value = 500.0;
+      Get.snackbar(
+        'Coupon Applied! 🎉',
+        '৳500 discount added',
+        backgroundColor: AppColors.success,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        borderRadius: 12,
+        margin: const EdgeInsets.all(16),
+      );
+    } else {
+      discount.value = 0.0;
+      Get.snackbar(
+        'Invalid Coupon',
+        'Please enter a valid coupon code',
+        backgroundColor: AppColors.sale,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        borderRadius: 12,
+        margin: const EdgeInsets.all(16),
+      );
     }
-
-    discount = 0.0;
-
-    // No snackbar.
   }
 
-  // CHECKOUT
+  void proceedToCheckout() => Get.toNamed(AppRoutes.checkout);
 
-  void proceedToCheckout() {
-    if (cartItems.value.isEmpty) {
-      return;
-    }
-
-    Get.toNamed(AppRoutes.checkout);
-  }
-
-  // DISPOSE
   @override
   void onClose() {
-    cartItems.dispose();
     couponController.dispose();
-
     super.onClose();
   }
 }
