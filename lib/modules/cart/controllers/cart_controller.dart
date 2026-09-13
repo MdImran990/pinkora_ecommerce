@@ -1,91 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'dart:convert';
+
 import '../../../data/model/cart_item_model.dart';
 import '../../../data/model/product_model.dart';
-import '../../../app/theme/app_colors.dart';
 import '../../../app/routes/app_routes.dart';
 
 class CartController extends GetxController {
-  final _box = GetStorage();
-  final cartItems = <CartItemModel>[].obs;
-  final couponController = TextEditingController();
-  final discount = 0.0.obs;
+  // CART ITEMS
+
+  final ValueNotifier<List<CartItemModel>> cartItems =
+  ValueNotifier<List<CartItemModel>>([]);
+
+  // COUPON
+
+  final TextEditingController couponController =
+  TextEditingController();
+
+  double discount = 0.0;
+
   final double deliveryFee = 80.0;
 
-  double get subtotal =>
-      cartItems.fold(0.0, (sum, item) => sum + item.totalPrice);
-  double get total => subtotal + deliveryFee - discount.value;
+  // PRICE
 
-  @override
-  void onInit() {
-    super.onInit();
-    _loadFromStorage();
+  double get subtotal {
+    return cartItems.value.fold(
+      0.0,
+          (sum, item) => sum + item.totalPrice,
+    );
   }
 
-  void _saveToStorage() {
-    try {
-      final data = cartItems
-          .map((item) => {
-        'id': item.product.id,
-        'name': item.product.name,
-        'price': item.product.price,
-        'originalPrice': item.product.originalPrice,
-        'discountPercent': item.product.discountPercent,
-        'rating': item.product.rating,
-        'reviewCount': item.product.reviewCount,
-        'category': item.product.category,
-        'image': item.product.image,
-        'quantity': item.quantity,
-        'selectedColor': item.selectedColor,
-        'selectedSize': item.selectedSize,
-      })
-          .toList();
-      _box.write('cart_items', jsonEncode(data));
-    } catch (_) {}
-  }
+  double get total {
+    final result = subtotal + deliveryFee - discount;
 
-  void _loadFromStorage() {
-    try {
-      final raw = _box.read<String>('cart_items');
-      if (raw == null || raw.isEmpty || raw == '[]') {
-        cartItems.clear();
-        return;
-      }
-      final List list = jsonDecode(raw);
-      if (list.isEmpty) {
-        cartItems.clear();
-        return;
-      }
-      cartItems.value = list
-          .map((e) => CartItemModel(
-        product: ProductModel(
-          id: e['id'].toString(),
-          name: e['name'].toString(),
-          image: e['image']?.toString() ?? '',
-          price: (e['price'] as num).toDouble(),
-          originalPrice:
-          (e['originalPrice'] as num).toDouble(),
-          discountPercent:
-          (e['discountPercent'] as num).toInt(),
-          rating: (e['rating'] as num).toDouble(),
-          reviewCount:
-          (e['reviewCount'] as num).toInt(),
-          category: e['category'].toString(),
-        ),
-        quantity: (e['quantity'] as num).toInt(),
-        selectedColor:
-        e['selectedColor']?.toString() ?? '',
-        selectedSize:
-        e['selectedSize']?.toString() ?? '',
-      ))
-          .toList();
-    } catch (_) {
-      cartItems.clear();
-      _box.remove('cart_items');
+    if (result < 0) {
+      return 0;
     }
+
+    return result;
   }
+
+  // =========================================================
+  // TOTAL ITEM COUNT
+  // =========================================================
+
+  int get itemCount {
+    return cartItems.value.fold(
+      0,
+          (sum, item) => sum + item.quantity,
+    );
+  }
+
+  // ADD TO CART
 
   void addToCart(
       ProductModel product, {
@@ -93,93 +58,156 @@ class CartController extends GetxController {
         String size = '',
         int qty = 1,
       }) {
-    final index =
-    cartItems.indexWhere((e) => e.product.id == product.id);
-    if (index >= 0) {
-      cartItems[index].quantity += qty;
-    } else {
-      cartItems.add(CartItemModel(
-        product: product,
-        quantity: qty,
-        selectedColor: color,
-        selectedSize: size,
-      ));
-    }
-    cartItems.refresh();
-    update();
-    _saveToStorage();
-    Get.snackbar(
-      'Added to Cart! 🛒',
-      '${product.name} added',
-      backgroundColor: AppColors.primary,
-      colorText: Colors.white,
-      snackPosition: SnackPosition.TOP,
-      borderRadius: 12,
-      margin: const EdgeInsets.all(16),
-      duration: const Duration(seconds: 1),
+    final List<CartItemModel> list = [
+      ...cartItems.value,
+    ];
+
+    final int index = list.indexWhere(
+          (item) => item.product.id == product.id,
     );
-  }
-  void increaseQty(int index) {
-    if (index < cartItems.length) {
-      cartItems[index].quantity++;
-      cartItems.refresh();
-      _saveToStorage();
+
+    if (index >= 0) {
+      final oldItem = list[index];
+
+      list[index] = CartItemModel(
+        product: oldItem.product,
+        quantity: oldItem.quantity + qty,
+        selectedColor: oldItem.selectedColor,
+        selectedSize: oldItem.selectedSize,
+      );
+    } else {
+      list.add(
+        CartItemModel(
+          product: product,
+          quantity: qty,
+          selectedColor: color,
+          selectedSize: size,
+        ),
+      );
     }
+
+    // Update ValueNotifier
+    cartItems.value = list;
+
+    // IMPORTANT:
+    // No Get.snackbar here.
+    // Snackbar/overlay removed to prevent touch blocking.
   }
+
+  // INCREASE QUANTITY
+
+  void increaseQty(int index) {
+    final List<CartItemModel> list = [
+      ...cartItems.value,
+    ];
+
+    if (index < 0 || index >= list.length) {
+      return;
+    }
+
+    final item = list[index];
+
+    list[index] = CartItemModel(
+      product: item.product,
+      quantity: item.quantity + 1,
+      selectedColor: item.selectedColor,
+      selectedSize: item.selectedSize,
+    );
+
+    cartItems.value = list;
+  }
+
+  // DECREASE QUANTITY
 
   void decreaseQty(int index) {
-    if (index < cartItems.length &&
-        cartItems[index].quantity > 1) {
-      cartItems[index].quantity--;
-      cartItems.refresh();
-      _saveToStorage();
+    final List<CartItemModel> list = [
+      ...cartItems.value,
+    ];
+
+    if (index < 0 || index >= list.length) {
+      return;
     }
+
+    final item = list[index];
+
+    if (item.quantity <= 1) {
+      return;
+    }
+
+    list[index] = CartItemModel(
+      product: item.product,
+      quantity: item.quantity - 1,
+      selectedColor: item.selectedColor,
+      selectedSize: item.selectedSize,
+    );
+
+    cartItems.value = list;
   }
+
+  // =========================================================
+  // REMOVE ITEM
+  // =========================================================
 
   void removeItem(int index) {
-    if (index < cartItems.length) {
-      cartItems.removeAt(index);
-      _saveToStorage();
+    final List<CartItemModel> list = [
+      ...cartItems.value,
+    ];
+
+    if (index < 0 || index >= list.length) {
+      return;
     }
+
+    list.removeAt(index);
+
+    cartItems.value = list;
   }
 
-  void applyCoupon() {
-    final code = couponController.text.trim().toUpperCase();
-    if (code == 'PINKORA50') {
-      discount.value = 500;
-      Get.snackbar(
-        'Coupon Applied! 🎉',
-        '৳500 discount added',
-        backgroundColor: AppColors.success,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-        borderRadius: 12,
-        margin: const EdgeInsets.all(16),
-      );
-    } else {
-      Get.snackbar(
-        'Invalid Coupon',
-        'Please enter a valid coupon code',
-        backgroundColor: AppColors.sale,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-        borderRadius: 12,
-        margin: const EdgeInsets.all(16),
-      );
-    }
-  }
+  // =========================================================
+  // CLEAR CART
+  // =========================================================
 
   void clearCart() {
-    cartItems.clear();
-    _box.remove('cart_items');
+    cartItems.value = [];
+    discount = 0.0;
+    couponController.clear();
   }
 
-  void proceedToCheckout() =>
-      Get.toNamed(AppRoutes.checkout);
+  // =========================================================
+  // COUPON
+  // =========================================================
 
+  void applyCoupon() {
+    final String code =
+    couponController.text.trim().toUpperCase();
+
+    if (code == 'PINKORA50') {
+      discount = 500.0;
+
+      // No snackbar.
+      return;
+    }
+
+    discount = 0.0;
+
+    // No snackbar.
+  }
+
+  // CHECKOUT
+
+  void proceedToCheckout() {
+    if (cartItems.value.isEmpty) {
+      return;
+    }
+
+    Get.toNamed(AppRoutes.checkout);
+  }
+
+  // DISPOSE
   @override
   void onClose() {
+    cartItems.dispose();
     couponController.dispose();
+
     super.onClose();
   }
 }

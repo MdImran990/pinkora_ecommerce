@@ -12,10 +12,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
 
-  // permanent — survive all navigation
-  Get.put<CartController>(CartController(), permanent: true);
-  Get.put<WishlistController>(WishlistController(), permanent: true);
-
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -39,6 +35,15 @@ class PinkoraApp extends StatelessWidget {
       getPages: AppPages.pages,
       defaultTransition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 300),
+      initialBinding: AppBinding(),
     );
+  }
+}
+
+class AppBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.put<CartController>(CartController(), permanent: true);
+    Get.put<WishlistController>(WishlistController(), permanent: true);
   }
 }

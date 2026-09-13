@@ -10,125 +10,127 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<CartController>(
-      builder: (ctrl) {
-        return Scaffold(
-          backgroundColor: AppColors.scaffoldBg,
-          appBar: AppBar(
-            backgroundColor: AppColors.scaffoldBg,
-            elevation: 0,
-            leading: GestureDetector(
-              onTap: () => Get.offAllNamed(AppRoutes.home),
-              child: Container(
-                margin: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.border),
-                ),
-                child: const Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  size: 16,
-                  color: AppColors.black,
-                ),
-              ),
+    final ctrl = Get.find<CartController>();
+
+    return Scaffold(
+      backgroundColor: AppColors.scaffoldBg,
+      appBar: AppBar(
+        backgroundColor: AppColors.scaffoldBg,
+        elevation: 0,
+        leading: GestureDetector(
+          onTap: () => Get.offAllNamed(AppRoutes.home),
+          child: Container(
+            margin: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.border),
             ),
-            title: Text(
-              'My Cart (${ctrl.cartItems.length})',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: AppColors.black,
-              ),
+            child: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              size: 16,
+              color: AppColors.black,
             ),
-            actions: [
-              IconButton(
-                onPressed: () {
-                  ctrl.clearCart();
-                  ctrl.update();
-                },
-                icon: const Icon(
-                  Icons.delete_outline_rounded,
-                  color: AppColors.black,
-                ),
-              ),
-            ],
           ),
-          body: ctrl.cartItems.isEmpty
-              ? Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 100,
-                  height: 100,
-                  decoration: const BoxDecoration(
-                    color: AppColors.primaryLight,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.shopping_cart_outlined,
-                    size: 50,
-                    color: AppColors.primary,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Your cart is empty',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.black,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Add items to get started',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppColors.grey,
-                  ),
-                ),
-                const SizedBox(height: 28),
-                ElevatedButton(
-                  onPressed: () =>
-                      Get.offAllNamed(AppRoutes.home),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 32, vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  child: const Text(
-                    'Shop Now',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
+        ),
+        title: ValueListenableBuilder(
+          valueListenable: ctrl.cartItems,
+          builder: (_, items, __) => Text(
+            'My Cart (${items.length})',
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: AppColors.black,
             ),
-          )
-              : Column(
+          ),
+        ),
+        actions: [
+          IconButton(
+            onPressed: ctrl.clearCart,
+            icon: const Icon(
+              Icons.delete_outline_rounded,
+              color: AppColors.black,
+            ),
+          ),
+        ],
+      ),
+      body: ValueListenableBuilder(
+        valueListenable: ctrl.cartItems,
+        builder: (context, items, _) {
+          if (items.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: const BoxDecoration(
+                      color: AppColors.primaryLight,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.shopping_cart_outlined,
+                      size: 50,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Your cart is empty',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Add items to get started',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppColors.grey,
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  ElevatedButton(
+                    onPressed: () =>
+                        Get.offAllNamed(AppRoutes.home),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 32, vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    child: const Text(
+                      'Shop Now',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return Column(
             children: [
-              // ── Items ──
               Expanded(
                 child: ListView.builder(
                   padding: const EdgeInsets.all(16),
-                  itemCount: ctrl.cartItems.length,
-                  itemBuilder: (context, i) {
-                    final item = ctrl.cartItems[i];
+                  itemCount: items.length,
+                  itemBuilder: (_, i) {
+                    final item = items[i];
                     return Container(
-                      margin:
-                      const EdgeInsets.only(bottom: 12),
+                      margin: const EdgeInsets.only(bottom: 12),
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: AppColors.white,
-                        borderRadius:
-                        BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black
@@ -140,7 +142,6 @@ class CartScreen extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          // Checkbox
                           Container(
                             width: 20,
                             height: 20,
@@ -157,8 +158,6 @@ class CartScreen extends StatelessWidget {
                               size: 13,
                             ),
                           ),
-
-                          // Image
                           Container(
                             width: 70,
                             height: 70,
@@ -174,10 +173,7 @@ class CartScreen extends StatelessWidget {
                               size: 32,
                             ),
                           ),
-
                           const SizedBox(width: 10),
-
-                          // Info
                           Expanded(
                             child: Column(
                               crossAxisAlignment:
@@ -192,8 +188,7 @@ class CartScreen extends StatelessWidget {
                                           fontSize: 13,
                                           fontWeight:
                                           FontWeight.w600,
-                                          color:
-                                          AppColors.black,
+                                          color: AppColors.black,
                                         ),
                                         maxLines: 1,
                                         overflow: TextOverflow
@@ -201,10 +196,8 @@ class CartScreen extends StatelessWidget {
                                       ),
                                     ),
                                     GestureDetector(
-                                      onTap: () {
-                                        ctrl.removeItem(i);
-                                        ctrl.update();
-                                      },
+                                      onTap: () =>
+                                          ctrl.removeItem(i),
                                       child: const Icon(
                                         Icons
                                             .delete_outline_rounded,
@@ -214,24 +207,17 @@ class CartScreen extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                                if (item
-                                    .selectedSize.isNotEmpty)
-                                  Text(
-                                    item.selectedSize,
-                                    style: const TextStyle(
-                                      fontSize: 11,
-                                      color: AppColors.grey,
-                                    ),
-                                  )
-                                else if (item
-                                    .selectedColor.isNotEmpty)
-                                  Text(
-                                    item.selectedColor,
-                                    style: const TextStyle(
-                                      fontSize: 11,
-                                      color: AppColors.grey,
-                                    ),
-                                  ),
+                                if (item.selectedSize.isNotEmpty)
+                                  Text(item.selectedSize,
+                                      style: const TextStyle(
+                                          fontSize: 11,
+                                          color: AppColors.grey))
+                                else if (
+                                item.selectedColor.isNotEmpty)
+                                  Text(item.selectedColor,
+                                      style: const TextStyle(
+                                          fontSize: 11,
+                                          color: AppColors.grey)),
                                 const SizedBox(height: 8),
                                 Row(
                                   mainAxisAlignment:
@@ -241,10 +227,8 @@ class CartScreen extends StatelessWidget {
                                     Row(
                                       children: [
                                         GestureDetector(
-                                          onTap: () {
-                                            ctrl.decreaseQty(i);
-                                            ctrl.update();
-                                          },
+                                          onTap: () =>
+                                              ctrl.decreaseQty(i),
                                           child: Container(
                                             width: 26,
                                             height: 26,
@@ -258,16 +242,14 @@ class CartScreen extends StatelessWidget {
                                                   .primaryLight,
                                               borderRadius:
                                               BorderRadius
-                                                  .circular(
-                                                  7),
+                                                  .circular(7),
                                             ),
                                             child: Icon(
                                               Icons.remove,
                                               size: 14,
                                               color: item.quantity <=
                                                   1
-                                                  ? AppColors
-                                                  .grey
+                                                  ? AppColors.grey
                                                   : AppColors
                                                   .primary,
                                             ),
@@ -290,10 +272,8 @@ class CartScreen extends StatelessWidget {
                                           ),
                                         ),
                                         GestureDetector(
-                                          onTap: () {
-                                            ctrl.increaseQty(i);
-                                            ctrl.update();
-                                          },
+                                          onTap: () =>
+                                              ctrl.increaseQty(i),
                                           child: Container(
                                             width: 26,
                                             height: 26,
@@ -303,8 +283,7 @@ class CartScreen extends StatelessWidget {
                                                   .primaryLight,
                                               borderRadius:
                                               BorderRadius
-                                                  .circular(
-                                                  7),
+                                                  .circular(7),
                                             ),
                                             child: const Icon(
                                               Icons.add,
@@ -320,8 +299,7 @@ class CartScreen extends StatelessWidget {
                                       '৳ ${item.totalPrice.toInt()}',
                                       style: const TextStyle(
                                         fontSize: 14,
-                                        fontWeight:
-                                        FontWeight.w700,
+                                        fontWeight: FontWeight.w700,
                                         color: AppColors.primary,
                                       ),
                                     ),
@@ -336,11 +314,9 @@ class CartScreen extends StatelessWidget {
                   },
                 ),
               ),
-
-              // ── Summary ──
               Container(
-                padding: const EdgeInsets.fromLTRB(
-                    16, 16, 16, 0),
+                padding:
+                const EdgeInsets.fromLTRB(16, 16, 16, 0),
                 decoration: BoxDecoration(
                   color: AppColors.white,
                   borderRadius: const BorderRadius.vertical(
@@ -358,7 +334,6 @@ class CartScreen extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Coupon
                     Row(
                       children: [
                         Expanded(
@@ -426,12 +401,9 @@ class CartScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 12),
                     const Divider(color: AppColors.border),
                     const SizedBox(height: 8),
-
-                    // Price rows
                     _PriceRow(
                       label: 'Subtotal',
                       value: '৳ ${ctrl.subtotal.toInt()}',
@@ -441,15 +413,6 @@ class CartScreen extends StatelessWidget {
                       label: 'Delivery Fee',
                       value: '৳ ${ctrl.deliveryFee.toInt()}',
                     ),
-                    if (ctrl.discount.value > 0) ...[
-                      const SizedBox(height: 6),
-                      _PriceRow(
-                        label: 'Discount',
-                        value:
-                        '- ৳ ${ctrl.discount.value.toInt()}',
-                        valueColor: AppColors.success,
-                      ),
-                    ],
                     const SizedBox(height: 8),
                     const Divider(color: AppColors.border),
                     const SizedBox(height: 8),
@@ -458,10 +421,7 @@ class CartScreen extends StatelessWidget {
                       value: '৳ ${ctrl.total.toInt()}',
                       isBold: true,
                     ),
-
                     const SizedBox(height: 12),
-
-                    // Checkout button
                     SizedBox(
                       width: double.infinity,
                       height: 52,
@@ -485,16 +445,15 @@ class CartScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 12),
                   ],
                 ),
               ),
             ],
-          ),
-          bottomNavigationBar: const PinkoraBottomNav(),
-        );
-      },
+          );
+        },
+      ),
+      bottomNavigationBar: const PinkoraBottomNav(),
     );
   }
 }
