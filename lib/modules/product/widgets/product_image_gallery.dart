@@ -28,7 +28,7 @@ class ProductImageGallery extends GetView<ProductController> {
                 child: Icon(
                   Icons.shopping_bag_rounded,
                   size: 140,
-                  color: AppColors.primary.withOpacity(0.3),
+                  color: AppColors.primary.withValues(alpha:0.3),
                 ),
               ),
               // Discount badge
@@ -88,7 +88,7 @@ class ProductImageGallery extends GetView<ProductController> {
                     child: Icon(
                       Icons.shopping_bag_outlined,
                       size: 28,
-                      color: AppColors.primary.withOpacity(0.4),
+                      color: AppColors.primary.withValues(alpha: 0.4),
                     ),
                   ),
                 );

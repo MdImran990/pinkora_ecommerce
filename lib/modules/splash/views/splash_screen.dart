@@ -1,15 +1,22 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
 
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../../../app/routes/app_routes.dart';
 import '../../../app/theme/app_colors.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
+
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _dotController;
+  Timer? _navigationTimer;
 
   @override
   void initState() {
@@ -19,10 +26,22 @@ class _SplashScreenState extends State<SplashScreen>
       vsync: this,
       duration: const Duration(milliseconds: 900),
     )..repeat();
+
+    _navigationTimer = Timer(
+      const Duration(milliseconds: 2200),
+      _goToLogin,
+    );
+  }
+
+  void _goToLogin() {
+    if (!mounted) return;
+
+    Get.offAllNamed(AppRoutes.login);
   }
 
   @override
   void dispose() {
+    _navigationTimer?.cancel();
     _dotController.dispose();
     super.dispose();
   }
