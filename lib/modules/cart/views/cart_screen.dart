@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../controllers/cart_controller.dart';
+import '../../../data/model/cart_item_model.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../widgets/bottom_nav_bar.dart';
@@ -56,74 +57,72 @@ class CartScreen extends StatelessWidget {
 
         actions: [
           Obx(
-                () => ctrl.cartItems.isEmpty
-                ? const SizedBox.shrink()
-                : IconButton(
-              onPressed: ctrl.clearCart,
-              icon: const Icon(
-                Icons.delete_outline_rounded,
-                color: AppColors.black,
-              ),
-            ),
+                () {
+              if (ctrl.cartItems.isEmpty) {
+                return const SizedBox.shrink();
+              }
+
+              return IconButton(
+                onPressed: ctrl.clearCart,
+                icon: const Icon(
+                  Icons.delete_outline_rounded,
+                  color: AppColors.black,
+                ),
+              );
+            },
           ),
         ],
       ),
 
       // ================= BODY =================
-      body: Obx(() {
-        final items = ctrl.cartItems;
+      body: Obx(
+            () {
+          if (ctrl.cartItems.isEmpty) {
+            return _emptyCart();
+          }
 
-        // ---------- EMPTY CART ----------
-        if (items.isEmpty) {
-          return _emptyCart();
-        }
+          return CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(
+                  16,
+                  16,
+                  16,
+                  0,
+                ),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                      final CartItemModel item =
+                      ctrl.cartItems[index];
 
-        // ---------- CART WITH ITEMS ----------
-        return CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            // Cart items
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(
-                16,
-                16,
-                16,
-                0,
-              ),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                    final item = items[index];
-
-                    return _cartItem(
-                      context,
-                      ctrl,
-                      item,
-                      index,
-                    );
-                  },
-                  childCount: items.length,
+                      return _cartItem(
+                        ctrl,
+                        item,
+                        index,
+                      );
+                    },
+                    childCount: ctrl.cartItems.length,
+                  ),
                 ),
               ),
-            ),
 
-            // Space
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 8),
-            ),
+              const SliverToBoxAdapter(
+                child: SizedBox(height: 8),
+              ),
 
-            // Summary
-            SliverToBoxAdapter(
-              child: _cartSummary(ctrl),
-            ),
+              SliverToBoxAdapter(
+                child: _cartSummary(ctrl),
+              ),
 
-            // Bottom space
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 20),
-            ),
-          ],
-        );
-      }),
+              const SliverToBoxAdapter(
+                child: SizedBox(height: 20),
+              ),
+            ],
+          );
+        },
+      ),
 
       bottomNavigationBar: const PinkoraBottomNav(),
     );
@@ -212,9 +211,8 @@ class CartScreen extends StatelessWidget {
   // ============================================================
 
   Widget _cartItem(
-      BuildContext context,
       CartController ctrl,
-      dynamic item,
+      CartItemModel item,
       int index,
       ) {
     return Container(
@@ -272,7 +270,6 @@ class CartScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Product name + delete
                 Row(
                   children: [
                     Expanded(
@@ -305,7 +302,6 @@ class CartScreen extends StatelessWidget {
 
                 const SizedBox(height: 3),
 
-                // Color / Size
                 if (item.selectedSize.isNotEmpty)
                   Text(
                     'Size: ${item.selectedSize}',
@@ -325,9 +321,9 @@ class CartScreen extends StatelessWidget {
 
                 const SizedBox(height: 8),
 
-                // Quantity + price
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment:
+                  MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
                       children: [
@@ -343,7 +339,8 @@ class CartScreen extends StatelessWidget {
                               color: item.quantity <= 1
                                   ? AppColors.lightGrey
                                   : AppColors.primaryLight,
-                              borderRadius: BorderRadius.circular(7),
+                              borderRadius:
+                              BorderRadius.circular(7),
                             ),
                             child: Icon(
                               Icons.remove,
@@ -356,7 +353,8 @@ class CartScreen extends StatelessWidget {
                         ),
 
                         Padding(
-                          padding: const EdgeInsets.symmetric(
+                          padding:
+                          const EdgeInsets.symmetric(
                             horizontal: 10,
                           ),
                           child: Text(
@@ -379,7 +377,8 @@ class CartScreen extends StatelessWidget {
                             height: 27,
                             decoration: BoxDecoration(
                               color: AppColors.primaryLight,
-                              borderRadius: BorderRadius.circular(7),
+                              borderRadius:
+                              BorderRadius.circular(7),
                             ),
                             child: const Icon(
                               Icons.add,
@@ -439,9 +438,7 @@ class CartScreen extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Coupon
           Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
                 child: TextField(
@@ -454,24 +451,28 @@ class CartScreen extends StatelessWidget {
                     ),
                     filled: true,
                     fillColor: AppColors.white,
-                    contentPadding: const EdgeInsets.symmetric(
+                    contentPadding:
+                    const EdgeInsets.symmetric(
                       horizontal: 14,
                       vertical: 12,
                     ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius:
+                      BorderRadius.circular(12),
                       borderSide: const BorderSide(
                         color: AppColors.border,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius:
+                      BorderRadius.circular(12),
                       borderSide: const BorderSide(
                         color: AppColors.border,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius:
+                      BorderRadius.circular(12),
                       borderSide: const BorderSide(
                         color: AppColors.primary,
                         width: 1.5,
@@ -492,7 +493,8 @@ class CartScreen extends StatelessWidget {
                     vertical: 14,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius:
+                    BorderRadius.circular(12),
                   ),
                   elevation: 0,
                 ),
@@ -516,7 +518,6 @@ class CartScreen extends StatelessWidget {
 
           const SizedBox(height: 8),
 
-          // Subtotal
           _PriceRow(
             label: 'Subtotal',
             value: '৳ ${ctrl.subtotal.toInt()}',
@@ -524,7 +525,6 @@ class CartScreen extends StatelessWidget {
 
           const SizedBox(height: 7),
 
-          // Delivery
           _PriceRow(
             label: 'Delivery Fee',
             value: '৳ ${ctrl.deliveryFee.toInt()}',
@@ -538,7 +538,6 @@ class CartScreen extends StatelessWidget {
 
           const SizedBox(height: 8),
 
-          // Total
           _PriceRow(
             label: 'Total',
             value: '৳ ${ctrl.total.toInt()}',
@@ -547,7 +546,6 @@ class CartScreen extends StatelessWidget {
 
           const SizedBox(height: 14),
 
-          // Checkout
           SizedBox(
             width: double.infinity,
             height: 52,
@@ -556,7 +554,8 @@ class CartScreen extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius:
+                  BorderRadius.circular(30),
                 ),
                 elevation: 0,
               ),
@@ -580,10 +579,6 @@ class CartScreen extends StatelessWidget {
 // PRICE ROW
 // ============================================================
 
-// ============================================================
-// PRICE ROW
-// ============================================================
-
 class _PriceRow extends StatelessWidget {
   final String label;
   final String value;
@@ -598,7 +593,8 @@ class _PriceRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment:
+      MainAxisAlignment.spaceBetween,
       children: [
         Text(
           label,

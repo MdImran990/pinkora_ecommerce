@@ -41,6 +41,7 @@ class AppPages {
       name: AppRoutes.splash,
       page: () => const SplashScreen(),
       binding: SplashBinding(),
+      transition: Transition.fadeIn,
     ),
 
     // =========================
@@ -50,6 +51,7 @@ class AppPages {
       name: AppRoutes.login,
       page: () => const LoginScreen(),
       binding: AuthBinding(),
+      transition: Transition.fadeIn,
     ),
 
     // =========================
@@ -59,6 +61,7 @@ class AppPages {
       name: AppRoutes.register,
       page: () => const RegisterScreen(),
       binding: AuthBinding(),
+      transition: Transition.fadeIn,
     ),
 
     // =========================
@@ -68,6 +71,7 @@ class AppPages {
       name: AppRoutes.forgotPassword,
       page: () => const ForgotPasswordScreen(),
       binding: AuthBinding(),
+      transition: Transition.fadeIn,
     ),
 
     // =========================
@@ -78,6 +82,7 @@ class AppPages {
       page: () => const HomeScreen(),
       binding: HomeBinding(),
       transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
     ),
 
     // =========================
@@ -88,6 +93,7 @@ class AppPages {
       page: () => const CategoryScreen(),
       binding: CategoryBinding(),
       transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
     ),
 
     // =========================
@@ -97,6 +103,8 @@ class AppPages {
       name: AppRoutes.productList,
       page: () => const ProductListScreen(),
       binding: ProductBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
     ),
 
     // =========================
@@ -106,6 +114,8 @@ class AppPages {
       name: AppRoutes.productDetail,
       page: () => const ProductDetailScreen(),
       binding: ProductBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
     ),
 
     // =========================
@@ -116,6 +126,7 @@ class AppPages {
       page: () => const CartScreen(),
       binding: CartBinding(),
       transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
     ),
 
     // =========================
@@ -125,6 +136,8 @@ class AppPages {
       name: AppRoutes.checkout,
       page: () => const CheckoutScreen(),
       binding: CheckoutBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
     ),
 
     // =========================
@@ -135,6 +148,7 @@ class AppPages {
       page: () => const WishlistScreen(),
       binding: WishlistBinding(),
       transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
     ),
 
     // =========================
@@ -145,6 +159,7 @@ class AppPages {
       page: () => const ProfileScreen(),
       binding: ProfileBinding(),
       transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
     ),
   ];
 }
