@@ -17,7 +17,9 @@ class CartScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg,
 
-      // ================= APP BAR =================
+      // ======================================================
+      // APP BAR
+      // ======================================================
       appBar: AppBar(
         backgroundColor: AppColors.scaffoldBg,
         elevation: 0,
@@ -73,7 +75,9 @@ class CartScreen extends StatelessWidget {
         ],
       ),
 
-      // ================= BODY =================
+      // ======================================================
+      // BODY
+      // ======================================================
       body: Obx(
             () {
           final items = ctrl.cartItems;
@@ -149,7 +153,7 @@ class CartScreen extends StatelessWidget {
 // EMPTY CART
 // ============================================================
 
-class _EmptyCart extends StatelessWidget {
+class _EmptyCart extends StatefulWidget {
   const _EmptyCart({
     required this.onShopNow,
   });
@@ -157,73 +161,232 @@ class _EmptyCart extends StatelessWidget {
   final VoidCallback onShopNow;
 
   @override
+  State<_EmptyCart> createState() => _EmptyCartState();
+}
+
+class _EmptyCartState extends State<_EmptyCart>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  late final Animation<double> _fadeAnimation;
+  late final Animation<double> _scaleAnimation;
+  late final Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+
+    final curve = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutCubic,
+    );
+
+    _fadeAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(curve);
+
+    _scaleAnimation = Tween<double>(
+      begin: 0.92,
+      end: 1,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOutBack,
+      ),
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.04),
+      end: Offset.zero,
+    ).animate(curve);
+
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 110,
-              height: 110,
-              decoration: const BoxDecoration(
-                color: AppColors.primaryLight,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.shopping_cart_outlined,
-                size: 52,
-                color: AppColors.primary,
-              ),
-            ),
+        child: FadeTransition(
+          opacity: _fadeAnimation,
+          child: SlideTransition(
+            position: _slideAnimation,
+            child: ScaleTransition(
+              scale: _scaleAnimation,
+              child: Column(
+                mainAxisAlignment:
+                MainAxisAlignment.center,
+                children: [
+                  RepaintBoundary(
+                    child: Container(
+                      width: 110,
+                      height: 110,
+                      decoration: const BoxDecoration(
+                        color: AppColors.primaryLight,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.shopping_cart_outlined,
+                        size: 52,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ),
 
-            const SizedBox(height: 22),
+                  const SizedBox(height: 22),
 
-            const Text(
-              'Your cart is empty',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: AppColors.black,
-              ),
-            ),
+                  const Text(
+                    'Your cart is empty',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.black,
+                    ),
+                  ),
 
-            const SizedBox(height: 8),
+                  const SizedBox(height: 8),
 
-            const Text(
-              'Add items to get started',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColors.grey,
-              ),
-            ),
+                  const Text(
+                    'Add items to get started',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppColors.grey,
+                    ),
+                  ),
 
-            const SizedBox(height: 28),
+                  const SizedBox(height: 28),
 
-            ElevatedButton(
-              onPressed: onShopNow,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 34,
-                  vertical: 14,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                elevation: 0,
-              ),
-              child: const Text(
-                'Shop Now',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
+                  _AnimatedShopButton(
+                    onTap: widget.onShopNow,
+                  ),
+                ],
               ),
             ),
-          ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ============================================================
+// EMPTY CART SHOP BUTTON
+// ============================================================
+
+class _AnimatedShopButton extends StatefulWidget {
+  const _AnimatedShopButton({
+    required this.onTap,
+  });
+
+  final VoidCallback onTap;
+
+  @override
+  State<_AnimatedShopButton> createState() =>
+      _AnimatedShopButtonState();
+}
+
+class _AnimatedShopButtonState
+    extends State<_AnimatedShopButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  late final Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 90),
+      reverseDuration:
+      const Duration(milliseconds: 130),
+    );
+
+    _scaleAnimation = Tween<double>(
+      begin: 1,
+      end: 0.96,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOut,
+        reverseCurve: Curves.easeOutCubic,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _tapDown(TapDownDetails details) {
+    _controller.forward();
+  }
+
+  void _tapCancel() {
+    _controller.reverse();
+  }
+
+  void _tapUp(TapUpDetails details) {
+    _controller.reverse();
+
+    Future<void>.delayed(
+      const Duration(milliseconds: 15),
+          () {
+        if (mounted) {
+          widget.onTap();
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTapDown: _tapDown,
+      onTapCancel: _tapCancel,
+      onTapUp: _tapUp,
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: ElevatedButton(
+          onPressed: null,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            disabledBackgroundColor:
+            AppColors.primary,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 34,
+              vertical: 14,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+            elevation: 0,
+          ),
+          child: const Text(
+            'Shop Now',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
       ),
     );
@@ -234,7 +397,7 @@ class _EmptyCart extends StatelessWidget {
 // CART ITEM
 // ============================================================
 
-class _CartItemCard extends StatelessWidget {
+class _CartItemCard extends StatefulWidget {
   const _CartItemCard({
     required this.item,
     required this.index,
@@ -246,203 +409,430 @@ class _CartItemCard extends StatelessWidget {
   final CartController controller;
 
   @override
+  State<_CartItemCard> createState() =>
+      _CartItemCardState();
+}
+
+class _CartItemCardState extends State<_CartItemCard>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _entryController;
+
+  late final Animation<double> _fadeAnimation;
+  late final Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _entryController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 350),
+    );
+
+    final curve = CurvedAnimation(
+      parent: _entryController,
+      curve: Curves.easeOutCubic,
+    );
+
+    _fadeAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(curve);
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0.03, 0),
+      end: Offset.zero,
+    ).animate(curve);
+
+    Future<void>.delayed(
+      Duration(milliseconds: 35 * widget.index),
+          () {
+        if (mounted) {
+          _entryController.forward();
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _entryController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final item = widget.item;
     final isMinimum = item.quantity <= 1;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Checkbox style
-          Container(
-            width: 20,
-            height: 20,
-            margin: const EdgeInsets.only(right: 10),
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: const Icon(
-              Icons.check_rounded,
-              color: Colors.white,
-              size: 13,
-            ),
-          ),
-
-          // Product image
-          Container(
-            width: 70,
-            height: 70,
-            decoration: BoxDecoration(
-              color: AppColors.primaryLight,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(
-              Icons.shopping_bag_outlined,
-              color: AppColors.primary,
-              size: 32,
-            ),
-          ),
-
-          const SizedBox(width: 10),
-
-          // Product information
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        item.product.name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.black,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(width: 8),
-
-                    GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        controller.removeItem(index);
-                      },
-                      child: const Icon(
-                        Icons.delete_outline_rounded,
-                        color: AppColors.grey,
-                        size: 18,
-                      ),
-                    ),
-                  ],
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: SlideTransition(
+        position: _slideAnimation,
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(
+                  alpha: 0.05,
                 ),
+                blurRadius: 8,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Row(
+            crossAxisAlignment:
+            CrossAxisAlignment.center,
+            children: [
+              // ──────────────────────────────────────
+              // CHECKBOX STYLE
+              // ──────────────────────────────────────
+              Container(
+                width: 20,
+                height: 20,
+                margin:
+                const EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius:
+                  BorderRadius.circular(5),
+                ),
+                child: const Icon(
+                  Icons.check_rounded,
+                  color: Colors.white,
+                  size: 13,
+                ),
+              ),
 
-                const SizedBox(height: 3),
+              // ──────────────────────────────────────
+              // PRODUCT IMAGE
+              // ──────────────────────────────────────
+              Container(
+                width: 70,
+                height: 70,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
+                  borderRadius:
+                  BorderRadius.circular(10),
+                ),
+                child: const Icon(
+                  Icons.shopping_bag_outlined,
+                  color: AppColors.primary,
+                  size: 32,
+                ),
+              ),
 
-                if (item.selectedSize.isNotEmpty)
-                  Text(
-                    'Size: ${item.selectedSize}',
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: AppColors.grey,
-                    ),
-                  )
-                else if (item.selectedColor.isNotEmpty)
-                  Text(
-                    'Color: ${item.selectedColor}',
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: AppColors.grey,
-                    ),
-                  ),
+              const SizedBox(width: 10),
 
-                const SizedBox(height: 8),
-
-                Row(
-                  mainAxisAlignment:
-                  MainAxisAlignment.spaceBetween,
+              // ──────────────────────────────────────
+              // PRODUCT INFO
+              // ──────────────────────────────────────
+              Expanded(
+                child: Column(
+                  crossAxisAlignment:
+                  CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        // Minus
-                        GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: isMinimum
-                              ? null
-                              : () {
-                            controller.decreaseQty(index);
-                          },
-                          child: Container(
-                            width: 27,
-                            height: 27,
-                            decoration: BoxDecoration(
-                              color: isMinimum
-                                  ? AppColors.lightGrey
-                                  : AppColors.primaryLight,
-                              borderRadius:
-                              BorderRadius.circular(7),
-                            ),
-                            child: Icon(
-                              Icons.remove,
-                              size: 14,
-                              color: isMinimum
-                                  ? AppColors.grey
-                                  : AppColors.primary,
-                            ),
-                          ),
-                        ),
-
-                        Padding(
-                          padding:
-                          const EdgeInsets.symmetric(
-                            horizontal: 10,
-                          ),
+                        Expanded(
                           child: Text(
-                            '${item.quantity}',
+                            item.product.name,
+                            maxLines: 1,
+                            overflow:
+                            TextOverflow.ellipsis,
                             style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
+                              fontSize: 13,
+                              fontWeight:
+                              FontWeight.w600,
                               color: AppColors.black,
                             ),
                           ),
                         ),
 
-                        // Plus
+                        const SizedBox(width: 8),
+
                         GestureDetector(
-                          behavior: HitTestBehavior.opaque,
+                          behavior:
+                          HitTestBehavior.opaque,
                           onTap: () {
-                            controller.increaseQty(index);
+                            widget.controller
+                                .removeItem(
+                              widget.index,
+                            );
                           },
-                          child: Container(
-                            width: 27,
-                            height: 27,
-                            decoration: BoxDecoration(
-                              color: AppColors.primaryLight,
-                              borderRadius:
-                              BorderRadius.circular(7),
-                            ),
-                            child: const Icon(
-                              Icons.add,
-                              size: 14,
-                              color: AppColors.primary,
-                            ),
+                          child: const Icon(
+                            Icons.delete_outline_rounded,
+                            color: AppColors.grey,
+                            size: 18,
                           ),
                         ),
                       ],
                     ),
 
-                    Text(
-                      '৳ ${item.totalPrice.toInt()}',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.primary,
+                    const SizedBox(height: 3),
+
+                    if (item.selectedSize.isNotEmpty)
+                      Text(
+                        'Size: ${item.selectedSize}',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: AppColors.grey,
+                        ),
+                      )
+                    else if (
+                    item.selectedColor.isNotEmpty)
+                      Text(
+                        'Color: ${item.selectedColor}',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: AppColors.grey,
+                        ),
                       ),
+
+                    const SizedBox(height: 8),
+
+                    Row(
+                      mainAxisAlignment:
+                      MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            // ─────────────────────
+                            // MINUS
+                            // ─────────────────────
+                            _QuantityButton(
+                              icon: Icons.remove,
+                              disabled: isMinimum,
+                              onTap: isMinimum
+                                  ? null
+                                  : () {
+                                widget.controller
+                                    .decreaseQty(
+                                  widget.index,
+                                );
+                              },
+                            ),
+
+                            Padding(
+                              padding:
+                              const EdgeInsets
+                                  .symmetric(
+                                horizontal: 10,
+                              ),
+                              child: AnimatedSwitcher(
+                                duration:
+                                const Duration(
+                                  milliseconds: 130,
+                                ),
+                                transitionBuilder:
+                                    (child, animation) {
+                                  return ScaleTransition(
+                                    scale: animation,
+                                    child:
+                                    FadeTransition(
+                                      opacity: animation,
+                                      child: child,
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  '${item.quantity}',
+                                  key: ValueKey(
+                                    item.quantity,
+                                  ),
+                                  style:
+                                  const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight:
+                                    FontWeight.w700,
+                                    color:
+                                    AppColors.black,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            // ─────────────────────
+                            // PLUS
+                            // ─────────────────────
+                            _QuantityButton(
+                              icon: Icons.add,
+                              onTap: () {
+                                widget.controller
+                                    .increaseQty(
+                                  widget.index,
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+
+                        // ─────────────────────────
+                        // TOTAL PRICE
+                        // ─────────────────────────
+                        AnimatedSwitcher(
+                          duration:
+                          const Duration(
+                            milliseconds: 140,
+                          ),
+                          transitionBuilder:
+                              (child, animation) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: ScaleTransition(
+                                scale: animation,
+                                child: child,
+                              ),
+                            );
+                          },
+                          child: Text(
+                            '৳ ${item.totalPrice.toInt()}',
+                            key: ValueKey(
+                              item.totalPrice,
+                            ),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight:
+                              FontWeight.w700,
+                              color:
+                              AppColors.primary,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ============================================================
+// QUANTITY BUTTON
+// ============================================================
+
+class _QuantityButton extends StatefulWidget {
+  const _QuantityButton({
+    required this.icon,
+    required this.onTap,
+    this.disabled = false,
+  });
+
+  final IconData icon;
+  final VoidCallback? onTap;
+  final bool disabled;
+
+  @override
+  State<_QuantityButton> createState() =>
+      _QuantityButtonState();
+}
+
+class _QuantityButtonState
+    extends State<_QuantityButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  late final Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 70),
+      reverseDuration:
+      const Duration(milliseconds: 110),
+    );
+
+    _scaleAnimation = Tween<double>(
+      begin: 1,
+      end: 0.86,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOut,
+        reverseCurve: Curves.easeOutCubic,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _tapDown(TapDownDetails details) {
+    if (!widget.disabled) {
+      _controller.forward();
+    }
+  }
+
+  void _tapCancel() {
+    _controller.reverse();
+  }
+
+  void _tapUp(TapUpDetails details) {
+    if (widget.disabled) return;
+
+    _controller.reverse();
+
+    Future<void>.delayed(
+      const Duration(milliseconds: 10),
+          () {
+        if (mounted) {
+          widget.onTap?.call();
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final backgroundColor = widget.disabled
+        ? AppColors.lightGrey
+        : AppColors.primaryLight;
+
+    final iconColor = widget.disabled
+        ? AppColors.grey
+        : AppColors.primary;
+
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTapDown: _tapDown,
+      onTapCancel: _tapCancel,
+      onTapUp: _tapUp,
+      child: RepaintBoundary(
+        child: ScaleTransition(
+          scale: _scaleAnimation,
+          child: AnimatedContainer(
+            duration:
+            const Duration(milliseconds: 100),
+            width: 27,
+            height: 27,
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius:
+              BorderRadius.circular(7),
+            ),
+            child: Icon(
+              widget.icon,
+              size: 14,
+              color: iconColor,
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -477,7 +867,9 @@ class _CartSummary extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
+            color: Colors.black.withValues(
+              alpha: 0.06,
+            ),
             blurRadius: 20,
             offset: const Offset(0, -4),
           ),
@@ -486,11 +878,15 @@ class _CartSummary extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // ────────────────────────────────────────
+          // COUPON
+          // ────────────────────────────────────────
           Row(
             children: [
               Expanded(
                 child: TextField(
-                  controller: controller.couponController,
+                  controller:
+                  controller.couponController,
                   decoration: InputDecoration(
                     hintText: 'Apply Coupon Code',
                     hintStyle: const TextStyle(
@@ -505,19 +901,22 @@ class _CartSummary extends StatelessWidget {
                       vertical: 12,
                     ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius:
+                      BorderRadius.circular(12),
                       borderSide: const BorderSide(
                         color: AppColors.border,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius:
+                      BorderRadius.circular(12),
                       borderSide: const BorderSide(
                         color: AppColors.border,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius:
+                      BorderRadius.circular(12),
                       borderSide: const BorderSide(
                         color: AppColors.primary,
                         width: 1.5,
@@ -529,27 +928,8 @@ class _CartSummary extends StatelessWidget {
 
               const SizedBox(width: 10),
 
-              ElevatedButton(
-                onPressed: controller.applyCoupon,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 18,
-                    vertical: 14,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 0,
-                ),
-                child: const Text(
-                  'Apply',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
+              _AnimatedApplyButton(
+                onTap: controller.applyCoupon,
               ),
             ],
           ),
@@ -564,14 +944,16 @@ class _CartSummary extends StatelessWidget {
 
           _PriceRow(
             label: 'Subtotal',
-            value: '৳ ${controller.subtotal.toInt()}',
+            value:
+            '৳ ${controller.subtotal.toInt()}',
           ),
 
           const SizedBox(height: 7),
 
           _PriceRow(
             label: 'Delivery Fee',
-            value: '৳ ${controller.deliveryFee.toInt()}',
+            value:
+            '৳ ${controller.deliveryFee.toInt()}',
           ),
 
           const SizedBox(height: 8),
@@ -584,35 +966,241 @@ class _CartSummary extends StatelessWidget {
 
           _PriceRow(
             label: 'Total',
-            value: '৳ ${controller.total.toInt()}',
+            value:
+            '৳ ${controller.total.toInt()}',
             isBold: true,
           ),
 
           const SizedBox(height: 14),
 
-          SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: ElevatedButton(
-              onPressed: controller.proceedToCheckout,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                elevation: 0,
+          _AnimatedCheckoutButton(
+            onTap: controller.proceedToCheckout,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ============================================================
+// APPLY BUTTON
+// ============================================================
+
+class _AnimatedApplyButton extends StatefulWidget {
+  const _AnimatedApplyButton({
+    required this.onTap,
+  });
+
+  final VoidCallback onTap;
+
+  @override
+  State<_AnimatedApplyButton> createState() =>
+      _AnimatedApplyButtonState();
+}
+
+class _AnimatedApplyButtonState
+    extends State<_AnimatedApplyButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  late final Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 80),
+      reverseDuration:
+      const Duration(milliseconds: 120),
+    );
+
+    _scaleAnimation = Tween<double>(
+      begin: 1,
+      end: 0.95,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOut,
+        reverseCurve: Curves.easeOutCubic,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _tapDown(TapDownDetails details) {
+    _controller.forward();
+  }
+
+  void _tapCancel() {
+    _controller.reverse();
+  }
+
+  void _tapUp(TapUpDetails details) {
+    _controller.reverse();
+
+    Future<void>.delayed(
+      const Duration(milliseconds: 15),
+          () {
+        if (mounted) {
+          widget.onTap();
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTapDown: _tapDown,
+      onTapCancel: _tapCancel,
+      onTapUp: _tapUp,
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: ElevatedButton(
+          onPressed: null,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            disabledBackgroundColor:
+            AppColors.primary,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 18,
+              vertical: 14,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 0,
+          ),
+          child: const Text(
+            'Apply',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ============================================================
+// CHECKOUT BUTTON
+// ============================================================
+
+class _AnimatedCheckoutButton
+    extends StatefulWidget {
+  const _AnimatedCheckoutButton({
+    required this.onTap,
+  });
+
+  final VoidCallback onTap;
+
+  @override
+  State<_AnimatedCheckoutButton> createState() =>
+      _AnimatedCheckoutButtonState();
+}
+
+class _AnimatedCheckoutButtonState
+    extends State<_AnimatedCheckoutButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  late final Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 90),
+      reverseDuration:
+      const Duration(milliseconds: 130),
+    );
+
+    _scaleAnimation = Tween<double>(
+      begin: 1,
+      end: 0.97,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOut,
+        reverseCurve: Curves.easeOutCubic,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _tapDown(TapDownDetails details) {
+    _controller.forward();
+  }
+
+  void _tapCancel() {
+    _controller.reverse();
+  }
+
+  void _tapUp(TapUpDetails details) {
+    _controller.reverse();
+
+    Future<void>.delayed(
+      const Duration(milliseconds: 15),
+          () {
+        if (mounted) {
+          widget.onTap();
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTapDown: _tapDown,
+      onTapCancel: _tapCancel,
+      onTapUp: _tapUp,
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: SizedBox(
+          width: double.infinity,
+          height: 52,
+          child: ElevatedButton(
+            onPressed: null,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              disabledBackgroundColor:
+              AppColors.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                BorderRadius.circular(30),
               ),
-              child: const Text(
-                'Proceed to Checkout',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
+              elevation: 0,
+            ),
+            child: const Text(
+              'Proceed to Checkout',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -638,14 +1226,16 @@ class _PriceRow extends StatelessWidget {
     final fontSize = isBold ? 16.0 : 14.0;
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment:
+      MainAxisAlignment.spaceBetween,
       children: [
         Text(
           label,
           style: TextStyle(
             fontSize: fontSize,
-            fontWeight:
-            isBold ? FontWeight.w700 : FontWeight.w400,
+            fontWeight: isBold
+                ? FontWeight.w700
+                : FontWeight.w400,
             color: AppColors.darkGrey,
           ),
         ),
@@ -653,8 +1243,9 @@ class _PriceRow extends StatelessWidget {
           value,
           style: TextStyle(
             fontSize: fontSize,
-            fontWeight:
-            isBold ? FontWeight.w700 : FontWeight.w500,
+            fontWeight: isBold
+                ? FontWeight.w700
+                : FontWeight.w500,
             color: isBold
                 ? AppColors.black
                 : AppColors.darkGrey,

@@ -27,7 +27,8 @@ class ProductDetailScreen extends GetView<ProductController> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg,
       body: CustomScrollView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        keyboardDismissBehavior:
+        ScrollViewKeyboardDismissBehavior.onDrag,
         cacheExtent: 800,
         slivers: [
           // ─────────────────────────────────────────────
@@ -39,6 +40,7 @@ class ProductDetailScreen extends GetView<ProductController> {
             pinned: true,
 
             leading: GestureDetector(
+              behavior: HitTestBehavior.opaque,
               onTap: Get.back,
               child: Container(
                 margin: const EdgeInsets.all(8),
@@ -58,56 +60,90 @@ class ProductDetailScreen extends GetView<ProductController> {
             ),
 
             actions: [
-              // Wishlist only rebuilds here.
+              // ─────────────────────────────────────────
+              // WISHLIST
+              // ─────────────────────────────────────────
               Obx(
-                    () => GestureDetector(
-                  onTap: controller.toggleWishlist,
-                  child: Container(
-                    margin: const EdgeInsets.only(right: 8),
-                    width: 38,
-                    height: 38,
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: AppColors.border,
+                    () {
+                  final isWishlisted =
+                      controller.isWishlisted.value;
+
+                  return GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: controller.toggleWishlist,
+                    child: AnimatedScale(
+                      scale: isWishlisted ? 1.08 : 1.0,
+                      duration:
+                      const Duration(milliseconds: 140),
+                      curve: Curves.easeOutBack,
+                      child: Container(
+                        margin: const EdgeInsets.only(right: 8),
+                        width: 38,
+                        height: 38,
+                        decoration: BoxDecoration(
+                          color: AppColors.white,
+                          borderRadius:
+                          BorderRadius.circular(10),
+                          border: Border.all(
+                            color: AppColors.border,
+                          ),
+                        ),
+                        child: AnimatedSwitcher(
+                          duration:
+                          const Duration(milliseconds: 120),
+                          transitionBuilder:
+                              (child, animation) {
+                            return ScaleTransition(
+                              scale: animation,
+                              child: child,
+                            );
+                          },
+                          child: Icon(
+                            isWishlisted
+                                ? Icons.favorite_rounded
+                                : Icons.favorite_border_rounded,
+                            key: ValueKey(isWishlisted),
+                            color: isWishlisted
+                                ? AppColors.primary
+                                : AppColors.grey,
+                            size: 20,
+                          ),
+                        ),
                       ),
                     ),
-                    child: Icon(
-                      controller.isWishlisted.value
-                          ? Icons.favorite_rounded
-                          : Icons.favorite_border_rounded,
-                      color: controller.isWishlisted.value
-                          ? AppColors.primary
-                          : AppColors.grey,
-                      size: 20,
-                    ),
-                  ),
-                ),
+                  );
+                },
               ),
 
-              Container(
-                margin: const EdgeInsets.only(right: 16),
-                width: 38,
-                height: 38,
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: AppColors.border,
+              // ─────────────────────────────────────────
+              // SHARE
+              // ─────────────────────────────────────────
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () {},
+                child: Container(
+                  margin: const EdgeInsets.only(right: 16),
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: AppColors.border,
+                    ),
                   ),
-                ),
-                child: const Icon(
-                  Icons.share_outlined,
-                  size: 20,
-                  color: AppColors.black,
+                  child: const Icon(
+                    Icons.share_outlined,
+                    size: 20,
+                    color: AppColors.black,
+                  ),
                 ),
               ),
             ],
           ),
 
           // ─────────────────────────────────────────────
-          // IMAGE
+          // PRODUCT IMAGE
           // ─────────────────────────────────────────────
           const SliverToBoxAdapter(
             child: RepaintBoundary(
@@ -149,9 +185,11 @@ class ProductDetailScreen extends GetView<ProductController> {
                     // ─────────────────────────────────
                     // RATING
                     // ─────────────────────────────────
-                    RatingRow(
-                      rating: p.rating,
-                      reviewCount: p.reviewCount,
+                    RepaintBoundary(
+                      child: RatingRow(
+                        rating: p.rating,
+                        reviewCount: p.reviewCount,
+                      ),
                     ),
 
                     const SizedBox(height: 14),
@@ -159,50 +197,55 @@ class ProductDetailScreen extends GetView<ProductController> {
                     // ─────────────────────────────────
                     // PRICE
                     // ─────────────────────────────────
-                    Row(
-                      children: [
-                        Text(
-                          '৳ ${p.price.toInt()}',
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.primary,
-                          ),
-                        ),
-
-                        const SizedBox(width: 10),
-
-                        Text(
-                          '৳ ${p.originalPrice.toInt()}',
-                          style: const TextStyle(
-                            fontSize: 15,
-                            color: AppColors.grey,
-                            decoration: TextDecoration.lineThrough,
-                            decorationColor: AppColors.grey,
-                          ),
-                        ),
-
-                        const SizedBox(width: 10),
-
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryLight,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            '${p.discountPercent}% OFF',
+                    RepaintBoundary(
+                      child: Row(
+                        children: [
+                          Text(
+                            '৳ ${p.price.toInt()}',
                             style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w800,
                               color: AppColors.primary,
                             ),
                           ),
-                        ),
-                      ],
+
+                          const SizedBox(width: 10),
+
+                          Text(
+                            '৳ ${p.originalPrice.toInt()}',
+                            style: const TextStyle(
+                              fontSize: 15,
+                              color: AppColors.grey,
+                              decoration:
+                              TextDecoration.lineThrough,
+                              decorationColor: AppColors.grey,
+                            ),
+                          ),
+
+                          const SizedBox(width: 10),
+
+                          Container(
+                            padding:
+                            const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryLight,
+                              borderRadius:
+                              BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              '${p.discountPercent}% OFF',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
 
                     const SizedBox(height: 20),
@@ -229,11 +272,14 @@ class ProductDetailScreen extends GetView<ProductController> {
                       const SizedBox(height: 10),
 
                       Obx(
-                            () => ColorSelector(
-                          colors: p.colors,
-                          selectedColor:
-                          controller.selectedColor.value,
-                          onSelect: controller.selectColor,
+                            () => RepaintBoundary(
+                          child: ColorSelector(
+                            colors: p.colors,
+                            selectedColor:
+                            controller.selectedColor.value,
+                            onSelect:
+                            controller.selectColor,
+                          ),
                         ),
                       ),
 
@@ -257,10 +303,15 @@ class ProductDetailScreen extends GetView<ProductController> {
                         ),
 
                         Obx(
-                              () => QuantityStepper(
-                            quantity: controller.quantity.value,
-                            onIncrease: controller.increaseQty,
-                            onDecrease: controller.decreaseQty,
+                              () => RepaintBoundary(
+                            child: QuantityStepper(
+                              quantity:
+                              controller.quantity.value,
+                              onIncrease:
+                              controller.increaseQty,
+                              onDecrease:
+                              controller.decreaseQty,
+                            ),
                           ),
                         ),
                       ],
@@ -269,71 +320,26 @@ class ProductDetailScreen extends GetView<ProductController> {
                     const SizedBox(height: 32),
 
                     // ─────────────────────────────────
-                    // BUTTONS
+                    // ACTION BUTTONS
                     // ─────────────────────────────────
                     Row(
                       children: [
                         Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: controller.addToCart,
-                            icon: const Icon(
-                              Icons.shopping_cart_outlined,
-                              size: 18,
-                            ),
-                            label: const Text(
-                              'Add to Cart',
-                            ),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor:
-                              AppColors.primary,
-                              side: const BorderSide(
-                                color: AppColors.primary,
-                                width: 1.5,
-                              ),
-                              padding:
-                              const EdgeInsets.symmetric(
-                                vertical: 14,
-                              ),
-                              shape:
-                              RoundedRectangleBorder(
-                                borderRadius:
-                                BorderRadius.circular(30),
-                              ),
-                              textStyle: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
+                          child: _AnimatedActionButton(
+                            onTap: controller.addToCart,
+                            outlined: true,
+                            icon: Icons.shopping_cart_outlined,
+                            label: 'Add to Cart',
                           ),
                         ),
 
                         const SizedBox(width: 14),
 
                         Expanded(
-                          child: ElevatedButton(
-                            onPressed: controller.buyNow,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                              AppColors.primary,
-                              padding:
-                              const EdgeInsets.symmetric(
-                                vertical: 14,
-                              ),
-                              shape:
-                              RoundedRectangleBorder(
-                                borderRadius:
-                                BorderRadius.circular(30),
-                              ),
-                              elevation: 0,
-                            ),
-                            child: const Text(
-                              'Buy Now',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
+                          child: _AnimatedActionButton(
+                            onTap: controller.buyNow,
+                            outlined: false,
+                            label: 'Buy Now',
                           ),
                         ),
                       ],
@@ -348,6 +354,153 @@ class ProductDetailScreen extends GetView<ProductController> {
             child: SizedBox(height: 30),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// ULTRA-SMOOTH ACTION BUTTON
+// ═══════════════════════════════════════════════════════
+
+class _AnimatedActionButton extends StatefulWidget {
+  final VoidCallback onTap;
+  final bool outlined;
+  final IconData? icon;
+  final String label;
+
+  const _AnimatedActionButton({
+    required this.onTap,
+    required this.outlined,
+    required this.label,
+    this.icon,
+  });
+
+  @override
+  State<_AnimatedActionButton> createState() =>
+      _AnimatedActionButtonState();
+}
+
+class _AnimatedActionButtonState
+    extends State<_AnimatedActionButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  late final Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 90),
+      reverseDuration: const Duration(milliseconds: 130),
+    );
+
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.96,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOut,
+        reverseCurve: Curves.easeOutCubic,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _tapDown(TapDownDetails details) {
+    _controller.forward();
+  }
+
+  void _tapCancel() {
+    _controller.reverse();
+  }
+
+  void _tapUp(TapUpDetails details) {
+    _controller.reverse();
+
+    Future<void>.delayed(
+      const Duration(milliseconds: 20),
+          () {
+        if (mounted) {
+          widget.onTap();
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTapDown: _tapDown,
+      onTapCancel: _tapCancel,
+      onTapUp: _tapUp,
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: widget.outlined
+            ? OutlinedButton.icon(
+          onPressed: null,
+          icon: Icon(
+            widget.icon,
+            size: 18,
+          ),
+          label: Text(widget.label),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: AppColors.primary,
+            disabledForegroundColor:
+            AppColors.primary,
+            side: const BorderSide(
+              color: AppColors.primary,
+              width: 1.5,
+            ),
+            padding:
+            const EdgeInsets.symmetric(
+              vertical: 14,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius:
+              BorderRadius.circular(30),
+            ),
+            textStyle: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        )
+            : ElevatedButton(
+          onPressed: null,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            disabledBackgroundColor:
+            AppColors.primary,
+            padding:
+            const EdgeInsets.symmetric(
+              vertical: 14,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius:
+              BorderRadius.circular(30),
+            ),
+            elevation: 0,
+          ),
+          child: Text(
+            widget.label,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -25,16 +25,40 @@ class QuantityStepper extends StatelessWidget {
           onTap: onDecrease,
           isDisabled: isMinimum,
         ),
+
         const SizedBox(width: 16),
-        Text(
-          '$quantity',
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            color: AppColors.black,
+
+        // Smooth quantity change
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 140),
+          switchInCurve: Curves.easeOutBack,
+          switchOutCurve: Curves.easeIn,
+          transitionBuilder: (child, animation) {
+            return ScaleTransition(
+              scale: animation,
+              child: FadeTransition(
+                opacity: animation,
+                child: child,
+              ),
+            );
+          },
+          child: SizedBox(
+            key: ValueKey(quantity),
+            width: 18,
+            child: Text(
+              '$quantity',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: AppColors.black,
+              ),
+            ),
           ),
         ),
+
         const SizedBox(width: 16),
+
         _StepBtn(
           icon: Icons.add,
           onTap: onIncrease,
@@ -44,7 +68,11 @@ class QuantityStepper extends StatelessWidget {
   }
 }
 
-class _StepBtn extends StatelessWidget {
+// ═══════════════════════════════════════════════════════
+// ULTRA-SMOOTH STEP BUTTON
+// ═══════════════════════════════════════════════════════
+
+class _StepBtn extends StatefulWidget {
   final IconData icon;
   final VoidCallback onTap;
   final bool isDisabled;
@@ -56,28 +84,101 @@ class _StepBtn extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final buttonColor =
-    isDisabled ? AppColors.lightGrey : AppColors.primaryLight;
+  State<_StepBtn> createState() => _StepBtnState();
+}
 
-    final iconColor =
-    isDisabled ? AppColors.grey : AppColors.primary;
+class _StepBtnState extends State<_StepBtn>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  late final Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 80),
+      reverseDuration:
+      const Duration(milliseconds: 120),
+    );
+
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.88,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOut,
+        reverseCurve: Curves.easeOutCubic,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onTapDown(TapDownDetails details) {
+    if (widget.isDisabled) return;
+
+    _controller.forward();
+  }
+
+  void _onTapCancel() {
+    _controller.reverse();
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    if (widget.isDisabled) return;
+
+    _controller.reverse();
+
+    Future<void>.delayed(
+      const Duration(milliseconds: 15),
+          () {
+        if (mounted) {
+          widget.onTap();
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final buttonColor = widget.isDisabled
+        ? AppColors.lightGrey
+        : AppColors.primaryLight;
+
+    final iconColor = widget.isDisabled
+        ? AppColors.grey
+        : AppColors.primary;
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: isDisabled ? null : onTap,
+      onTapDown: _onTapDown,
+      onTapCancel: _onTapCancel,
+      onTapUp: _onTapUp,
       child: RepaintBoundary(
-        child: Container(
-          width: 34,
-          height: 34,
-          decoration: BoxDecoration(
-            color: buttonColor,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Icon(
-            icon,
-            size: 18,
-            color: iconColor,
+        child: ScaleTransition(
+          scale: _scaleAnimation,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 120),
+            curve: Curves.easeOut,
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(
+              color: buttonColor,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              widget.icon,
+              size: 18,
+              color: iconColor,
+            ),
           ),
         ),
       ),

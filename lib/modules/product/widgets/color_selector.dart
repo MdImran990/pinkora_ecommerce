@@ -19,11 +19,15 @@ class ColorSelector extends StatelessWidget {
       final value = hex.replaceAll('#', '');
 
       if (value.length == 6) {
-        return Color(int.parse('FF$value', radix: 16));
+        return Color(
+          int.parse('FF$value', radix: 16),
+        );
       }
 
       if (value.length == 8) {
-        return Color(int.parse(value, radix: 16));
+        return Color(
+          int.parse(value, radix: 16),
+        );
       }
 
       return AppColors.primary;
@@ -49,7 +53,11 @@ class ColorSelector extends StatelessWidget {
   }
 }
 
-class _ColorItem extends StatelessWidget {
+// ═══════════════════════════════════════════════════════
+// ULTRA-SMOOTH COLOR ITEM
+// ═══════════════════════════════════════════════════════
+
+class _ColorItem extends StatefulWidget {
   final String colorCode;
   final Color color;
   final bool isSelected;
@@ -64,39 +72,127 @@ class _ColorItem extends StatelessWidget {
   });
 
   @override
+  State<_ColorItem> createState() => _ColorItemState();
+}
+
+class _ColorItemState extends State<_ColorItem>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pressController;
+
+  late final Animation<double> _pressScale;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _pressController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 80),
+      reverseDuration:
+      const Duration(milliseconds: 120),
+    );
+
+    _pressScale = Tween<double>(
+      begin: 1.0,
+      end: 0.90,
+    ).animate(
+      CurvedAnimation(
+        parent: _pressController,
+        curve: Curves.easeOut,
+        reverseCurve: Curves.easeOutCubic,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pressController.dispose();
+    super.dispose();
+  }
+
+  void _onTapDown(TapDownDetails details) {
+    _pressController.forward();
+  }
+
+  void _onTapCancel() {
+    _pressController.reverse();
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    _pressController.reverse();
+
+    Future<void>.delayed(
+      const Duration(milliseconds: 15),
+          () {
+        if (mounted) {
+          widget.onTap();
+        }
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: onTap,
-      child: RepaintBoundary(
-        child: Container(
-          margin: const EdgeInsets.only(right: 10),
-          width: 32,
-          height: 32,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: isSelected
-                  ? AppColors.primary
-                  : Colors.transparent,
-              width: 2.5,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: color.withValues(alpha: 0.4),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
+      onTapDown: _onTapDown,
+      onTapCancel: _onTapCancel,
+      onTapUp: _onTapUp,
+      child: ScaleTransition(
+        scale: _pressScale,
+        child: RepaintBoundary(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            curve: Curves.easeOutCubic,
+            margin: const EdgeInsets.only(right: 10),
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: widget.color,
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: widget.isSelected
+                    ? AppColors.primary
+                    : Colors.transparent,
+                width: 2.5,
               ),
-            ],
+              boxShadow: [
+                BoxShadow(
+                  color: widget.color.withValues(
+                    alpha: widget.isSelected ? 0.50 : 0.40,
+                  ),
+                  blurRadius:
+                  widget.isSelected ? 8 : 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 140),
+              switchInCurve: Curves.easeOutBack,
+              switchOutCurve: Curves.easeIn,
+              transitionBuilder:
+                  (child, animation) {
+                return ScaleTransition(
+                  scale: animation,
+                  child: FadeTransition(
+                    opacity: animation,
+                    child: child,
+                  ),
+                );
+              },
+              child: widget.isSelected
+                  ? const Icon(
+                Icons.check_rounded,
+                key: ValueKey('selected'),
+                color: Colors.white,
+                size: 16,
+              )
+                  : const SizedBox(
+                key: ValueKey('unselected'),
+              ),
+            ),
           ),
-          child: isSelected
-              ? const Icon(
-            Icons.check_rounded,
-            color: Colors.white,
-            size: 16,
-          )
-              : null,
         ),
       ),
     );
