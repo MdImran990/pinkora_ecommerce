@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../app/theme/app_colors.dart';
 import '../../../data/model/product_model.dart';
 import 'product_card_home.dart';
@@ -17,6 +18,7 @@ class FlashSaleSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        // ── SECTION HEADER ──
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
@@ -44,15 +46,26 @@ class FlashSaleSection extends StatelessWidget {
             ],
           ),
         ),
+
         const SizedBox(height: 14),
+
+        // ── PRODUCTS ──
         SizedBox(
           height: 230,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
+            physics: const BouncingScrollPhysics(),
+            cacheExtent: 500,
             itemCount: products.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 14),
-            itemBuilder: (_, i) => ProductCardHome(product: products[i]),
+            separatorBuilder: (_, __) =>
+            const SizedBox(width: 14),
+            itemBuilder: (context, index) {
+              return ProductCardHome(
+                key: ValueKey(products[index].id),
+                product: products[index],
+              );
+            },
           ),
         ),
       ],

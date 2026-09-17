@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../controllers/category_controller.dart';
 import '../widgets/category_grid_card.dart';
 import '../../../app/theme/app_colors.dart';
@@ -18,13 +19,16 @@ class CategoryScreen extends GetView<CategoryController> {
         elevation: 0,
         automaticallyImplyLeading: true,
         leading: GestureDetector(
-          onTap: () => Get.back(),
+          behavior: HitTestBehavior.opaque,
+          onTap: Get.back,
           child: Container(
             margin: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: AppColors.white,
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: AppColors.border),
+              border: Border.all(
+                color: AppColors.border,
+              ),
             ),
             child: const Icon(
               Icons.arrow_back_ios_new_rounded,
@@ -41,9 +45,9 @@ class CategoryScreen extends GetView<CategoryController> {
             color: AppColors.black,
           ),
         ),
-        actions: [
+        actions: const [
           Padding(
-            padding: const EdgeInsets.only(right: 16),
+            padding: EdgeInsets.only(right: 16),
             child: Icon(
               Icons.search_rounded,
               color: AppColors.black,
@@ -52,28 +56,122 @@ class CategoryScreen extends GetView<CategoryController> {
           ),
         ],
       ),
-      body: Obx(() => GridView.builder(
-        padding: const EdgeInsets.all(16),
-        gridDelegate:
-        const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 14,
-          mainAxisSpacing: 14,
-          childAspectRatio: 0.85,
-        ),
-        itemCount: controller.categories.length,
-        itemBuilder: (_, i) {
-          final cat = controller.categories[i];
-          return CategoryGridCard(
-            category: cat,
-            onTap: () => Get.toNamed(
-              AppRoutes.productList,
-              arguments: cat,
+      body: Obx(
+            () {
+          final categories = controller.categories;
+
+          return GridView.builder(
+            padding: const EdgeInsets.all(16),
+            physics: const BouncingScrollPhysics(),
+            cacheExtent: 800,
+            keyboardDismissBehavior:
+            ScrollViewKeyboardDismissBehavior.onDrag,
+            gridDelegate:
+            const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 14,
+              mainAxisSpacing: 14,
+              childAspectRatio: 0.85,
             ),
+            itemCount: categories.length,
+            itemBuilder: (context, index) {
+              final category = categories[index];
+
+              return RepaintBoundary(
+                key: ValueKey(category.id),
+                child: _AnimatedCategoryCard(
+                  index: index,
+                  category: category,
+                  onTap: () => Get.toNamed(
+                    AppRoutes.productList,
+                    arguments: category,
+                  ),
+                ),
+              );
+            },
           );
         },
-      )),
+      ),
       bottomNavigationBar: const PinkoraBottomNav(),
+    );
+  }
+}
+
+class _AnimatedCategoryCard extends StatefulWidget {
+  final int index;
+  final dynamic category;
+  final VoidCallback onTap;
+
+  const _AnimatedCategoryCard({
+    required this.index,
+    required this.category,
+    required this.onTap,
+  });
+
+  @override
+  State<_AnimatedCategoryCard> createState() =>
+      _AnimatedCategoryCardState();
+}
+
+class _AnimatedCategoryCardState
+    extends State<_AnimatedCategoryCard>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  late final Animation<double> _fadeAnimation;
+  late final Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 420),
+    );
+
+    final curve = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutCubic,
+    );
+
+    _fadeAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(curve);
+
+    _scaleAnimation = Tween<double>(
+      begin: 0.94,
+      end: 1,
+    ).animate(curve);
+
+    Future<void>.delayed(
+      Duration(milliseconds: 45 * widget.index),
+          () {
+        if (mounted) {
+          _controller.forward();
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: CategoryGridCard(
+          category: widget.category,
+          onTap: widget.onTap,
+        ),
+      ),
     );
   }
 }

@@ -12,7 +12,7 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CartController ctrl = Get.find<CartController>();
+    final ctrl = Get.find<CartController>();
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg,
@@ -24,9 +24,8 @@ class CartScreen extends StatelessWidget {
         centerTitle: true,
 
         leading: GestureDetector(
-          onTap: () {
-            Get.offAllNamed(AppRoutes.home);
-          },
+          behavior: HitTestBehavior.opaque,
+          onTap: () => Get.offAllNamed(AppRoutes.home),
           child: Container(
             margin: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -77,12 +76,21 @@ class CartScreen extends StatelessWidget {
       // ================= BODY =================
       body: Obx(
             () {
-          if (ctrl.cartItems.isEmpty) {
-            return _emptyCart();
+          final items = ctrl.cartItems;
+
+          if (items.isEmpty) {
+            return _EmptyCart(
+              onShopNow: () => Get.offAllNamed(
+                AppRoutes.home,
+              ),
+            );
           }
 
           return CustomScrollView(
+            keyboardDismissBehavior:
+            ScrollViewKeyboardDismissBehavior.onDrag,
             physics: const BouncingScrollPhysics(),
+            cacheExtent: 800,
             slivers: [
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(
@@ -94,16 +102,20 @@ class CartScreen extends StatelessWidget {
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
                         (context, index) {
-                      final CartItemModel item =
-                      ctrl.cartItems[index];
+                      final item = items[index];
 
-                      return _cartItem(
-                        ctrl,
-                        item,
-                        index,
+                      return RepaintBoundary(
+                        key: ValueKey(
+                          '${item.product.id}_$index',
+                        ),
+                        child: _CartItemCard(
+                          item: item,
+                          index: index,
+                          controller: ctrl,
+                        ),
                       );
                     },
-                    childCount: ctrl.cartItems.length,
+                    childCount: items.length,
                   ),
                 ),
               ),
@@ -113,7 +125,11 @@ class CartScreen extends StatelessWidget {
               ),
 
               SliverToBoxAdapter(
-                child: _cartSummary(ctrl),
+                child: RepaintBoundary(
+                  child: _CartSummary(
+                    controller: ctrl,
+                  ),
+                ),
               ),
 
               const SliverToBoxAdapter(
@@ -127,12 +143,21 @@ class CartScreen extends StatelessWidget {
       bottomNavigationBar: const PinkoraBottomNav(),
     );
   }
+}
 
-  // ============================================================
-  // EMPTY CART
-  // ============================================================
+// ============================================================
+// EMPTY CART
+// ============================================================
 
-  Widget _emptyCart() {
+class _EmptyCart extends StatelessWidget {
+  const _EmptyCart({
+    required this.onShopNow,
+  });
+
+  final VoidCallback onShopNow;
+
+  @override
+  Widget build(BuildContext context) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -178,9 +203,7 @@ class CartScreen extends StatelessWidget {
             const SizedBox(height: 28),
 
             ElevatedButton(
-              onPressed: () {
-                Get.offAllNamed(AppRoutes.home);
-              },
+              onPressed: onShopNow,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 padding: const EdgeInsets.symmetric(
@@ -205,16 +228,27 @@ class CartScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  // ============================================================
-  // CART ITEM
-  // ============================================================
+// ============================================================
+// CART ITEM
+// ============================================================
 
-  Widget _cartItem(
-      CartController ctrl,
-      CartItemModel item,
-      int index,
-      ) {
+class _CartItemCard extends StatelessWidget {
+  const _CartItemCard({
+    required this.item,
+    required this.index,
+    required this.controller,
+  });
+
+  final CartItemModel item;
+  final int index;
+  final CartController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final isMinimum = item.quantity <= 1;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
@@ -288,8 +322,9 @@ class CartScreen extends StatelessWidget {
                     const SizedBox(width: 8),
 
                     GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTap: () {
-                        ctrl.removeItem(index);
+                        controller.removeItem(index);
                       },
                       child: const Icon(
                         Icons.delete_outline_rounded,
@@ -329,14 +364,17 @@ class CartScreen extends StatelessWidget {
                       children: [
                         // Minus
                         GestureDetector(
-                          onTap: () {
-                            ctrl.decreaseQty(index);
+                          behavior: HitTestBehavior.opaque,
+                          onTap: isMinimum
+                              ? null
+                              : () {
+                            controller.decreaseQty(index);
                           },
                           child: Container(
                             width: 27,
                             height: 27,
                             decoration: BoxDecoration(
-                              color: item.quantity <= 1
+                              color: isMinimum
                                   ? AppColors.lightGrey
                                   : AppColors.primaryLight,
                               borderRadius:
@@ -345,7 +383,7 @@ class CartScreen extends StatelessWidget {
                             child: Icon(
                               Icons.remove,
                               size: 14,
-                              color: item.quantity <= 1
+                              color: isMinimum
                                   ? AppColors.grey
                                   : AppColors.primary,
                             ),
@@ -369,8 +407,9 @@ class CartScreen extends StatelessWidget {
 
                         // Plus
                         GestureDetector(
+                          behavior: HitTestBehavior.opaque,
                           onTap: () {
-                            ctrl.increaseQty(index);
+                            controller.increaseQty(index);
                           },
                           child: Container(
                             width: 27,
@@ -407,12 +446,21 @@ class CartScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  // ============================================================
-  // CART SUMMARY
-  // ============================================================
+// ============================================================
+// CART SUMMARY
+// ============================================================
 
-  Widget _cartSummary(CartController ctrl) {
+class _CartSummary extends StatelessWidget {
+  const _CartSummary({
+    required this.controller,
+  });
+
+  final CartController controller;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.fromLTRB(
@@ -442,7 +490,7 @@ class CartScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: TextField(
-                  controller: ctrl.couponController,
+                  controller: controller.couponController,
                   decoration: InputDecoration(
                     hintText: 'Apply Coupon Code',
                     hintStyle: const TextStyle(
@@ -457,22 +505,19 @@ class CartScreen extends StatelessWidget {
                       vertical: 12,
                     ),
                     border: OutlineInputBorder(
-                      borderRadius:
-                      BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(
                         color: AppColors.border,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius:
-                      BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(
                         color: AppColors.border,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius:
-                      BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(
                         color: AppColors.primary,
                         width: 1.5,
@@ -485,7 +530,7 @@ class CartScreen extends StatelessWidget {
               const SizedBox(width: 10),
 
               ElevatedButton(
-                onPressed: ctrl.applyCoupon,
+                onPressed: controller.applyCoupon,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   padding: const EdgeInsets.symmetric(
@@ -493,8 +538,7 @@ class CartScreen extends StatelessWidget {
                     vertical: 14,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius:
-                    BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   elevation: 0,
                 ),
@@ -520,14 +564,14 @@ class CartScreen extends StatelessWidget {
 
           _PriceRow(
             label: 'Subtotal',
-            value: '৳ ${ctrl.subtotal.toInt()}',
+            value: '৳ ${controller.subtotal.toInt()}',
           ),
 
           const SizedBox(height: 7),
 
           _PriceRow(
             label: 'Delivery Fee',
-            value: '৳ ${ctrl.deliveryFee.toInt()}',
+            value: '৳ ${controller.deliveryFee.toInt()}',
           ),
 
           const SizedBox(height: 8),
@@ -540,7 +584,7 @@ class CartScreen extends StatelessWidget {
 
           _PriceRow(
             label: 'Total',
-            value: '৳ ${ctrl.total.toInt()}',
+            value: '৳ ${controller.total.toInt()}',
             isBold: true,
           ),
 
@@ -550,12 +594,11 @@ class CartScreen extends StatelessWidget {
             width: double.infinity,
             height: 52,
             child: ElevatedButton(
-              onPressed: ctrl.proceedToCheckout,
+              onPressed: controller.proceedToCheckout,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 shape: RoundedRectangleBorder(
-                  borderRadius:
-                  BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(30),
                 ),
                 elevation: 0,
               ),
@@ -580,39 +623,38 @@ class CartScreen extends StatelessWidget {
 // ============================================================
 
 class _PriceRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final bool isBold;
-
   const _PriceRow({
     required this.label,
     required this.value,
     this.isBold = false,
   });
 
+  final String label;
+  final String value;
+  final bool isBold;
+
   @override
   Widget build(BuildContext context) {
+    final fontSize = isBold ? 16.0 : 14.0;
+
     return Row(
-      mainAxisAlignment:
-      MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           label,
           style: TextStyle(
-            fontSize: isBold ? 16 : 14,
-            fontWeight: isBold
-                ? FontWeight.w700
-                : FontWeight.w400,
+            fontSize: fontSize,
+            fontWeight:
+            isBold ? FontWeight.w700 : FontWeight.w400,
             color: AppColors.darkGrey,
           ),
         ),
         Text(
           value,
           style: TextStyle(
-            fontSize: isBold ? 16 : 14,
-            fontWeight: isBold
-                ? FontWeight.w700
-                : FontWeight.w500,
+            fontSize: fontSize,
+            fontWeight:
+            isBold ? FontWeight.w700 : FontWeight.w500,
             color: isBold
                 ? AppColors.black
                 : AppColors.darkGrey,

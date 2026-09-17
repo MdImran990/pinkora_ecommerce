@@ -7,17 +7,14 @@ import '../../modules/auth/bindings/auth_binding.dart';
 import '../../modules/auth/views/login_screen.dart';
 import '../../modules/auth/views/register_screen.dart';
 import '../../modules/auth/views/forgot_password_screen.dart';
-
 import '../../modules/home/bindings/home_binding.dart';
 import '../../modules/home/views/home_screen.dart';
 
 import '../../modules/category/bindings/category_binding.dart';
 import '../../modules/category/views/category_screen.dart';
-
 import '../../modules/product/bindings/product_binding.dart';
 import '../../modules/product/views/product_detail_screen.dart';
 import '../../modules/product/views/product_list_screen.dart';
-
 import '../../modules/cart/bindings/cart_binding.dart';
 import '../../modules/cart/views/cart_screen.dart';
 

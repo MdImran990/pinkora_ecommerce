@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../app/theme/app_colors.dart';
 
 class RatingRow extends StatelessWidget {
@@ -13,21 +14,24 @@ class RatingRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fullStars = rating.floor();
+    final hasHalfStar = rating > fullStars && fullStars < 5;
+
     return Row(
       children: [
-        ...List.generate(5, (i) {
-          if (i < rating.floor()) {
-            return const Icon(Icons.star_rounded,
-                color: AppColors.star, size: 18);
-          } else if (i < rating) {
-            return const Icon(Icons.star_half_rounded,
-                color: AppColors.star, size: 18);
-          } else {
-            return const Icon(Icons.star_outline_rounded,
-                color: AppColors.star, size: 18);
-          }
-        }),
+        for (int i = 0; i < 5; i++)
+          Icon(
+            i < fullStars
+                ? Icons.star_rounded
+                : (i == fullStars && hasHalfStar
+                ? Icons.star_half_rounded
+                : Icons.star_outline_rounded),
+            color: AppColors.star,
+            size: 18,
+          ),
+
         const SizedBox(width: 6),
+
         Text(
           '$rating',
           style: const TextStyle(
@@ -36,7 +40,9 @@ class RatingRow extends StatelessWidget {
             color: AppColors.black,
           ),
         ),
+
         const SizedBox(width: 4),
+
         Text(
           '($reviewCount reviews)',
           style: const TextStyle(

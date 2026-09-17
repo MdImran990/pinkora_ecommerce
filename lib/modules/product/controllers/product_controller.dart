@@ -1,84 +1,141 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../data/model/product_model.dart';
-import '../../../app/theme/app_colors.dart';
+
 import '../../../app/routes/app_routes.dart';
+import '../../../app/theme/app_colors.dart';
+import '../../../data/model/product_model.dart';
 import '../../../modules/cart/controllers/cart_controller.dart';
 import '../../../modules/wishlist/controllers/wishlist_controller.dart';
 
 class ProductController extends GetxController {
-  final product = Rxn<ProductModel>();
-  final selectedColor = ''.obs;
-  final selectedSize = ''.obs;
-  final quantity = 1.obs;
-  final currentImageIndex = 0.obs;
-  final isWishlisted = false.obs;
+  final Rxn<ProductModel> product = Rxn<ProductModel>();
 
-  late CartController _cartCtrl;
-  late WishlistController _wishCtrl;
+  final RxString selectedColor = ''.obs;
+  final RxString selectedSize = ''.obs;
+  final RxInt quantity = 1.obs;
+  final RxInt currentImageIndex = 0.obs;
+  final RxBool isWishlisted = false.obs;
+
+  late final CartController _cartCtrl;
+  late final WishlistController _wishCtrl;
 
   @override
   void onInit() {
     super.onInit();
+
     _cartCtrl = Get.find<CartController>();
     _wishCtrl = Get.find<WishlistController>();
 
-    if (Get.arguments != null && Get.arguments is ProductModel) {
-      product.value = Get.arguments as ProductModel;
-    } else {
-      product.value = ProductModel(
-        id: '1',
-        name: 'Trendy Handbag',
-        image: '',
-        price: 2100,
-        originalPrice: 3000,
-        discountPercent: 30,
-        rating: 4.8,
-        reviewCount: 120,
-        category: 'Fashion',
-        colors: ['#FF6B9D', '#000000', '#D4A574', '#F5E6D3'],
-      );
-    }
-
-    if (product.value!.colors.isNotEmpty) {
-      selectedColor.value = product.value!.colors.first;
-    }
-
-    isWishlisted.value = _wishCtrl.isWished(product.value!.id);
+    _loadProduct();
   }
 
-  void selectColor(String color) => selectedColor.value = color;
-  void selectSize(String size) => selectedSize.value = size;
+  void _loadProduct() {
+    final argument = Get.arguments;
+
+    final loadedProduct = argument is ProductModel
+        ? argument
+        : ProductModel(
+      id: '1',
+      name: 'Trendy Handbag',
+      image: '',
+      price: 2100,
+      originalPrice: 3000,
+      discountPercent: 30,
+      rating: 4.8,
+      reviewCount: 120,
+      category: 'Fashion',
+      colors: [
+        '#FF6B9D',
+        '#000000',
+        '#D4A574',
+        '#F5E6D3',
+      ],
+    );
+
+    product.value = loadedProduct;
+
+    if (loadedProduct.colors.isNotEmpty) {
+      selectedColor.value = loadedProduct.colors.first;
+    } else {
+      selectedColor.value = '';
+    }
+
+    selectedSize.value = '';
+    quantity.value = 1;
+    currentImageIndex.value = 0;
+
+    isWishlisted.value =
+        _wishCtrl.isWished(loadedProduct.id);
+  }
+
+  void selectColor(String color) {
+    if (selectedColor.value == color) return;
+
+    selectedColor.value = color;
+  }
+
+  void selectSize(String size) {
+    if (selectedSize.value == size) return;
+
+    selectedSize.value = size;
+  }
 
   void toggleWishlist() {
-    final p = product.value!;
-    if (_wishCtrl.isWished(p.id)) {
-      _wishCtrl.removeItem(p);
-      isWishlisted.value = false;
+    final currentProduct = product.value;
+
+    if (currentProduct == null) return;
+
+    final wished =
+    _wishCtrl.isWished(currentProduct.id);
+
+    if (wished) {
+      _wishCtrl.removeItem(currentProduct);
+
+      if (isWishlisted.value) {
+        isWishlisted.value = false;
+      }
     } else {
-      _wishCtrl.addItem(p);
-      isWishlisted.value = true;
+      _wishCtrl.addItem(currentProduct);
+
+      if (!isWishlisted.value) {
+        isWishlisted.value = true;
+      }
     }
   }
 
-  void increaseQty() => quantity.value++;
-  void decreaseQty() {
-    if (quantity.value > 1) quantity.value--;
+  void increaseQty() {
+    quantity.value++;
   }
 
-  void changeImage(int index) => currentImageIndex.value = index;
+  void decreaseQty() {
+    if (quantity.value <= 1) return;
+
+    quantity.value--;
+  }
+
+  void changeImage(int index) {
+    if (index < 0) return;
+
+    if (currentImageIndex.value == index) return;
+
+    currentImageIndex.value = index;
+  }
 
   void addToCart() {
-    final p = product.value!;
+    final currentProduct = product.value;
+
+    if (currentProduct == null) return;
+
     _cartCtrl.addToCart(
-      p,
+      currentProduct,
       color: selectedColor.value,
       size: selectedSize.value,
       qty: quantity.value,
     );
+
     Get.snackbar(
       '✅ Added!',
-      '${p.name} cart এ যোগ হয়েছে',
+      '${currentProduct.name} cart এ যোগ হয়েছে',
       backgroundColor: AppColors.primary,
       colorText: Colors.white,
       snackPosition: SnackPosition.BOTTOM,
@@ -89,13 +146,17 @@ class ProductController extends GetxController {
   }
 
   void buyNow() {
-    final p = product.value!;
+    final currentProduct = product.value;
+
+    if (currentProduct == null) return;
+
     _cartCtrl.addToCart(
-      p,
+      currentProduct,
       color: selectedColor.value,
       size: selectedSize.value,
       qty: quantity.value,
     );
+
     Get.toNamed(AppRoutes.checkout);
   }
 }

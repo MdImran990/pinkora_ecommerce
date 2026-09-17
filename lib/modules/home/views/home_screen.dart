@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../controllers/home_controller.dart';
 import '../widgets/banner_carousel.dart';
 import '../widgets/category_chip_row.dart';
@@ -17,17 +18,22 @@ class HomeScreen extends GetView<HomeController> {
       backgroundColor: AppColors.scaffoldBg,
       body: SafeArea(
         child: CustomScrollView(
+          keyboardDismissBehavior:
+          ScrollViewKeyboardDismissBehavior.onDrag,
           slivers: [
             // ── APP BAR ──
-            SliverToBoxAdapter(
+            const SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                padding: EdgeInsets.fromLTRB(16, 12, 16, 0),
                 child: Row(
                   children: [
-                    const Icon(Icons.location_on_rounded,
-                        color: AppColors.primary, size: 18),
-                    const SizedBox(width: 4),
-                    const Text(
+                    Icon(
+                      Icons.location_on_rounded,
+                      color: AppColors.primary,
+                      size: 18,
+                    ),
+                    SizedBox(width: 4),
+                    Text(
                       'Dhaka, Bangladesh',
                       style: TextStyle(
                         fontSize: 13,
@@ -35,19 +41,33 @@ class HomeScreen extends GetView<HomeController> {
                         color: AppColors.black,
                       ),
                     ),
-                    const Icon(Icons.keyboard_arrow_down_rounded,
-                        color: AppColors.black, size: 18),
-                    const Spacer(),
-                    Container(
+                    Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: AppColors.black,
+                      size: 18,
+                    ),
+                    Spacer(),
+                    SizedBox(
                       width: 38,
                       height: 38,
-                      decoration: BoxDecoration(
-                        color: AppColors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: AppColors.border),
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: AppColors.white,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                          border: Border.fromBorderSide(
+                            BorderSide(
+                              color: AppColors.border,
+                            ),
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.notifications_outlined,
+                          color: AppColors.black,
+                          size: 20,
+                        ),
                       ),
-                      child: const Icon(Icons.notifications_outlined,
-                          color: AppColors.black, size: 20),
                     ),
                   ],
                 ),
@@ -55,42 +75,62 @@ class HomeScreen extends GetView<HomeController> {
             ),
 
             // ── SEARCH BAR ──
-            SliverToBoxAdapter(
+            const SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
-                child: Container(
+                padding: EdgeInsets.fromLTRB(16, 14, 16, 0),
+                child: SizedBox(
                   height: 48,
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: AppColors.border),
-                  ),
-                  child: Row(
-                    children: [
-                      const SizedBox(width: 14),
-                      const Icon(Icons.search_rounded,
-                          color: AppColors.grey, size: 22),
-                      const SizedBox(width: 10),
-                      const Expanded(
-                        child: Text(
-                          'Search products...',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: AppColors.grey,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(14),
+                      ),
+                      border: Border.fromBorderSide(
+                        BorderSide(
+                          color: AppColors.border,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(width: 14),
+                        Icon(
+                          Icons.search_rounded,
+                          color: AppColors.grey,
+                          size: 22,
+                        ),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Search products...',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AppColors.grey,
+                            ),
                           ),
                         ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.all(6),
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryLight,
-                          borderRadius: BorderRadius.circular(8),
+                        Padding(
+                          padding: EdgeInsets.all(6),
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryLight,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(8),
+                              ),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(6),
+                              child: Icon(
+                                Icons.camera_alt_outlined,
+                                color: AppColors.primary,
+                                size: 16,
+                              ),
+                            ),
+                          ),
                         ),
-                        child: const Icon(Icons.camera_alt_outlined,
-                            color: AppColors.primary, size: 16),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -100,7 +140,9 @@ class HomeScreen extends GetView<HomeController> {
             const SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.only(top: 16),
-                child: BannerCarousel(),
+                child: RepaintBoundary(
+                  child: BannerCarousel(),
+                ),
               ),
             ),
 
@@ -109,9 +151,11 @@ class HomeScreen extends GetView<HomeController> {
               child: Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: GetBuilder<HomeController>(
-                  builder: (ctrl) => CategoryChipRow(
-                    categories: ctrl.categories,
-                  ),
+                  builder: (ctrl) {
+                    return CategoryChipRow(
+                      categories: ctrl.categories,
+                    );
+                  },
                 ),
               ),
             ),
@@ -121,14 +165,19 @@ class HomeScreen extends GetView<HomeController> {
               child: Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: GetBuilder<HomeController>(
-                  builder: (ctrl) => FlashSaleSection(
-                    products: ctrl.flashSaleProducts,
-                    onSeeAll: () => Get.toNamed(AppRoutes.productList),
-                  ),
+                  builder: (ctrl) {
+                    return FlashSaleSection(
+                      products: ctrl.flashSaleProducts,
+                      onSeeAll: () => Get.toNamed(
+                        AppRoutes.productList,
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
 
+            // ── BOTTOM SPACE ──
             const SliverToBoxAdapter(
               child: SizedBox(height: 100),
             ),

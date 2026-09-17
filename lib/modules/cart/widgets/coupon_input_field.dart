@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../app/theme/app_colors.dart';
 
 class CouponInputField extends StatelessWidget {
@@ -10,6 +11,19 @@ class CouponInputField extends StatelessWidget {
     required this.controller,
     required this.onApply,
   });
+
+  static OutlineInputBorder _border({
+    Color color = AppColors.border,
+    double width = 1,
+  }) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(
+        color: color,
+        width: width,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,30 +45,29 @@ class CouponInputField extends StatelessWidget {
               filled: true,
               fillColor: AppColors.white,
               contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16, vertical: 14),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppColors.border),
+                horizontal: 16,
+                vertical: 14,
               ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppColors.border),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(
-                    color: AppColors.primary, width: 1.5),
+              border: _border(),
+              enabledBorder: _border(),
+              focusedBorder: _border(
+                color: AppColors.primary,
+                width: 1.5,
               ),
             ),
           ),
         ),
+
         const SizedBox(width: 10),
+
         ElevatedButton(
           onPressed: onApply,
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
             padding: const EdgeInsets.symmetric(
-                horizontal: 20, vertical: 14),
+              horizontal: 20,
+              vertical: 14,
+            ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
