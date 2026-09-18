@@ -1,16 +1,8 @@
 import 'package:flutter/material.dart';
+
 import '../../../app/theme/app_colors.dart';
 
 class AuthTextField extends StatelessWidget {
-  final TextEditingController controller;
-  final String hint;
-  final IconData prefixIcon;
-  final bool isPassword;
-  final bool isPasswordHidden;
-  final VoidCallback? onTogglePassword;
-  final String? Function(String?)? validator;
-  final TextInputType keyboardType;
-
   const AuthTextField({
     super.key,
     required this.controller,
@@ -23,23 +15,48 @@ class AuthTextField extends StatelessWidget {
     this.keyboardType = TextInputType.text,
   });
 
+  final TextEditingController controller;
+  final String hint;
+  final IconData prefixIcon;
+  final bool isPassword;
+  final bool isPasswordHidden;
+  final VoidCallback? onTogglePassword;
+  final String? Function(String?)? validator;
+  final TextInputType keyboardType;
+
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      obscureText: isPassword && isPasswordHidden,
       keyboardType: keyboardType,
+      obscureText: isPassword && isPasswordHidden,
       validator: validator,
+
+      // Keeps keyboard behavior smooth.
+      textInputAction: isPassword
+          ? TextInputAction.done
+          : TextInputAction.next,
+
       style: const TextStyle(
         fontSize: 14,
         color: AppColors.black,
         fontWeight: FontWeight.w500,
       ),
+
       decoration: InputDecoration(
         hintText: hint,
-        prefixIcon: Icon(prefixIcon, color: AppColors.grey, size: 20),
+
+        prefixIcon: const Icon(
+          Icons.person_outline_rounded,
+          color: AppColors.grey,
+          size: 20,
+        ),
+
         suffixIcon: isPassword
             ? IconButton(
+          tooltip: 'Show password',
+          onPressed: onTogglePassword,
+          splashRadius: 22,
           icon: Icon(
             isPasswordHidden
                 ? Icons.visibility_off_outlined
@@ -47,7 +64,6 @@ class AuthTextField extends StatelessWidget {
             color: AppColors.grey,
             size: 20,
           ),
-          onPressed: onTogglePassword,
         )
             : null,
       ),
