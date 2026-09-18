@@ -6,7 +6,6 @@ import '../../../app/theme/app_colors.dart';
 import '../../../data/model/product_model.dart';
 import '../../../modules/cart/controllers/cart_controller.dart';
 import '../../../modules/wishlist/controllers/wishlist_controller.dart';
-
 class ProductController extends GetxController {
   final Rxn<ProductModel> product = Rxn<ProductModel>();
 
@@ -34,31 +33,13 @@ class ProductController extends GetxController {
 
     final loadedProduct = argument is ProductModel
         ? argument
-        : ProductModel(
-      id: '1',
-      name: 'Trendy Handbag',
-      image: '',
-      price: 2100,
-      originalPrice: 3000,
-      discountPercent: 30,
-      rating: 4.8,
-      reviewCount: 120,
-      category: 'Fashion',
-      colors: [
-        '#FF6B9D',
-        '#000000',
-        '#D4A574',
-        '#F5E6D3',
-      ],
-    );
+        : _fallbackProduct;
 
     product.value = loadedProduct;
 
-    if (loadedProduct.colors.isNotEmpty) {
-      selectedColor.value = loadedProduct.colors.first;
-    } else {
-      selectedColor.value = '';
-    }
+    selectedColor.value = loadedProduct.colors.isNotEmpty
+        ? loadedProduct.colors.first
+        : '';
 
     selectedSize.value = '';
     quantity.value = 1;
@@ -67,6 +48,24 @@ class ProductController extends GetxController {
     isWishlisted.value =
         _wishCtrl.isWished(loadedProduct.id);
   }
+
+  static final ProductModel _fallbackProduct = ProductModel(
+    id: '1',
+    name: 'Trendy Handbag',
+    image: '',
+    price: 2100,
+    originalPrice: 3000,
+    discountPercent: 30,
+    rating: 4.8,
+    reviewCount: 120,
+    category: 'Fashion',
+    colors: [
+      '#FF6B9D',
+      '#000000',
+      '#D4A574',
+      '#F5E6D3',
+    ],
+  );
 
   void selectColor(String color) {
     if (selectedColor.value == color) return;
@@ -90,16 +89,10 @@ class ProductController extends GetxController {
 
     if (wished) {
       _wishCtrl.removeItem(currentProduct);
-
-      if (isWishlisted.value) {
-        isWishlisted.value = false;
-      }
+      isWishlisted.value = false;
     } else {
       _wishCtrl.addItem(currentProduct);
-
-      if (!isWishlisted.value) {
-        isWishlisted.value = true;
-      }
+      isWishlisted.value = true;
     }
   }
 
@@ -115,7 +108,6 @@ class ProductController extends GetxController {
 
   void changeImage(int index) {
     if (index < 0) return;
-
     if (currentImageIndex.value == index) return;
 
     currentImageIndex.value = index;

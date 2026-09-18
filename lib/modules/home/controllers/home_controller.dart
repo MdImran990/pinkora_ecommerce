@@ -6,8 +6,8 @@ import '../../../data/model/category_model.dart';
 class HomeController extends GetxController {
   final RxInt bannerIndex = 0.obs;
 
-  final List<CategoryModel> categories = [];
-  final List<ProductModel> flashSaleProducts = [];
+  final List<CategoryModel> categories = <CategoryModel>[];
+  final List<ProductModel> flashSaleProducts = <ProductModel>[];
 
   @override
   void onInit() {
@@ -102,7 +102,10 @@ class HomeController extends GetxController {
   }
 
   void changeBannerIndex(int index) {
-    if (bannerIndex.value == index) return;
+    if (bannerIndex.value == index) {
+      return;
+    }
+
     bannerIndex.value = index;
   }
 }

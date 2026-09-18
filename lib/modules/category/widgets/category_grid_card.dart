@@ -4,14 +4,14 @@ import '../../../app/theme/app_colors.dart';
 import '../../../data/model/category_model.dart';
 
 class CategoryGridCard extends StatefulWidget {
-  final CategoryModel category;
-  final VoidCallback onTap;
-
   const CategoryGridCard({
     super.key,
     required this.category,
     required this.onTap,
   });
+
+  final CategoryModel category;
+  final VoidCallback onTap;
 
   @override
   State<CategoryGridCard> createState() =>
@@ -21,7 +21,6 @@ class CategoryGridCard extends StatefulWidget {
 class _CategoryGridCardState extends State<CategoryGridCard>
     with SingleTickerProviderStateMixin {
   late final AnimationController _pressController;
-
   late final Animation<double> _scaleAnimation;
 
   @override
@@ -30,10 +29,8 @@ class _CategoryGridCardState extends State<CategoryGridCard>
 
     _pressController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 90),
-      reverseDuration: const Duration(milliseconds: 130),
-      lowerBound: 0,
-      upperBound: 1,
+      duration: const Duration(milliseconds: 80),
+      reverseDuration: const Duration(milliseconds: 120),
     );
 
     _scaleAnimation = Tween<double>(
@@ -66,8 +63,12 @@ class _CategoryGridCardState extends State<CategoryGridCard>
     _pressController.reverse();
 
     Future<void>.delayed(
-      const Duration(milliseconds: 20),
-      widget.onTap,
+      const Duration(milliseconds: 15),
+          () {
+        if (mounted) {
+          widget.onTap();
+        }
+      },
     );
   }
 
@@ -143,7 +144,6 @@ class _CategoryGridCardState extends State<CategoryGridCard>
   @override
   Widget build(BuildContext context) {
     final categoryName = widget.category.name;
-
     final icon = _icon(categoryName);
     final backgroundColor = _bgColor(categoryName);
     final iconColor = _iconColor(categoryName);
@@ -153,9 +153,9 @@ class _CategoryGridCardState extends State<CategoryGridCard>
       onTapDown: _onTapDown,
       onTapCancel: _onTapCancel,
       onTapUp: _onTapUp,
-      child: RepaintBoundary(
-        child: ScaleTransition(
-          scale: _scaleAnimation,
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: RepaintBoundary(
           child: Container(
             decoration: BoxDecoration(
               color: AppColors.white,
@@ -173,12 +173,12 @@ class _CategoryGridCardState extends State<CategoryGridCard>
                 Expanded(
                   child: RepaintBoundary(
                     child: Container(
-                      decoration: BoxDecoration(
-                        color: backgroundColor,
-                        borderRadius:
-                        const BorderRadius.vertical(
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.vertical(
                           top: Radius.circular(16),
                         ),
+                      ).copyWith(
+                        color: backgroundColor,
                       ),
                       child: Center(
                         child: Icon(
@@ -190,15 +190,12 @@ class _CategoryGridCardState extends State<CategoryGridCard>
                     ),
                   ),
                 ),
-
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 10,
                   ),
                   child: Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
                         child: Text(
@@ -221,7 +218,6 @@ class _CategoryGridCardState extends State<CategoryGridCard>
                     ],
                   ),
                 ),
-
                 Padding(
                   padding: const EdgeInsets.only(
                     left: 10,

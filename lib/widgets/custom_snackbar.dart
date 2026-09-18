@@ -20,7 +20,6 @@ class CustomSnackbar {
       ),
     );
   }
-
   static void error(
       String title,
       String message,

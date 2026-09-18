@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../app/theme/app_colors.dart';
 import '../../../app/routes/app_routes.dart';
+import '../../../app/theme/app_colors.dart';
 import '../../../data/model/product_model.dart';
 import '../../../modules/cart/controllers/cart_controller.dart';
 import '../../../modules/wishlist/controllers/wishlist_controller.dart';
@@ -198,7 +198,7 @@ class _ProductGridCardState extends State<_ProductGridCard>
     _pressController.reverse();
 
     Future<void>.delayed(
-      const Duration(milliseconds: 20),
+      const Duration(milliseconds: 15),
           () {
         if (!mounted) return;
 
@@ -282,7 +282,6 @@ class _ProductGridCardState extends State<_ProductGridCard>
                       ),
                     ),
                   ),
-
                   Positioned(
                     top: 8,
                     left: 8,
@@ -305,7 +304,6 @@ class _ProductGridCardState extends State<_ProductGridCard>
                       ),
                     ),
                   ),
-
                   Positioned(
                     top: 6,
                     right: 6,
@@ -339,9 +337,8 @@ class _ProductGridCardState extends State<_ProductGridCard>
                                 ],
                               ),
                               child: AnimatedSwitcher(
-                                duration: const Duration(
-                                  milliseconds: 120,
-                                ),
+                                duration:
+                                const Duration(milliseconds: 120),
                                 transitionBuilder:
                                     (child, animation) {
                                   return ScaleTransition(
@@ -368,7 +365,6 @@ class _ProductGridCardState extends State<_ProductGridCard>
                   ),
                 ],
               ),
-
               Padding(
                 padding: const EdgeInsets.fromLTRB(
                   8,
@@ -377,8 +373,7 @@ class _ProductGridCardState extends State<_ProductGridCard>
                   4,
                 ),
                 child: Column(
-                  crossAxisAlignment:
-                  CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       product.name,
@@ -390,9 +385,7 @@ class _ProductGridCardState extends State<_ProductGridCard>
                         color: AppColors.black,
                       ),
                     ),
-
                     const SizedBox(height: 3),
-
                     Row(
                       children: [
                         Text(
@@ -417,9 +410,7 @@ class _ProductGridCardState extends State<_ProductGridCard>
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 3),
-
                     Row(
                       mainAxisAlignment:
                       MainAxisAlignment.spaceBetween,
@@ -441,11 +432,10 @@ class _ProductGridCardState extends State<_ProductGridCard>
                             ),
                           ],
                         ),
-
                         GestureDetector(
                           behavior: HitTestBehavior.opaque,
                           onTap: _addToCart,
-                          child: _AnimatedCartButton(),
+                          child: const _AnimatedCartButton(),
                         ),
                       ],
                     ),
@@ -461,6 +451,8 @@ class _ProductGridCardState extends State<_ProductGridCard>
 }
 
 class _AnimatedCartButton extends StatefulWidget {
+  const _AnimatedCartButton();
+
   @override
   State<_AnimatedCartButton> createState() =>
       _AnimatedCartButtonState();
@@ -478,8 +470,8 @@ class _AnimatedCartButtonState
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 100),
-      reverseDuration: const Duration(milliseconds: 140),
+      duration: const Duration(milliseconds: 90),
+      reverseDuration: const Duration(milliseconds: 120),
     );
 
     _scale = Tween<double>(
@@ -489,6 +481,7 @@ class _AnimatedCartButtonState
       CurvedAnimation(
         parent: _controller,
         curve: Curves.easeOut,
+        reverseCurve: Curves.easeOutCubic,
       ),
     );
   }

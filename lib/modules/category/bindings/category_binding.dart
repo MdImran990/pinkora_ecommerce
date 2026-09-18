@@ -1,9 +1,14 @@
 import 'package:get/get.dart';
+
 import '../controllers/category_controller.dart';
 
 class CategoryBinding extends Bindings {
   @override
   void dependencies() {
-    Get.put<CategoryController>(CategoryController());
+    if (!Get.isRegistered<CategoryController>()) {
+      Get.lazyPut<CategoryController>(
+        CategoryController.new,
+      );
+    }
   }
 }

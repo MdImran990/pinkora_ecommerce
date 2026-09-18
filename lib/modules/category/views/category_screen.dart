@@ -6,6 +6,7 @@ import '../widgets/category_grid_card.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../widgets/bottom_nav_bar.dart';
+import '../../../data/model/category_model.dart';
 
 class CategoryScreen extends GetView<CategoryController> {
   const CategoryScreen({super.key});
@@ -98,15 +99,15 @@ class CategoryScreen extends GetView<CategoryController> {
 }
 
 class _AnimatedCategoryCard extends StatefulWidget {
-  final int index;
-  final dynamic category;
-  final VoidCallback onTap;
-
   const _AnimatedCategoryCard({
     required this.index,
     required this.category,
     required this.onTap,
   });
+
+  final int index;
+  final CategoryModel category;
+  final VoidCallback onTap;
 
   @override
   State<_AnimatedCategoryCard> createState() =>
@@ -117,7 +118,6 @@ class _AnimatedCategoryCardState
     extends State<_AnimatedCategoryCard>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
-
   late final Animation<double> _fadeAnimation;
   late final Animation<double> _scaleAnimation;
 
