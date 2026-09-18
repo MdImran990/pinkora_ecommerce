@@ -61,6 +61,10 @@ class CheckoutStepIndicator extends StatelessWidget {
   }
 }
 
+// ─────────────────────────────────────────────
+// Step Item
+// ─────────────────────────────────────────────
+
 class _StepItem extends StatelessWidget {
   final String label;
   final IconData icon;
@@ -76,44 +80,74 @@ class _StepItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(
-            color: isCompleted
-                ? AppColors.primary
-                : AppColors.lightGrey,
-            shape: BoxShape.circle,
+    return RepaintBoundary(
+      child: Column(
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOutCubic,
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: isCompleted
+                  ? AppColors.primary
+                  : AppColors.lightGrey,
+              shape: BoxShape.circle,
+            ),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 160),
+              switchInCurve: Curves.easeOutBack,
+              switchOutCurve: Curves.easeInCubic,
+              transitionBuilder: (
+                  child,
+                  animation,
+                  ) {
+                return ScaleTransition(
+                  scale: animation,
+                  child: FadeTransition(
+                    opacity: animation,
+                    child: child,
+                  ),
+                );
+              },
+              child: Icon(
+                icon,
+                key: ValueKey(
+                  '$icon-$isCompleted',
+                ),
+                size: 18,
+                color: isCompleted
+                    ? Colors.white
+                    : AppColors.grey,
+              ),
+            ),
           ),
-          child: Icon(
-            icon,
-            size: 18,
-            color: isCompleted
-                ? Colors.white
-                : AppColors.grey,
-          ),
-        ),
 
-        const SizedBox(height: 4),
+          const SizedBox(height: 4),
 
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: isActive
-                ? FontWeight.w600
-                : FontWeight.w400,
-            color: isActive
-                ? AppColors.primary
-                : AppColors.grey,
+          AnimatedDefaultTextStyle(
+            duration: const Duration(milliseconds: 160),
+            curve: Curves.easeOutCubic,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: isActive
+                  ? FontWeight.w600
+                  : FontWeight.w400,
+              color: isActive
+                  ? AppColors.primary
+                  : AppColors.grey,
+            ),
+            child: Text(label),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
+
+// ─────────────────────────────────────────────
+// Step Connector
+// ─────────────────────────────────────────────
 
 class _StepConnector extends StatelessWidget {
   final bool isCompleted;
@@ -124,12 +158,16 @@ class _StepConnector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 2,
-      margin: const EdgeInsets.only(bottom: 18),
-      color: isCompleted
-          ? AppColors.primary
-          : AppColors.border,
+    return RepaintBoundary(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOutCubic,
+        height: 2,
+        margin: const EdgeInsets.only(bottom: 18),
+        color: isCompleted
+            ? AppColors.primary
+            : AppColors.border,
+      ),
     );
   }
 }

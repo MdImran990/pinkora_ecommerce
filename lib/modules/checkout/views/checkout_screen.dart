@@ -26,7 +26,9 @@ class CheckoutScreen extends GetView<CheckoutController> {
             decoration: BoxDecoration(
               color: AppColors.white,
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: AppColors.border),
+              border: Border.all(
+                color: AppColors.border,
+              ),
             ),
             child: const Icon(
               Icons.arrow_back_ios_new_rounded,
@@ -44,88 +46,112 @@ class CheckoutScreen extends GetView<CheckoutController> {
           ),
         ),
       ),
-      body: Obx(() {
-        final step = controller.currentStep.value;
+      body: Obx(
+            () {
+          final step = controller.currentStep.value;
 
-        return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: CheckoutStepIndicator(
-                currentStep: step,
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            Expanded(
-              child: SingleChildScrollView(
-                keyboardDismissBehavior:
-                ScrollViewKeyboardDismissBehavior.onDrag,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: _buildStep(step),
-              ),
-            ),
-
-            if (step == 3)
-              RepaintBoundary(
-                child: _OrderSummary(
-                  controller: controller,
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  16,
+                  8,
+                  16,
+                  0,
+                ),
+                child: CheckoutStepIndicator(
+                  currentStep: step,
                 ),
               ),
 
-            Container(
-              padding: const EdgeInsets.fromLTRB(
-                16,
-                12,
-                16,
-                24,
-              ),
-              color: AppColors.scaffoldBg,
-              child: SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: step == 3
-                      ? controller.placeOrder
-                      : controller.nextStep,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+              const SizedBox(height: 16),
+
+              Expanded(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 220),
+                  switchInCurve: Curves.easeOutCubic,
+                  switchOutCurve: Curves.easeInCubic,
+                  child: SingleChildScrollView(
+                    key: ValueKey(step),
+                    keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
                     ),
-                    elevation: 0,
+                    child: _buildStep(step),
                   ),
-                  child: Text(
-                    step == 3 ? 'Place Order' : 'Continue',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                ),
+              ),
+
+              if (step == 3)
+                RepaintBoundary(
+                  child: _OrderSummary(
+                    controller: controller,
+                  ),
+                ),
+
+              Container(
+                padding: const EdgeInsets.fromLTRB(
+                  16,
+                  12,
+                  16,
+                  24,
+                ),
+                color: AppColors.scaffoldBg,
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: step == 3
+                        ? controller.placeOrder
+                        : controller.nextStep,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      step == 3 ? 'Place Order' : 'Continue',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
-        );
-      }),
+            ],
+          );
+        },
+      ),
     );
   }
 
   Widget _buildStep(int step) {
     switch (step) {
       case 0:
-        return AddressStep(controller: controller);
+        return AddressStep(
+          controller: controller,
+        );
 
       case 1:
-        return DeliveryStep(controller: controller);
+        return DeliveryStep(
+          controller: controller,
+        );
 
       case 2:
-        return PaymentStep(controller: controller);
+        return PaymentStep(
+          controller: controller,
+        );
 
       case 3:
-        return _ConfirmStep(controller: controller);
+        return _ConfirmStep(
+          controller: controller,
+        );
 
       default:
         return const SizedBox.shrink();
@@ -255,17 +281,19 @@ class _SummaryCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Container(
-              width: 38,
-              height: 38,
-              decoration: BoxDecoration(
-                color: AppColors.primaryLight,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(
-                icon,
-                color: AppColors.primary,
-                size: 20,
+            RepaintBoundary(
+              child: Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  icon,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
               ),
             ),
 
@@ -319,13 +347,15 @@ class _OrderSummary extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(
           () {
-            const subtotal = CheckoutController.subtotal;
+        const subtotal = CheckoutController.subtotal;
         final deliveryFee = controller.deliveryFee;
-            const discount = CheckoutController.discount;
+        const discount = CheckoutController.discount;
         final total = controller.total;
 
         return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16),
+          margin: const EdgeInsets.symmetric(
+            horizontal: 16,
+          ),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: AppColors.white,
@@ -361,7 +391,9 @@ class _OrderSummary extends StatelessWidget {
               ),
 
               const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
+                padding: EdgeInsets.symmetric(
+                  vertical: 10,
+                ),
                 child: Divider(
                   color: AppColors.border,
                 ),
@@ -413,7 +445,6 @@ class _PriceRow extends StatelessWidget {
             color: AppColors.darkGrey,
           ),
         ),
-
         Text(
           value,
           style: TextStyle(

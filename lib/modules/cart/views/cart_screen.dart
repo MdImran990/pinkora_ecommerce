@@ -17,9 +17,10 @@ class CartScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg,
 
-      // ======================================================
+      // ============================================================
       // APP BAR
-      // ======================================================
+      // ============================================================
+
       appBar: AppBar(
         backgroundColor: AppColors.scaffoldBg,
         elevation: 0,
@@ -75,43 +76,44 @@ class CartScreen extends StatelessWidget {
         ],
       ),
 
-      // ======================================================
+      // ============================================================
       // BODY
-      // ======================================================
+      // ============================================================
+
       body: Obx(
             () {
-          final items = ctrl.cartItems;
-
-          if (items.isEmpty) {
-            return _EmptyCart(
-              onShopNow: () => Get.offAllNamed(
-                AppRoutes.home,
-              ),
-            );
+          if (ctrl.cartItems.isEmpty) {
+            return const _EmptyCart();
           }
 
           return CustomScrollView(
             keyboardDismissBehavior:
             ScrollViewKeyboardDismissBehavior.onDrag,
             physics: const BouncingScrollPhysics(),
-            cacheExtent: 800,
+            cacheExtent: 600,
             slivers: [
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(
+              const SliverPadding(
+                padding: EdgeInsets.fromLTRB(
                   16,
                   16,
                   16,
                   0,
                 ),
+              ),
+
+              // ----------------------------------------------------
+              // CART ITEMS
+              // ----------------------------------------------------
+
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
                         (context, index) {
-                      final item = items[index];
+                      final item = ctrl.cartItems[index];
 
                       return RepaintBoundary(
-                        key: ValueKey(
-                          '${item.product.id}_$index',
-                        ),
+                        key: ValueKey(item.product.id),
                         child: _CartItemCard(
                           item: item,
                           index: index,
@@ -119,7 +121,7 @@ class CartScreen extends StatelessWidget {
                         ),
                       );
                     },
-                    childCount: items.length,
+                    childCount: ctrl.cartItems.length,
                   ),
                 ),
               ),
@@ -128,11 +130,13 @@ class CartScreen extends StatelessWidget {
                 child: SizedBox(height: 8),
               ),
 
-              SliverToBoxAdapter(
+              // ----------------------------------------------------
+              // SUMMARY
+              // ----------------------------------------------------
+
+              const SliverToBoxAdapter(
                 child: RepaintBoundary(
-                  child: _CartSummary(
-                    controller: ctrl,
-                  ),
+                  child: _CartSummary(),
                 ),
               ),
 
@@ -149,16 +153,12 @@ class CartScreen extends StatelessWidget {
   }
 }
 
-// ============================================================
+// ================================================================
 // EMPTY CART
-// ============================================================
+// ================================================================
 
 class _EmptyCart extends StatefulWidget {
-  const _EmptyCart({
-    required this.onShopNow,
-  });
-
-  final VoidCallback onShopNow;
+  const _EmptyCart();
 
   @override
   State<_EmptyCart> createState() => _EmptyCartState();
@@ -178,7 +178,7 @@ class _EmptyCartState extends State<_EmptyCart>
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 450),
     );
 
     final curve = CurvedAnimation(
@@ -215,6 +215,10 @@ class _EmptyCartState extends State<_EmptyCart>
     super.dispose();
   }
 
+  void _shopNow() {
+    Get.offAllNamed(AppRoutes.home);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -227,8 +231,7 @@ class _EmptyCartState extends State<_EmptyCart>
             child: ScaleTransition(
               scale: _scaleAnimation,
               child: Column(
-                mainAxisAlignment:
-                MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   RepaintBoundary(
                     child: Container(
@@ -271,7 +274,7 @@ class _EmptyCartState extends State<_EmptyCart>
                   const SizedBox(height: 28),
 
                   _AnimatedShopButton(
-                    onTap: widget.onShopNow,
+                    onTap: _shopNow,
                   ),
                 ],
               ),
@@ -283,9 +286,9 @@ class _EmptyCartState extends State<_EmptyCart>
   }
 }
 
-// ============================================================
-// EMPTY CART SHOP BUTTON
-// ============================================================
+// ================================================================
+// SHOP NOW BUTTON
+// ================================================================
 
 class _AnimatedShopButton extends StatefulWidget {
   const _AnimatedShopButton({
@@ -299,8 +302,7 @@ class _AnimatedShopButton extends StatefulWidget {
       _AnimatedShopButtonState();
 }
 
-class _AnimatedShopButtonState
-    extends State<_AnimatedShopButton>
+class _AnimatedShopButtonState extends State<_AnimatedShopButton>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
@@ -312,9 +314,8 @@ class _AnimatedShopButtonState
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 90),
-      reverseDuration:
-      const Duration(milliseconds: 130),
+      duration: const Duration(milliseconds: 80),
+      reverseDuration: const Duration(milliseconds: 120),
     );
 
     _scaleAnimation = Tween<double>(
@@ -345,15 +346,7 @@ class _AnimatedShopButtonState
 
   void _tapUp(TapUpDetails details) {
     _controller.reverse();
-
-    Future<void>.delayed(
-      const Duration(milliseconds: 15),
-          () {
-        if (mounted) {
-          widget.onTap();
-        }
-      },
-    );
+    widget.onTap();
   }
 
   @override
@@ -369,8 +362,7 @@ class _AnimatedShopButtonState
           onPressed: null,
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
-            disabledBackgroundColor:
-            AppColors.primary,
+            disabledBackgroundColor: AppColors.primary,
             padding: const EdgeInsets.symmetric(
               horizontal: 34,
               vertical: 14,
@@ -393,9 +385,9 @@ class _AnimatedShopButtonState
   }
 }
 
-// ============================================================
+// ================================================================
 // CART ITEM
-// ============================================================
+// ================================================================
 
 class _CartItemCard extends StatefulWidget {
   const _CartItemCard({
@@ -409,8 +401,7 @@ class _CartItemCard extends StatefulWidget {
   final CartController controller;
 
   @override
-  State<_CartItemCard> createState() =>
-      _CartItemCardState();
+  State<_CartItemCard> createState() => _CartItemCardState();
 }
 
 class _CartItemCardState extends State<_CartItemCard>
@@ -426,7 +417,7 @@ class _CartItemCardState extends State<_CartItemCard>
 
     _entryController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 350),
+      duration: const Duration(milliseconds: 300),
     );
 
     final curve = CurvedAnimation(
@@ -440,18 +431,11 @@ class _CartItemCardState extends State<_CartItemCard>
     ).animate(curve);
 
     _slideAnimation = Tween<Offset>(
-      begin: const Offset(0.03, 0),
+      begin: const Offset(0.025, 0),
       end: Offset.zero,
     ).animate(curve);
 
-    Future<void>.delayed(
-      Duration(milliseconds: 35 * widget.index),
-          () {
-        if (mounted) {
-          _entryController.forward();
-        }
-      },
-    );
+    _entryController.forward();
   }
 
   @override
@@ -477,30 +461,26 @@ class _CartItemCardState extends State<_CartItemCard>
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(
-                  alpha: 0.05,
-                ),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 3),
               ),
             ],
           ),
           child: Row(
-            crossAxisAlignment:
-            CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // ──────────────────────────────────────
-              // CHECKBOX STYLE
-              // ──────────────────────────────────────
+              // --------------------------------------------------
+              // CHECKBOX
+              // --------------------------------------------------
+
               Container(
                 width: 20,
                 height: 20,
-                margin:
-                const EdgeInsets.only(right: 10),
+                margin: const EdgeInsets.only(right: 10),
                 decoration: BoxDecoration(
                   color: AppColors.primary,
-                  borderRadius:
-                  BorderRadius.circular(5),
+                  borderRadius: BorderRadius.circular(5),
                 ),
                 child: const Icon(
                   Icons.check_rounded,
@@ -509,16 +489,16 @@ class _CartItemCardState extends State<_CartItemCard>
                 ),
               ),
 
-              // ──────────────────────────────────────
+              // --------------------------------------------------
               // PRODUCT IMAGE
-              // ──────────────────────────────────────
+              // --------------------------------------------------
+
               Container(
                 width: 70,
                 height: 70,
                 decoration: BoxDecoration(
                   color: AppColors.primaryLight,
-                  borderRadius:
-                  BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(
                   Icons.shopping_bag_outlined,
@@ -529,13 +509,13 @@ class _CartItemCardState extends State<_CartItemCard>
 
               const SizedBox(width: 10),
 
-              // ──────────────────────────────────────
+              // --------------------------------------------------
               // PRODUCT INFO
-              // ──────────────────────────────────────
+              // --------------------------------------------------
+
               Expanded(
                 child: Column(
-                  crossAxisAlignment:
-                  CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
@@ -543,12 +523,10 @@ class _CartItemCardState extends State<_CartItemCard>
                           child: Text(
                             item.product.name,
                             maxLines: 1,
-                            overflow:
-                            TextOverflow.ellipsis,
+                            overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               fontSize: 13,
-                              fontWeight:
-                              FontWeight.w600,
+                              fontWeight: FontWeight.w600,
                               color: AppColors.black,
                             ),
                           ),
@@ -557,18 +535,19 @@ class _CartItemCardState extends State<_CartItemCard>
                         const SizedBox(width: 8),
 
                         GestureDetector(
-                          behavior:
-                          HitTestBehavior.opaque,
+                          behavior: HitTestBehavior.opaque,
                           onTap: () {
-                            widget.controller
-                                .removeItem(
+                            widget.controller.removeItem(
                               widget.index,
                             );
                           },
-                          child: const Icon(
-                            Icons.delete_outline_rounded,
-                            color: AppColors.grey,
-                            size: 18,
+                          child: const Padding(
+                            padding: EdgeInsets.all(2),
+                            child: Icon(
+                              Icons.delete_outline_rounded,
+                              color: AppColors.grey,
+                              size: 18,
+                            ),
                           ),
                         ),
                       ],
@@ -584,8 +563,7 @@ class _CartItemCardState extends State<_CartItemCard>
                           color: AppColors.grey,
                         ),
                       )
-                    else if (
-                    item.selectedColor.isNotEmpty)
+                    else if (item.selectedColor.isNotEmpty)
                       Text(
                         'Color: ${item.selectedColor}',
                         style: const TextStyle(
@@ -602,9 +580,10 @@ class _CartItemCardState extends State<_CartItemCard>
                       children: [
                         Row(
                           children: [
-                            // ─────────────────────
+                            // ------------------------------------
                             // MINUS
-                            // ─────────────────────
+                            // ------------------------------------
+
                             _QuantityButton(
                               icon: Icons.remove,
                               disabled: isMinimum,
@@ -620,21 +599,18 @@ class _CartItemCardState extends State<_CartItemCard>
 
                             Padding(
                               padding:
-                              const EdgeInsets
-                                  .symmetric(
+                              const EdgeInsets.symmetric(
                                 horizontal: 10,
                               ),
                               child: AnimatedSwitcher(
-                                duration:
-                                const Duration(
-                                  milliseconds: 130,
+                                duration: const Duration(
+                                  milliseconds: 120,
                                 ),
                                 transitionBuilder:
                                     (child, animation) {
                                   return ScaleTransition(
                                     scale: animation,
-                                    child:
-                                    FadeTransition(
+                                    child: FadeTransition(
                                       opacity: animation,
                                       child: child,
                                     ),
@@ -642,29 +618,24 @@ class _CartItemCardState extends State<_CartItemCard>
                                 },
                                 child: Text(
                                   '${item.quantity}',
-                                  key: ValueKey(
-                                    item.quantity,
-                                  ),
-                                  style:
-                                  const TextStyle(
+                                  key: ValueKey(item.quantity),
+                                  style: const TextStyle(
                                     fontSize: 14,
-                                    fontWeight:
-                                    FontWeight.w700,
-                                    color:
-                                    AppColors.black,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.black,
                                   ),
                                 ),
                               ),
                             ),
 
-                            // ─────────────────────
+                            // ------------------------------------
                             // PLUS
-                            // ─────────────────────
+                            // ------------------------------------
+
                             _QuantityButton(
                               icon: Icons.add,
                               onTap: () {
-                                widget.controller
-                                    .increaseQty(
+                                widget.controller.increaseQty(
                                   widget.index,
                                 );
                               },
@@ -672,13 +643,13 @@ class _CartItemCardState extends State<_CartItemCard>
                           ],
                         ),
 
-                        // ─────────────────────────
-                        // TOTAL PRICE
-                        // ─────────────────────────
+                        // ----------------------------------------
+                        // TOTAL
+                        // ----------------------------------------
+
                         AnimatedSwitcher(
-                          duration:
-                          const Duration(
-                            milliseconds: 140,
+                          duration: const Duration(
+                            milliseconds: 120,
                           ),
                           transitionBuilder:
                               (child, animation) {
@@ -692,15 +663,11 @@ class _CartItemCardState extends State<_CartItemCard>
                           },
                           child: Text(
                             '৳ ${item.totalPrice.toInt()}',
-                            key: ValueKey(
-                              item.totalPrice,
-                            ),
+                            key: ValueKey(item.totalPrice),
                             style: const TextStyle(
                               fontSize: 14,
-                              fontWeight:
-                              FontWeight.w700,
-                              color:
-                              AppColors.primary,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.primary,
                             ),
                           ),
                         ),
@@ -717,9 +684,9 @@ class _CartItemCardState extends State<_CartItemCard>
   }
 }
 
-// ============================================================
+// ================================================================
 // QUANTITY BUTTON
-// ============================================================
+// ================================================================
 
 class _QuantityButton extends StatefulWidget {
   const _QuantityButton({
@@ -737,8 +704,7 @@ class _QuantityButton extends StatefulWidget {
       _QuantityButtonState();
 }
 
-class _QuantityButtonState
-    extends State<_QuantityButton>
+class _QuantityButtonState extends State<_QuantityButton>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
@@ -751,8 +717,7 @@ class _QuantityButtonState
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 70),
-      reverseDuration:
-      const Duration(milliseconds: 110),
+      reverseDuration: const Duration(milliseconds: 100),
     );
 
     _scaleAnimation = Tween<double>(
@@ -787,15 +752,7 @@ class _QuantityButtonState
     if (widget.disabled) return;
 
     _controller.reverse();
-
-    Future<void>.delayed(
-      const Duration(milliseconds: 10),
-          () {
-        if (mounted) {
-          widget.onTap?.call();
-        }
-      },
-    );
+    widget.onTap?.call();
   }
 
   @override
@@ -816,15 +773,12 @@ class _QuantityButtonState
       child: RepaintBoundary(
         child: ScaleTransition(
           scale: _scaleAnimation,
-          child: AnimatedContainer(
-            duration:
-            const Duration(milliseconds: 100),
+          child: Container(
             width: 27,
             height: 27,
             decoration: BoxDecoration(
               color: backgroundColor,
-              borderRadius:
-              BorderRadius.circular(7),
+              borderRadius: BorderRadius.circular(7),
             ),
             child: Icon(
               widget.icon,
@@ -838,153 +792,151 @@ class _QuantityButtonState
   }
 }
 
-// ============================================================
+// ================================================================
 // CART SUMMARY
-// ============================================================
+// ================================================================
 
 class _CartSummary extends StatelessWidget {
-  const _CartSummary({
-    required this.controller,
-  });
-
-  final CartController controller;
+  const _CartSummary();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: 8),
-      padding: const EdgeInsets.fromLTRB(
-        16,
-        18,
-        16,
-        18,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(24),
-          bottom: Radius.circular(24),
+    final controller = Get.find<CartController>();
+
+    return Obx(
+          () => Container(
+        margin: const EdgeInsets.only(top: 8),
+        padding: const EdgeInsets.fromLTRB(
+          16,
+          18,
+          16,
+          18,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(
-              alpha: 0.06,
-            ),
-            blurRadius: 20,
-            offset: const Offset(0, -4),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(24),
+            bottom: Radius.circular(24),
           ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // ────────────────────────────────────────
-          // COUPON
-          // ────────────────────────────────────────
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller:
-                  controller.couponController,
-                  decoration: InputDecoration(
-                    hintText: 'Apply Coupon Code',
-                    hintStyle: const TextStyle(
-                      color: AppColors.grey,
-                      fontSize: 13,
-                    ),
-                    filled: true,
-                    fillColor: AppColors.white,
-                    contentPadding:
-                    const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 12,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius:
-                      BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: AppColors.border,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 20,
+              offset: const Offset(0, -4),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // ----------------------------------------------------
+            // COUPON
+            // ----------------------------------------------------
+
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: controller.couponController,
+                    textInputAction: TextInputAction.done,
+                    onSubmitted: (_) =>
+                        controller.applyCoupon(),
+                    decoration: InputDecoration(
+                      hintText: 'Apply Coupon Code',
+                      hintStyle: const TextStyle(
+                        color: AppColors.grey,
+                        fontSize: 13,
                       ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius:
-                      BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: AppColors.border,
+                      filled: true,
+                      fillColor: AppColors.white,
+                      contentPadding:
+                      const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
                       ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius:
-                      BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: AppColors.primary,
-                        width: 1.5,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: AppColors.border,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: AppColors.border,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: AppColors.primary,
+                          width: 1.5,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
 
-              const SizedBox(width: 10),
+                const SizedBox(width: 10),
 
-              _AnimatedApplyButton(
-                onTap: controller.applyCoupon,
-              ),
-            ],
-          ),
+                _AnimatedApplyButton(
+                  onTap: controller.applyCoupon,
+                ),
+              ],
+            ),
 
-          const SizedBox(height: 14),
+            const SizedBox(height: 14),
 
-          const Divider(
-            color: AppColors.border,
-          ),
+            const Divider(
+              color: AppColors.border,
+            ),
 
-          const SizedBox(height: 8),
+            const SizedBox(height: 8),
 
-          _PriceRow(
-            label: 'Subtotal',
-            value:
-            '৳ ${controller.subtotal.toInt()}',
-          ),
+            _PriceRow(
+              label: 'Subtotal',
+              value:
+              '৳ ${controller.subtotal.toInt()}',
+            ),
 
-          const SizedBox(height: 7),
+            const SizedBox(height: 7),
 
-          _PriceRow(
-            label: 'Delivery Fee',
-            value:
-            '৳ ${controller.deliveryFee.toInt()}',
-          ),
+            _PriceRow(
+              label: 'Delivery Fee',
+              value:
+              '৳ ${controller.deliveryFee.toInt()}',
+            ),
 
-          const SizedBox(height: 8),
+            const SizedBox(height: 8),
 
-          const Divider(
-            color: AppColors.border,
-          ),
+            const Divider(
+              color: AppColors.border,
+            ),
 
-          const SizedBox(height: 8),
+            const SizedBox(height: 8),
 
-          _PriceRow(
-            label: 'Total',
-            value:
-            '৳ ${controller.total.toInt()}',
-            isBold: true,
-          ),
+            _PriceRow(
+              label: 'Total',
+              value:
+              '৳ ${controller.total.toInt()}',
+              isBold: true,
+            ),
 
-          const SizedBox(height: 14),
+            const SizedBox(height: 14),
 
-          _AnimatedCheckoutButton(
-            onTap: controller.proceedToCheckout,
-          ),
-        ],
+            _AnimatedCheckoutButton(
+              onTap: controller.proceedToCheckout,
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-// ============================================================
+// ================================================================
 // APPLY BUTTON
-// ============================================================
+// ================================================================
 
 class _AnimatedApplyButton extends StatefulWidget {
   const _AnimatedApplyButton({
@@ -1012,8 +964,7 @@ class _AnimatedApplyButtonState
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 80),
-      reverseDuration:
-      const Duration(milliseconds: 120),
+      reverseDuration: const Duration(milliseconds: 110),
     );
 
     _scaleAnimation = Tween<double>(
@@ -1044,15 +995,7 @@ class _AnimatedApplyButtonState
 
   void _tapUp(TapUpDetails details) {
     _controller.reverse();
-
-    Future<void>.delayed(
-      const Duration(milliseconds: 15),
-          () {
-        if (mounted) {
-          widget.onTap();
-        }
-      },
-    );
+    widget.onTap();
   }
 
   @override
@@ -1068,8 +1011,7 @@ class _AnimatedApplyButtonState
           onPressed: null,
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
-            disabledBackgroundColor:
-            AppColors.primary,
+            disabledBackgroundColor: AppColors.primary,
             padding: const EdgeInsets.symmetric(
               horizontal: 18,
               vertical: 14,
@@ -1093,12 +1035,11 @@ class _AnimatedApplyButtonState
   }
 }
 
-// ============================================================
+// ================================================================
 // CHECKOUT BUTTON
-// ============================================================
+// ================================================================
 
-class _AnimatedCheckoutButton
-    extends StatefulWidget {
+class _AnimatedCheckoutButton extends StatefulWidget {
   const _AnimatedCheckoutButton({
     required this.onTap,
   });
@@ -1124,8 +1065,7 @@ class _AnimatedCheckoutButtonState
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 90),
-      reverseDuration:
-      const Duration(milliseconds: 130),
+      reverseDuration: const Duration(milliseconds: 120),
     );
 
     _scaleAnimation = Tween<double>(
@@ -1156,15 +1096,7 @@ class _AnimatedCheckoutButtonState
 
   void _tapUp(TapUpDetails details) {
     _controller.reverse();
-
-    Future<void>.delayed(
-      const Duration(milliseconds: 15),
-          () {
-        if (mounted) {
-          widget.onTap();
-        }
-      },
-    );
+    widget.onTap();
   }
 
   @override
@@ -1183,11 +1115,9 @@ class _AnimatedCheckoutButtonState
             onPressed: null,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
-              disabledBackgroundColor:
-              AppColors.primary,
+              disabledBackgroundColor: AppColors.primary,
               shape: RoundedRectangleBorder(
-                borderRadius:
-                BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(30),
               ),
               elevation: 0,
             ),
@@ -1206,9 +1136,9 @@ class _AnimatedCheckoutButtonState
   }
 }
 
-// ============================================================
+// ================================================================
 // PRICE ROW
-// ============================================================
+// ================================================================
 
 class _PriceRow extends StatelessWidget {
   const _PriceRow({
@@ -1226,8 +1156,7 @@ class _PriceRow extends StatelessWidget {
     final fontSize = isBold ? 16.0 : 14.0;
 
     return Row(
-      mainAxisAlignment:
-      MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           label,

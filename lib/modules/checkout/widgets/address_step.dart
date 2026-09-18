@@ -68,8 +68,7 @@ class AddressStep extends StatelessWidget {
 
                 Expanded(
                   child: Column(
-                    crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
                         'Home',
@@ -97,12 +96,15 @@ class AddressStep extends StatelessWidget {
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () {},
-                  child: const Text(
-                    'Change',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primary,
+                  child: const Padding(
+                    padding: EdgeInsets.all(4),
+                    child: Text(
+                      'Change',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primary,
+                      ),
                     ),
                   ),
                 ),
@@ -114,41 +116,107 @@ class AddressStep extends StatelessWidget {
         const SizedBox(height: 20),
 
         // Add new address button
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
+        _AddAddressButton(
           onTap: () {},
-          child: Container(
-            height: 50,
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: AppColors.border,
-              ),
-            ),
-            child: const Row(
-              mainAxisAlignment:
-              MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.add_rounded,
-                  color: AppColors.primary,
-                  size: 20,
-                ),
-                SizedBox(width: 8),
-                Text(
-                  'Add New Address',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.primary,
-                  ),
-                ),
-              ],
-            ),
-          ),
         ),
       ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// Add Address Button
+// ─────────────────────────────────────────────
+
+class _AddAddressButton extends StatefulWidget {
+  final VoidCallback onTap;
+
+  const _AddAddressButton({
+    required this.onTap,
+  });
+
+  @override
+  State<_AddAddressButton> createState() =>
+      _AddAddressButtonState();
+}
+
+class _AddAddressButtonState extends State<_AddAddressButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 90),
+      lowerBound: 0.0,
+      upperBound: 0.04,
+    );
+  }
+
+  void _pressDown() {
+    _controller.forward();
+  }
+
+  void _pressUp() {
+    _controller.reverse();
+
+    widget.onTap();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: 1 - _controller.value,
+          child: child,
+        );
+      },
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTapDown: (_) => _pressDown(),
+        onTapUp: (_) => _pressUp(),
+        onTapCancel: _controller.reverse,
+        child: Container(
+          height: 50,
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: AppColors.border,
+            ),
+          ),
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.add_rounded,
+                color: AppColors.primary,
+                size: 20,
+              ),
+              SizedBox(width: 8),
+              Text(
+                'Add New Address',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.primary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
