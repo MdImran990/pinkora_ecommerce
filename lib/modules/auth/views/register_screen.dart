@@ -61,145 +61,80 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
       duration: const Duration(milliseconds: 1200),
     );
 
-    _backFade = CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(
-        0.0,
-        0.25,
-        curve: Curves.easeOutCubic,
-      ),
+    _backFade = _interval(0.0, 0.25);
+    _backSlide = _slide(
+      const Offset(-0.08, 0),
+      0.0,
+      0.25,
     );
 
-    _backSlide = Tween<Offset>(
-      begin: const Offset(-0.08, 0),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(
-          0.0,
-          0.25,
-          curve: Curves.easeOutCubic,
-        ),
-      ),
+    _logoFade = _interval(0.08, 0.38);
+    _logoSlide = _slide(
+      const Offset(0, 0.14),
+      0.08,
+      0.38,
     );
 
-    _logoFade = CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(
-        0.08,
-        0.38,
-        curve: Curves.easeOutCubic,
-      ),
+    _titleFade = _interval(0.22, 0.50);
+    _titleSlide = _slide(
+      const Offset(0, 0.10),
+      0.22,
+      0.50,
     );
 
-    _logoSlide = Tween<Offset>(
-      begin: const Offset(0, 0.14),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(
-          0.08,
-          0.38,
-          curve: Curves.easeOutCubic,
-        ),
-      ),
+    _formFade = _interval(0.34, 0.72);
+    _formSlide = _slide(
+      const Offset(0, 0.08),
+      0.34,
+      0.72,
     );
 
-    _titleFade = CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(
-        0.22,
-        0.50,
-        curve: Curves.easeOutCubic,
-      ),
+    _buttonFade = _interval(0.50, 0.82);
+    _buttonSlide = _slide(
+      const Offset(0, 0.07),
+      0.50,
+      0.82,
     );
 
-    _titleSlide = Tween<Offset>(
-      begin: const Offset(0, 0.10),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(
-          0.22,
-          0.50,
-          curve: Curves.easeOutCubic,
-        ),
-      ),
-    );
-
-    _formFade = CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(
-        0.34,
-        0.72,
-        curve: Curves.easeOutCubic,
-      ),
-    );
-
-    _formSlide = Tween<Offset>(
-      begin: const Offset(0, 0.08),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(
-          0.34,
-          0.72,
-          curve: Curves.easeOutCubic,
-        ),
-      ),
-    );
-
-    _buttonFade = CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(
-        0.50,
-        0.82,
-        curve: Curves.easeOutCubic,
-      ),
-    );
-
-    _buttonSlide = Tween<Offset>(
-      begin: const Offset(0, 0.07),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(
-          0.50,
-          0.82,
-          curve: Curves.easeOutCubic,
-        ),
-      ),
-    );
-
-    _bottomFade = CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(
-        0.65,
-        1.0,
-        curve: Curves.easeOutCubic,
-      ),
-    );
-
-    _bottomSlide = Tween<Offset>(
-      begin: const Offset(0, 0.05),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(
-          0.65,
-          1.0,
-          curve: Curves.easeOutCubic,
-        ),
-      ),
+    _bottomFade = _interval(0.65, 1.0);
+    _bottomSlide = _slide(
+      const Offset(0, 0.05),
+      0.65,
+      1.0,
     );
 
     _animationController.forward();
+  }
+
+  Animation<double> _interval(double begin, double end) {
+    return CurvedAnimation(
+      parent: _animationController,
+      curve: Interval(
+        begin,
+        end,
+        curve: Curves.easeOutCubic,
+      ),
+    );
+  }
+
+  Animation<Offset> _slide(
+      Offset begin,
+      double start,
+      double end,
+      ) {
+    return Tween<Offset>(
+      begin: begin,
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(
+          start,
+          end,
+          curve: Curves.easeOutCubic,
+        ),
+      ),
+    );
   }
 
   @override
@@ -222,9 +157,13 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
     );
   }
 
+  void _goToLogin() {
+    Get.offAllNamed(AppRoutes.login);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final controller = widget.controller;
+    final authController = widget.controller;
 
     return Scaffold(
       body: Container(
@@ -241,9 +180,11 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
         child: SafeArea(
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
+            keyboardDismissBehavior:
+            ScrollViewKeyboardDismissBehavior.onDrag,
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Form(
-              key: controller.formKey,
+              key: authController.formKey,
               child: Column(
                 children: [
                   const SizedBox(height: 16),
@@ -254,24 +195,32 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
                     child: _animatedSection(
                       fade: _backFade,
                       slide: _backSlide,
-                      child: GestureDetector(
-                        onTap: () =>
-                            Get.offAllNamed(AppRoutes.login),
-                        child: Container(
-                          width: 42,
-                          height: 42,
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            borderRadius:
-                            BorderRadius.circular(12),
-                            border: Border.all(
-                              color: AppColors.border,
+                      child: RepaintBoundary(
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: _goToLogin,
+                            borderRadius: BorderRadius.circular(12),
+                            splashColor:
+                            AppColors.primary.withValues(alpha: 0.08),
+                            highlightColor:
+                            AppColors.primary.withValues(alpha: 0.04),
+                            child: Ink(
+                              width: 42,
+                              height: 42,
+                              decoration: BoxDecoration(
+                                color: AppColors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: AppColors.border,
+                                ),
+                              ),
+                              child: const Icon(
+                                Icons.arrow_back_ios_new_rounded,
+                                size: 18,
+                                color: AppColors.black,
+                              ),
                             ),
-                          ),
-                          child: const Icon(
-                            Icons.arrow_back_ios_new_rounded,
-                            size: 18,
-                            color: AppColors.black,
                           ),
                         ),
                       ),
@@ -284,27 +233,8 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
                   _animatedSection(
                     fade: _logoFade,
                     slide: _logoSlide,
-                    child: Container(
-                      width: 90,
-                      height: 90,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(24),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primary.withValues(
-                              alpha: 0.3,
-                            ),
-                            blurRadius: 20,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.shopping_bag_rounded,
-                        color: Colors.white,
-                        size: 46,
-                      ),
+                    child: const RepaintBoundary(
+                      child: _RegisterLogo(),
                     ),
                   ),
 
@@ -314,25 +244,27 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
                   _animatedSection(
                     fade: _titleFade,
                     slide: _titleSlide,
-                    child: const Column(
-                      children: [
-                        Text(
-                          'Create Account 🎉',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.black,
+                    child: const RepaintBoundary(
+                      child: Column(
+                        children: [
+                          Text(
+                            'Create Account 🎉',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.black,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Sign up to start shopping',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: AppColors.grey,
+                          SizedBox(height: 8),
+                          Text(
+                            'Sign up to start shopping',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AppColors.grey,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
 
@@ -345,29 +277,30 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
                     child: Column(
                       children: [
                         AuthTextField(
-                          controller: controller.nameController,
+                          controller: authController.nameController,
                           hint: 'Full Name',
-                          prefixIcon:
-                          Icons.person_outline,
-                          validator: (v) =>
-                          v!.isEmpty
-                              ? 'Name required'
-                              : null,
+                          prefixIcon: Icons.person_outline,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Name required';
+                            }
+                            return null;
+                          },
                         ),
 
                         const SizedBox(height: 16),
 
                         AuthTextField(
-                          controller: controller.emailController,
+                          controller: authController.emailController,
                           hint: 'Email or Phone',
-                          prefixIcon:
-                          Icons.email_outlined,
-                          keyboardType:
-                          TextInputType.emailAddress,
-                          validator: (v) =>
-                          v!.isEmpty
-                              ? 'Email required'
-                              : null,
+                          prefixIcon: Icons.email_outlined,
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Email required';
+                            }
+                            return null;
+                          },
                         ),
 
                         const SizedBox(height: 16),
@@ -375,19 +308,20 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
                         Obx(
                               () => AuthTextField(
                             controller:
-                            controller.passwordController,
+                            authController.passwordController,
                             hint: 'Password',
-                            prefixIcon:
-                            Icons.lock_outline,
+                            prefixIcon: Icons.lock_outline,
                             isPassword: true,
-                            isPasswordHidden: controller
-                                .isPasswordHidden.value,
+                            isPasswordHidden:
+                            authController.isPasswordHidden.value,
                             onTogglePassword:
-                            controller.togglePassword,
-                            validator: (v) =>
-                            v!.length < 6
-                                ? 'Min 6 characters'
-                                : null,
+                            authController.togglePassword,
+                            validator: (value) {
+                              if (value == null || value.length < 6) {
+                                return 'Min 6 characters';
+                              }
+                              return null;
+                            },
                           ),
                         ),
                       ],
@@ -401,67 +335,64 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
                     fade: _buttonFade,
                     slide: _buttonSlide,
                     child: Obx(
-                          () => SizedBox(
-                        width: double.infinity,
-                        height: 52,
-                        child: ElevatedButton(
-                          onPressed:
-                          controller.isLoading.value
-                              ? null
-                              : controller.register,
-                          style:
-                          ElevatedButton.styleFrom(
-                            backgroundColor:
-                            AppColors.primary,
-                            disabledBackgroundColor:
-                            AppColors.primary
-                                .withValues(alpha: 0.65),
-                            shape:
-                            RoundedRectangleBorder(
-                              borderRadius:
-                              BorderRadius.circular(30),
+                          () {
+                        final isLoading =
+                            authController.isLoading.value;
+
+                        return SizedBox(
+                          width: double.infinity,
+                          height: 52,
+                          child: ElevatedButton(
+                            onPressed: isLoading
+                                ? null
+                                : authController.register,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              disabledBackgroundColor:
+                              AppColors.primary.withValues(
+                                alpha: 0.65,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                BorderRadius.circular(30),
+                              ),
+                              elevation: 0,
                             ),
-                            elevation: 0,
-                          ),
-                          child: AnimatedSwitcher(
-                            duration: const Duration(
-                              milliseconds: 220,
-                            ),
-                            switchInCurve:
-                            Curves.easeOutCubic,
-                            switchOutCurve:
-                            Curves.easeInCubic,
-                            child:
-                            controller.isLoading.value
-                                ? const SizedBox(
-                              key: ValueKey(
-                                'register_loading',
+                            child: AnimatedSwitcher(
+                              duration: const Duration(
+                                milliseconds: 220,
                               ),
-                              width: 22,
-                              height: 22,
-                              child:
-                              CircularProgressIndicator(
-                                color:
-                                Colors.white,
-                                strokeWidth: 2.5,
-                              ),
-                            )
-                                : const Text(
-                              'Sign Up',
-                              key: ValueKey(
-                                'register_text',
-                              ),
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight:
-                                FontWeight.w600,
-                                color:
-                                Colors.white,
+                              switchInCurve: Curves.easeOutCubic,
+                              switchOutCurve: Curves.easeInCubic,
+                              child: isLoading
+                                  ? const SizedBox(
+                                key: ValueKey(
+                                  'register_loading',
+                                ),
+                                width: 22,
+                                height: 22,
+                                child:
+                                CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2.5,
+                                ),
+                              )
+                                  : const Text(
+                                'Sign Up',
+                                key: ValueKey(
+                                  'register_text',
+                                ),
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight:
+                                  FontWeight.w600,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
                   ),
 
@@ -471,124 +402,7 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
                   _animatedSection(
                     fade: _bottomFade,
                     slide: _bottomSlide,
-                    child: Column(
-                      children: [
-                        const Row(
-                          children: [
-                            Expanded(
-                              child: Divider(
-                                color: AppColors.border,
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                              EdgeInsets.symmetric(
-                                horizontal: 12,
-                              ),
-                              child: Text(
-                                'OR CONTINUE WITH',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: AppColors.grey,
-                                  letterSpacing: 0.8,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Divider(
-                                color: AppColors.border,
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 24),
-
-                        Row(
-                          mainAxisAlignment:
-                          MainAxisAlignment.center,
-                          children: [
-                            SocialLoginButton(
-                              label: 'Google',
-                              icon: const Text(
-                                'G',
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight:
-                                  FontWeight.w700,
-                                  color:
-                                  Color(0xFF4285F4),
-                                ),
-                              ),
-                              onTap: () {},
-                            ),
-
-                            const SizedBox(width: 16),
-
-                            SocialLoginButton(
-                              label: 'Facebook',
-                              icon: const Text(
-                                'f',
-                                style: TextStyle(
-                                  fontSize: 26,
-                                  fontWeight:
-                                  FontWeight.w700,
-                                  color:
-                                  Color(0xFF1877F2),
-                                ),
-                              ),
-                              onTap: () {},
-                            ),
-
-                            const SizedBox(width: 16),
-
-                            SocialLoginButton(
-                              label: 'Apple',
-                              icon: const Icon(
-                                Icons.apple,
-                                size: 28,
-                                color:
-                                AppColors.black,
-                              ),
-                              onTap: () {},
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 28),
-
-                        Row(
-                          mainAxisAlignment:
-                          MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Already have an account? ',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color:
-                                AppColors.darkGrey,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () =>
-                                  Get.offAllNamed(
-                                    AppRoutes.login,
-                                  ),
-                              child: const Text(
-                                'Login',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color:
-                                  AppColors.primary,
-                                  fontWeight:
-                                  FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                    child: const _RegisterBottomSection(),
                   ),
 
                   const SizedBox(height: 32),
@@ -598,6 +412,153 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
           ),
         ),
       ),
+    );
+  }
+}
+
+class _RegisterLogo extends StatelessWidget {
+  const _RegisterLogo();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 90,
+      height: 90,
+      decoration: BoxDecoration(
+        color: AppColors.primary,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: const Icon(
+        Icons.shopping_bag_rounded,
+        color: Colors.white,
+        size: 46,
+      ),
+    );
+  }
+}
+
+class _RegisterBottomSection extends StatelessWidget {
+  const _RegisterBottomSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Row(
+          children: [
+            Expanded(
+              child: Divider(
+                color: AppColors.border,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12),
+              child: Text(
+                'OR CONTINUE WITH',
+                style: TextStyle(
+                  fontSize: 11,
+                  color: AppColors.grey,
+                  letterSpacing: 0.8,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Divider(
+                color: AppColors.border,
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 24),
+
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SocialLoginButton(
+              label: 'Google',
+              icon: const Text(
+                'G',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF4285F4),
+                ),
+              ),
+              onTap: () {},
+            ),
+            const SizedBox(width: 16),
+            SocialLoginButton(
+              label: 'Facebook',
+              icon: const Text(
+                'f',
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF1877F2),
+                ),
+              ),
+              onTap: () {},
+            ),
+            const SizedBox(width: 16),
+            SocialLoginButton(
+              label: 'Apple',
+              icon: const Icon(
+                Icons.apple,
+                size: 28,
+                color: AppColors.black,
+              ),
+              onTap: () {},
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 28),
+
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Already have an account? ',
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColors.darkGrey,
+              ),
+            ),
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => Get.offAllNamed(AppRoutes.login),
+                borderRadius: BorderRadius.circular(6),
+                splashColor: AppColors.primary.withValues(
+                  alpha: 0.08,
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 2,
+                  ),
+                  child: Text(
+                    'Login',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

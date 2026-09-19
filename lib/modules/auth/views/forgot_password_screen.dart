@@ -170,9 +170,13 @@ class _AnimatedForgotPasswordBodyState
     );
   }
 
+  void _goToLogin() {
+    Get.offAllNamed(AppRoutes.login);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final controller = widget.controller;
+    final authController = widget.controller;
 
     return Scaffold(
       body: Container(
@@ -189,9 +193,11 @@ class _AnimatedForgotPasswordBodyState
         child: SafeArea(
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
+            keyboardDismissBehavior:
+            ScrollViewKeyboardDismissBehavior.onDrag,
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Form(
-              key: controller.formKey,
+              key: authController.formKey,
               child: Column(
                 children: [
                   const SizedBox(height: 16),
@@ -202,24 +208,32 @@ class _AnimatedForgotPasswordBodyState
                     child: _animatedSection(
                       fade: _backFade,
                       slide: _backSlide,
-                      child: GestureDetector(
-                        onTap: () =>
-                            Get.offAllNamed(AppRoutes.login),
-                        child: Container(
-                          width: 42,
-                          height: 42,
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            borderRadius:
-                            BorderRadius.circular(12),
-                            border: Border.all(
-                              color: AppColors.border,
+                      child: RepaintBoundary(
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: _goToLogin,
+                            borderRadius: BorderRadius.circular(12),
+                            splashColor:
+                            AppColors.primary.withValues(alpha: 0.08),
+                            highlightColor:
+                            AppColors.primary.withValues(alpha: 0.04),
+                            child: Ink(
+                              width: 42,
+                              height: 42,
+                              decoration: BoxDecoration(
+                                color: AppColors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: AppColors.border,
+                                ),
+                              ),
+                              child: const Icon(
+                                Icons.arrow_back_ios_new_rounded,
+                                size: 18,
+                                color: AppColors.black,
+                              ),
                             ),
-                          ),
-                          child: const Icon(
-                            Icons.arrow_back_ios_new_rounded,
-                            size: 18,
-                            color: AppColors.black,
                           ),
                         ),
                       ),
@@ -232,28 +246,28 @@ class _AnimatedForgotPasswordBodyState
                   _animatedSection(
                     fade: _iconFade,
                     slide: _iconSlide,
-                    child: Container(
-                      width: 90,
-                      height: 90,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius:
-                        BorderRadius.circular(24),
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                            AppColors.primary.withValues(
-                              alpha: 0.3,
+                    child: RepaintBoundary(
+                      child: Container(
+                        width: 90,
+                        height: 90,
+                        decoration: BoxDecoration(
+                          color: AppColors.primary,
+                          borderRadius: BorderRadius.circular(24),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primary.withValues(
+                                alpha: 0.3,
+                              ),
+                              blurRadius: 20,
+                              offset: const Offset(0, 8),
                             ),
-                            blurRadius: 20,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.lock_reset_rounded,
-                        color: Colors.white,
-                        size: 46,
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.lock_reset_rounded,
+                          color: Colors.white,
+                          size: 46,
+                        ),
                       ),
                     ),
                   ),
@@ -264,27 +278,29 @@ class _AnimatedForgotPasswordBodyState
                   _animatedSection(
                     fade: _titleFade,
                     slide: _titleSlide,
-                    child: const Column(
-                      children: [
-                        Text(
-                          'Forgot Password?',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.black,
+                    child: const RepaintBoundary(
+                      child: Column(
+                        children: [
+                          Text(
+                            'Forgot Password?',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.black,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Enter your email or phone to reset your password',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: AppColors.grey,
+                          SizedBox(height: 8),
+                          Text(
+                            'Enter your email or phone to reset your password',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AppColors.grey,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
 
@@ -297,118 +313,112 @@ class _AnimatedForgotPasswordBodyState
                     child: Column(
                       children: [
                         AuthTextField(
-                          controller:
-                          controller.emailController,
+                          controller: authController.emailController,
                           hint: 'Email or Phone',
-                          prefixIcon:
-                          Icons.email_outlined,
-                          keyboardType:
-                          TextInputType.emailAddress,
-                          validator: (v) =>
-                          v!.isEmpty
-                              ? 'Email required'
-                              : null,
+                          prefixIcon: Icons.email_outlined,
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Email required';
+                            }
+                            return null;
+                          },
                         ),
 
                         const SizedBox(height: 24),
 
                         Obx(
-                              () => SizedBox(
-                            width: double.infinity,
-                            height: 52,
-                            child: ElevatedButton(
-                              onPressed:
-                              controller.isLoading.value
-                                  ? null
-                                  : controller
-                                  .forgotPassword,
-                              style:
-                              ElevatedButton.styleFrom(
-                                backgroundColor:
-                                AppColors.primary,
-                                disabledBackgroundColor:
-                                AppColors.primary
-                                    .withValues(
-                                  alpha: 0.65,
+                              () {
+                            final isLoading =
+                                authController.isLoading.value;
+
+                            return SizedBox(
+                              width: double.infinity,
+                              height: 52,
+                              child: ElevatedButton(
+                                onPressed: isLoading
+                                    ? null
+                                    : authController.forgotPassword,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primary,
+                                  disabledBackgroundColor:
+                                  AppColors.primary.withValues(
+                                    alpha: 0.65,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  elevation: 0,
                                 ),
-                                shape:
-                                RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(
-                                    30,
+                                child: AnimatedSwitcher(
+                                  duration: const Duration(
+                                    milliseconds: 220,
                                   ),
-                                ),
-                                elevation: 0,
-                              ),
-                              child: AnimatedSwitcher(
-                                duration:
-                                const Duration(
-                                  milliseconds: 220,
-                                ),
-                                child: controller
-                                    .isLoading.value
-                                    ? const SizedBox(
-                                  key: ValueKey(
-                                    'forgot_loading',
-                                  ),
-                                  width: 22,
-                                  height: 22,
-                                  child:
-                                  CircularProgressIndicator(
-                                    color:
-                                    Colors.white,
-                                    strokeWidth: 2.5,
-                                  ),
-                                )
-                                    : const Text(
-                                  'Reset Password',
-                                  key: ValueKey(
-                                    'forgot_text',
-                                  ),
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight:
-                                    FontWeight.w600,
-                                    color:
-                                    Colors.white,
+                                  child: isLoading
+                                      ? const SizedBox(
+                                    key: ValueKey('forgot_loading'),
+                                    width: 22,
+                                    height: 22,
+                                    child:
+                                    CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2.5,
+                                    ),
+                                  )
+                                      : const Text(
+                                    'Reset Password',
+                                    key: ValueKey('forgot_text'),
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
+                            );
+                          },
                         ),
 
                         const SizedBox(height: 28),
 
-                        Row(
-                          mainAxisAlignment:
-                          MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Remember your password? ',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color:
-                                AppColors.darkGrey,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () =>
-                                  Get.offAllNamed(
-                                    AppRoutes.login,
-                                  ),
-                              child: const Text(
-                                'Login',
+                        RepaintBoundary(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                'Remember your password? ',
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color:
-                                  AppColors.primary,
-                                  fontWeight:
-                                  FontWeight.w700,
+                                  color: AppColors.darkGrey,
                                 ),
                               ),
-                            ),
-                          ],
+                              Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  onTap: _goToLogin,
+                                  borderRadius: BorderRadius.circular(6),
+                                  splashColor: AppColors.primary.withValues(
+                                    alpha: 0.08,
+                                  ),
+                                  child: const Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 4,
+                                      vertical: 2,
+                                    ),
+                                    child: Text(
+                                      'Login',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: AppColors.primary,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

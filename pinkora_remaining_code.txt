@@ -1,0 +1,1573 @@
+﻿
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\main.dart ====================
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+
+import 'app/routes/app_pages.dart';
+import 'app/routes/app_routes.dart';
+import 'app/theme/app_theme.dart';
+import 'modules/cart/controllers/cart_controller.dart';
+import 'modules/wishlist/controllers/wishlist_controller.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await GetStorage.init();
+
+  await SystemChrome.setPreferredOrientations(
+    const [
+      DeviceOrientation.portraitUp,
+    ],
+  );
+
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: Colors.white,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ),
+  );
+
+  runApp(const PinkoraApp());
+}
+
+class PinkoraApp extends StatelessWidget {
+  const PinkoraApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return GetMaterialApp(
+      title: 'Pinkora',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.light,
+
+      initialRoute: AppRoutes.splash,
+      getPages: AppPages.pages,
+
+      defaultTransition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
+
+      initialBinding: AppBinding(),
+
+      scrollBehavior: const MaterialScrollBehavior().copyWith(
+        physics: const BouncingScrollPhysics(),
+      ),
+    );
+  }
+}
+
+class AppBinding extends Bindings {
+  @override
+  void dependencies() {
+    if (!Get.isRegistered<CartController>()) {
+      Get.put<CartController>(
+        CartController(),
+        permanent: true,
+      );
+    }
+
+    if (!Get.isRegistered<WishlistController>()) {
+      Get.put<WishlistController>(
+        WishlistController(),
+        permanent: true,
+      );
+    }
+  }
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\app\routes\app_pages.dart ====================
+
+import 'package:get/get.dart';
+
+import '../../modules/splash/bindings/splash_binding.dart';
+import '../../modules/splash/views/splash_screen.dart';
+
+import '../../modules/auth/bindings/auth_binding.dart';
+import '../../modules/auth/views/login_screen.dart';
+import '../../modules/auth/views/register_screen.dart';
+import '../../modules/auth/views/forgot_password_screen.dart';
+import '../../modules/home/bindings/home_binding.dart';
+import '../../modules/home/views/home_screen.dart';
+
+import '../../modules/category/bindings/category_binding.dart';
+import '../../modules/category/views/category_screen.dart';
+import '../../modules/product/bindings/product_binding.dart';
+import '../../modules/product/views/product_detail_screen.dart';
+import '../../modules/product/views/product_list_screen.dart';
+import '../../modules/cart/bindings/cart_binding.dart';
+import '../../modules/cart/views/cart_screen.dart';
+
+import '../../modules/checkout/bindings/checkout_binding.dart';
+import '../../modules/checkout/views/checkout_screen.dart';
+
+import '../../modules/wishlist/bindings/wishlist_binding.dart';
+import '../../modules/wishlist/views/wishlist_screen.dart';
+
+import '../../modules/profile/bindings/profile_binding.dart';
+import '../../modules/profile/views/profile_screen.dart';
+
+import 'app_routes.dart';
+
+class AppPages {
+  static final pages = [
+    // =========================
+    // SPLASH
+    // =========================
+    GetPage(
+      name: AppRoutes.splash,
+      page: () => const SplashScreen(),
+      binding: SplashBinding(),
+      transition: Transition.fadeIn,
+    ),
+
+    // =========================
+    // LOGIN
+    // =========================
+    GetPage(
+      name: AppRoutes.login,
+      page: () => const LoginScreen(),
+      binding: AuthBinding(),
+      transition: Transition.fadeIn,
+    ),
+
+    // =========================
+    // REGISTER
+    // =========================
+    GetPage(
+      name: AppRoutes.register,
+      page: () => const RegisterScreen(),
+      binding: AuthBinding(),
+      transition: Transition.fadeIn,
+    ),
+
+    // =========================
+    // FORGOT PASSWORD
+    // =========================
+    GetPage(
+      name: AppRoutes.forgotPassword,
+      page: () => const ForgotPasswordScreen(),
+      binding: AuthBinding(),
+      transition: Transition.fadeIn,
+    ),
+
+    // =========================
+    // HOME
+    // =========================
+    GetPage(
+      name: AppRoutes.home,
+      page: () => const HomeScreen(),
+      binding: HomeBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
+    ),
+
+    // =========================
+    // CATEGORY
+    // =========================
+    GetPage(
+      name: AppRoutes.category,
+      page: () => const CategoryScreen(),
+      binding: CategoryBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
+    ),
+
+    // =========================
+    // PRODUCT LIST
+    // =========================
+    GetPage(
+      name: AppRoutes.productList,
+      page: () => const ProductListScreen(),
+      binding: ProductBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
+    ),
+
+    // =========================
+    // PRODUCT DETAIL
+    // =========================
+    GetPage(
+      name: AppRoutes.productDetail,
+      page: () => const ProductDetailScreen(),
+      binding: ProductBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
+    ),
+
+    // =========================
+    // CART
+    // =========================
+    GetPage(
+      name: AppRoutes.cart,
+      page: () => const CartScreen(),
+      binding: CartBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
+    ),
+
+    // =========================
+    // CHECKOUT
+    // =========================
+    GetPage(
+      name: AppRoutes.checkout,
+      page: () => const CheckoutScreen(),
+      binding: CheckoutBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
+    ),
+
+    // =========================
+    // WISHLIST
+    // =========================
+    GetPage(
+      name: AppRoutes.wishlist,
+      page: () => const WishlistScreen(),
+      binding: WishlistBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
+    ),
+
+    // =========================
+    // PROFILE
+    // =========================
+    GetPage(
+      name: AppRoutes.profile,
+      page: () => const ProfileScreen(),
+      binding: ProfileBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
+    ),
+  ];
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\app\routes\app_routes.dart ====================
+
+abstract class AppRoutes {
+  static const splash = '/';
+
+  static const login = '/login';
+  static const register = '/register';
+  static const forgotPassword = '/forgot-password';
+
+  static const home = '/home';
+  static const category = '/category';
+
+  static const productList = '/product-list';
+  static const productDetail = '/product-detail';
+
+  static const cart = '/cart';
+  static const checkout = '/checkout';
+
+  static const wishlist = '/wishlist';
+  static const profile = '/profile';
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\app\theme\app_colors.dart ====================
+
+import 'package:flutter/material.dart';
+
+class AppColors {
+  static const Color primary      = Color(0xFFE91E8C);
+  static const Color primaryDark  = Color(0xFFD81B86);
+  static const Color primaryLight = Color(0xFFFFE4F0);
+  static const Color scaffoldBg   = Color(0xFFFFF0F7);
+
+  static const Color white        = Color(0xFFFFFFFF);
+  static const Color black        = Color(0xFF1A1A1A);
+  static const Color darkGrey     = Color(0xFF4A4A4A);
+  static const Color grey         = Color(0xFF9E9E9E);
+  static const Color lightGrey    = Color(0xFFF5F5F5);
+  static const Color border       = Color(0xFFEEEEEE);
+
+  static const Color star         = Color(0xFFFFC107);
+  static const Color sale         = Color(0xFFFF4444);
+  static const Color success      = Color(0xFF4CAF50);
+  static const Color error        = Color(0xFFE53935);
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\app\theme\app_theme.dart ====================
+
+import 'package:flutter/material.dart';
+import 'app_colors.dart';
+
+class AppTheme {
+  static ThemeData get light => ThemeData(
+    useMaterial3: true,
+    scaffoldBackgroundColor: AppColors.scaffoldBg,
+    primaryColor: AppColors.primary,
+    fontFamily: 'Poppins',
+    colorScheme: const ColorScheme.light(
+      primary: AppColors.primary,
+      secondary: AppColors.primaryLight,
+      surface: AppColors.white,
+    ),
+    textTheme: const TextTheme(
+      displayLarge: TextStyle(
+        fontSize: 28,
+        fontWeight: FontWeight.w700,
+        color: AppColors.black,
+      ),
+      titleLarge: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: AppColors.black,
+      ),
+      titleMedium: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        color: AppColors.black,
+      ),
+      bodyLarge: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        color: AppColors.black,
+      ),
+      bodyMedium: TextStyle(
+        fontSize: 13,
+        fontWeight: FontWeight.w400,
+        color: AppColors.darkGrey,
+      ),
+      labelSmall: TextStyle(
+        fontSize: 11,
+        fontWeight: FontWeight.w400,
+        color: AppColors.grey,
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.white,
+        minimumSize: const Size(double.infinity, 52),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        textStyle: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          fontFamily: 'Poppins',
+        ),
+        elevation: 0,
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: AppColors.white,
+      contentPadding:
+      const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: AppColors.border),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: AppColors.border),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide:
+        const BorderSide(color: AppColors.primary, width: 1.5),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide:
+        const BorderSide(color: AppColors.error, width: 1.5),
+      ),
+      hintStyle: const TextStyle(
+        color: AppColors.grey,
+        fontSize: 14,
+        fontFamily: 'Poppins',
+      ),
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppColors.scaffoldBg,
+      elevation: 0,
+      centerTitle: true,
+      titleTextStyle: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: AppColors.black,
+        fontFamily: 'Poppins',
+      ),
+      iconTheme: IconThemeData(color: AppColors.black),
+    ),
+    checkboxTheme: CheckboxThemeData(
+      fillColor: WidgetStateProperty.resolveWith(
+            (s) => s.contains(WidgetState.selected)
+            ? AppColors.primary
+            : AppColors.white,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4),
+      ),
+    ),
+  );
+}
+
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\data\model\cart_item_model.dart ====================
+
+import 'product_model.dart';
+
+class CartItemModel {
+  final ProductModel product;
+  int quantity;
+  String selectedColor;
+  String selectedSize;
+
+  CartItemModel({
+    required this.product,
+    this.quantity = 1,
+    this.selectedColor = '',
+    this.selectedSize = '',
+  });
+
+  double get totalPrice => product.price * quantity;
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\data\model\category_model.dart ====================
+
+class CategoryModel {
+  final String id;
+  final String name;
+  final String image;
+  final int itemCount;
+
+  CategoryModel({
+    required this.id,
+    required this.name,
+    required this.image,
+    required this.itemCount,
+  });
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\data\model\order_model.dart ====================
+
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\data\model\product_model.dart ====================
+
+class ProductModel {
+  final String id;
+  final String name;
+  final String image;
+  final List<String> images;
+  final double price;
+  final double originalPrice;
+  final int discountPercent;
+  final double rating;
+  final int reviewCount;
+  final String category;
+  final List<String> colors;
+  final List<String> sizes;
+  final bool isFlashSale;
+  final bool isFeatured;
+
+  ProductModel({
+    required this.id,
+    required this.name,
+    required this.image,
+    this.images = const [],
+    required this.price,
+    required this.originalPrice,
+    required this.discountPercent,
+    required this.rating,
+    required this.reviewCount,
+    required this.category,
+    this.colors = const [],
+    this.sizes = const [],
+    this.isFlashSale = false,
+    this.isFeatured = false,
+  });
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\data\model\user_model.dart ====================
+
+class UserModel {
+  final String id;
+  final String name;
+  final String email;
+  final String phone;
+  final String avatar;
+  final String address;
+
+  UserModel({
+    required this.id,
+    required this.name,
+    required this.email,
+    this.phone = '',
+    this.avatar = '',
+    this.address = '',
+  });
+
+  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
+    id: json['id'] ?? '',
+    name: json['name'] ?? '',
+    email: json['email'] ?? '',
+    phone: json['phone'] ?? '',
+    avatar: json['avatar'] ?? '',
+    address: json['address'] ?? '',
+  );
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\data\providers\dio_provider.dart ====================
+
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\data\repositories\auth_repository.dart ====================
+
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\data\repositories\cart_repository.dart ====================
+
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\data\repositories\product_repository.dart ====================
+
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\modules\auth\bindings\auth_binding.dart ====================
+
+import 'package:get/get.dart';
+import '../controllers/auth_controller.dart';
+
+class AuthBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<AuthController>(
+          () => AuthController(),
+      fenix: true,
+    );
+  }
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\modules\auth\controllers\auth_controller.dart ====================
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+
+import '../../../app/routes/app_routes.dart';
+
+class AuthController extends GetxController {
+  final isPasswordHidden = true.obs;
+  final isLoading = false.obs;
+  final rememberMe = false.obs;
+  final formKey = GlobalKey<FormState>();
+
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final nameController = TextEditingController();
+
+  void togglePassword() => isPasswordHidden.toggle();
+
+  void toggleRemember(bool? val) {
+    rememberMe.value = val ?? false;
+  }
+
+  // â”€â”€ LOGIN â”€â”€
+  Future<void> login() async {
+    if (!formKey.currentState!.validate()) return;
+
+    isLoading.value = true;
+
+    await Future.delayed(
+      const Duration(seconds: 2),
+    );
+
+    final box = GetStorage();
+    await box.write('isLoggedIn', true);
+
+    isLoading.value = false;
+
+    Get.offAllNamed(AppRoutes.home);
+  }
+
+  // â”€â”€ REGISTER â”€â”€
+  Future<void> register() async {
+    if (!formKey.currentState!.validate()) return;
+
+    isLoading.value = true;
+
+    await Future.delayed(
+      const Duration(seconds: 2),
+    );
+
+    isLoading.value = false;
+
+    Get.offAllNamed(AppRoutes.login);
+
+    await Future.delayed(
+      const Duration(milliseconds: 500),
+    );
+
+    Get.snackbar(
+      'Account Created! ðŸŽ‰',
+      'Please login with your credentials',
+      backgroundColor: const Color(0xFF4CAF50),
+      colorText: Colors.white,
+      snackPosition: SnackPosition.TOP,
+      borderRadius: 12,
+      margin: const EdgeInsets.all(16),
+      duration: const Duration(seconds: 3),
+    );
+  }
+
+  // â”€â”€ FORGOT PASSWORD â”€â”€
+  Future<void> forgotPassword() async {
+    final email = emailController.text.trim();
+
+    if (email.isEmpty) {
+      Get.snackbar(
+        'Email Required',
+        'Please enter your email or phone number',
+        backgroundColor: const Color(0xFFE91E63),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        borderRadius: 12,
+        margin: const EdgeInsets.all(16),
+        duration: const Duration(seconds: 2),
+      );
+      return;
+    }
+
+    isLoading.value = true;
+
+    // Temporary local delay.
+    // API / OTP / email reset will be connected later.
+    await Future.delayed(
+      const Duration(seconds: 2),
+    );
+
+    isLoading.value = false;
+
+    Get.snackbar(
+      'Reset Link Sent! ðŸ“©',
+      'Please check your email or phone',
+      backgroundColor: const Color(0xFF4CAF50),
+      colorText: Colors.white,
+      snackPosition: SnackPosition.TOP,
+      borderRadius: 12,
+      margin: const EdgeInsets.all(16),
+      duration: const Duration(seconds: 3),
+    );
+  }
+
+  // â”€â”€ NAVIGATION â”€â”€
+  void goToRegister() {
+    Get.toNamed(AppRoutes.register);
+  }
+
+  void goToLogin() {
+    Get.offAllNamed(AppRoutes.login);
+  }
+
+  void goToForgotPassword() {
+    Get.toNamed(AppRoutes.forgotPassword);
+  }
+
+  @override
+  void onClose() {
+    emailController.dispose();
+    passwordController.dispose();
+    nameController.dispose();
+
+    super.onClose();
+  }
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\modules\cart\bindings\cart_binding.dart ====================
+
+import 'package:get/get.dart';
+
+import '../controllers/cart_controller.dart';
+
+class CartBinding extends Bindings {
+  @override
+  void dependencies() {
+    if (!Get.isRegistered<CartController>()) {
+      Get.put<CartController>(
+        CartController(),
+        permanent: true,
+      );
+    }
+  }
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\modules\cart\controllers\cart_controller.dart ====================
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../../../data/model/cart_item_model.dart';
+import '../../../data/model/product_model.dart';
+import '../../../app/theme/app_colors.dart';
+import '../../../app/routes/app_routes.dart';
+
+class CartController extends GetxController {
+  final RxList<CartItemModel> cartItems = <CartItemModel>[].obs;
+  final RxDouble discount = 0.0.obs;
+
+  final TextEditingController couponController =
+  TextEditingController();
+
+  final double deliveryFee = 80.0;
+
+  int get itemCount => cartItems.length;
+
+  double get subtotal {
+    return cartItems.fold(
+      0.0,
+          (sum, item) => sum + item.totalPrice,
+    );
+  }
+
+  double get total {
+    final value = subtotal + deliveryFee - discount.value;
+    return value < 0 ? 0.0 : value;
+  }
+
+  void addToCart(
+      ProductModel product, {
+        String color = '',
+        String size = '',
+        int qty = 1,
+      }) {
+    if (qty <= 0) return;
+
+    final index = cartItems.indexWhere(
+          (item) => item.product.id == product.id,
+    );
+
+    if (index != -1) {
+      final existing = cartItems[index];
+
+      cartItems[index] = CartItemModel(
+        product: existing.product,
+        quantity: existing.quantity + qty,
+        selectedColor: existing.selectedColor,
+        selectedSize: existing.selectedSize,
+      );
+    } else {
+      cartItems.add(
+        CartItemModel(
+          product: product,
+          quantity: qty,
+          selectedColor: color,
+          selectedSize: size,
+        ),
+      );
+    }
+
+    cartItems.refresh();
+  }
+
+  void increaseQty(int index) {
+    if (index < 0 || index >= cartItems.length) return;
+
+    final item = cartItems[index];
+
+    cartItems[index] = CartItemModel(
+      product: item.product,
+      quantity: item.quantity + 1,
+      selectedColor: item.selectedColor,
+      selectedSize: item.selectedSize,
+    );
+
+    cartItems.refresh();
+  }
+
+  void decreaseQty(int index) {
+    if (index < 0 || index >= cartItems.length) return;
+
+    final item = cartItems[index];
+
+    if (item.quantity <= 1) return;
+
+    cartItems[index] = CartItemModel(
+      product: item.product,
+      quantity: item.quantity - 1,
+      selectedColor: item.selectedColor,
+      selectedSize: item.selectedSize,
+    );
+
+    cartItems.refresh();
+  }
+
+  void removeItem(int index) {
+    if (index < 0 || index >= cartItems.length) return;
+
+    cartItems.removeAt(index);
+    cartItems.refresh();
+  }
+
+  void clearCart() {
+    cartItems.clear();
+    discount.value = 0.0;
+    couponController.clear();
+  }
+
+  void applyCoupon() {
+    final code = couponController.text.trim().toUpperCase();
+
+    if (code == 'PINKORA50') {
+      discount.value = 500.0;
+
+      Get.snackbar(
+        'Coupon Applied! ðŸŽ‰',
+        'à§³500 discount added',
+        backgroundColor: AppColors.success,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        borderRadius: 12,
+        margin: const EdgeInsets.all(16),
+        duration: const Duration(seconds: 2),
+      );
+    } else {
+      discount.value = 0.0;
+
+      Get.snackbar(
+        'Invalid Coupon',
+        'Please enter a valid coupon code',
+        backgroundColor: AppColors.sale,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        borderRadius: 12,
+        margin: const EdgeInsets.all(16),
+        duration: const Duration(seconds: 2),
+      );
+    }
+  }
+
+  void proceedToCheckout() {
+    if (cartItems.isEmpty) {
+      Get.snackbar(
+        'Cart is Empty',
+        'Please add a product before checkout',
+        backgroundColor: AppColors.sale,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        borderRadius: 12,
+        margin: const EdgeInsets.all(16),
+      );
+      return;
+    }
+
+    Get.toNamed(AppRoutes.checkout);
+  }
+
+  @override
+  void onClose() {
+    couponController.dispose();
+    super.onClose();
+  }
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\modules\category\bindings\category_binding.dart ====================
+
+import 'package:get/get.dart';
+
+import '../controllers/category_controller.dart';
+
+class CategoryBinding extends Bindings {
+  @override
+  void dependencies() {
+    if (!Get.isRegistered<CategoryController>()) {
+      Get.lazyPut<CategoryController>(
+        CategoryController.new,
+      );
+    }
+  }
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\modules\category\controllers\category_controller.dart ====================
+
+import 'package:get/get.dart';
+
+import '../../../data/model/category_model.dart';
+
+class CategoryController extends GetxController {
+  final RxList<CategoryModel> categories = <CategoryModel>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadCategories();
+  }
+
+  void _loadCategories() {
+    categories.assignAll([
+      CategoryModel(
+        id: '1',
+        name: 'Fashion',
+        image: '',
+        itemCount: 1200,
+      ),
+      CategoryModel(
+        id: '2',
+        name: 'Beauty',
+        image: '',
+        itemCount: 800,
+      ),
+      CategoryModel(
+        id: '3',
+        name: 'Electronics',
+        image: '',
+        itemCount: 1000,
+      ),
+      CategoryModel(
+        id: '4',
+        name: 'Shoes',
+        image: '',
+        itemCount: 900,
+      ),
+      CategoryModel(
+        id: '5',
+        name: 'Watches',
+        image: '',
+        itemCount: 600,
+      ),
+      CategoryModel(
+        id: '6',
+        name: 'Bags',
+        image: '',
+        itemCount: 500,
+      ),
+      CategoryModel(
+        id: '7',
+        name: 'Accessories',
+        image: '',
+        itemCount: 400,
+      ),
+      CategoryModel(
+        id: '8',
+        name: 'Home & Living',
+        image: '',
+        itemCount: 700,
+      ),
+    ]);
+  }
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\modules\checkout\bindings\checkout_binding.dart ====================
+
+import 'package:get/get.dart';
+
+import '../controllers/checkout_controller.dart';
+
+class CheckoutBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<CheckoutController>(
+          () => CheckoutController(),
+    );
+  }
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\modules\checkout\controllers\checkout_controller.dart ====================
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../../../app/routes/app_routes.dart';
+import '../../../app/theme/app_colors.dart';
+
+class CheckoutController extends GetxController {
+  final RxInt currentStep = 0.obs;
+
+  // Address
+  final TextEditingController nameController =
+  TextEditingController();
+
+  final TextEditingController phoneController =
+  TextEditingController();
+
+  final TextEditingController addressController =
+  TextEditingController();
+
+  // Delivery
+  final RxString selectedDelivery = 'standard'.obs;
+
+  static const double standardFee = 80.0;
+  static const double expressFee = 150.0;
+
+  double get deliveryFee {
+    return selectedDelivery.value == 'standard'
+        ? standardFee
+        : expressFee;
+  }
+
+  // Payment
+  final RxString selectedPayment = 'bkash'.obs;
+
+  // Order values
+  static const double subtotal = 9800.0;
+  static const double discount = 500.0;
+
+  double get total {
+    final value = subtotal + deliveryFee - discount;
+    return value < 0 ? 0.0 : value;
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    nameController.text = 'Imran Hossain';
+    phoneController.text = '01700000000';
+    addressController.text =
+    'House 12, Road 5, Dhanmondi, Dhaka, 1205';
+  }
+
+  void nextStep() {
+    final step = currentStep.value;
+
+    if (step >= 3) return;
+
+    currentStep.value = step + 1;
+  }
+
+  void previousStep() {
+    final step = currentStep.value;
+
+    if (step <= 0) return;
+
+    currentStep.value = step - 1;
+  }
+
+  void selectDelivery(String type) {
+    if (selectedDelivery.value == type) return;
+
+    selectedDelivery.value = type;
+  }
+
+  void selectPayment(String method) {
+    if (selectedPayment.value == method) return;
+
+    selectedPayment.value = method;
+  }
+
+  void placeOrder() {
+    Get.offAllNamed(AppRoutes.home);
+
+    Get.snackbar(
+      'Order Placed! ðŸŽ‰',
+      'Your order has been placed successfully',
+      backgroundColor: AppColors.success,
+      colorText: Colors.white,
+      snackPosition: SnackPosition.TOP,
+      borderRadius: 12,
+      margin: const EdgeInsets.all(16),
+      duration: const Duration(seconds: 3),
+    );
+  }
+
+  @override
+  void onClose() {
+    nameController.dispose();
+    phoneController.dispose();
+    addressController.dispose();
+
+    super.onClose();
+  }
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\modules\home\bindings\home_binding.dart ====================
+
+import 'package:get/get.dart';
+import '../controllers/home_controller.dart';
+
+class HomeBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.put<HomeController>(HomeController());
+  }
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\modules\home\controllers\home_controller.dart ====================
+
+import 'package:get/get.dart';
+
+import '../../../data/model/product_model.dart';
+import '../../../data/model/category_model.dart';
+
+class HomeController extends GetxController {
+  final RxInt bannerIndex = 0.obs;
+
+  final List<CategoryModel> categories = <CategoryModel>[];
+  final List<ProductModel> flashSaleProducts = <ProductModel>[];
+
+  @override
+  void onInit() {
+    super.onInit();
+    loadData();
+  }
+
+  void loadData() {
+    categories
+      ..clear()
+      ..addAll([
+        CategoryModel(
+          id: '1',
+          name: 'Fashion',
+          image: '',
+          itemCount: 1200,
+        ),
+        CategoryModel(
+          id: '2',
+          name: 'Beauty',
+          image: '',
+          itemCount: 800,
+        ),
+        CategoryModel(
+          id: '3',
+          name: 'Electronics',
+          image: '',
+          itemCount: 1000,
+        ),
+        CategoryModel(
+          id: '4',
+          name: 'Shoes',
+          image: '',
+          itemCount: 900,
+        ),
+        CategoryModel(
+          id: '5',
+          name: 'Watches',
+          image: '',
+          itemCount: 600,
+        ),
+      ]);
+
+    flashSaleProducts
+      ..clear()
+      ..addAll([
+        ProductModel(
+          id: '1',
+          name: 'Trendy Handbag',
+          image: '',
+          price: 2100,
+          originalPrice: 3000,
+          discountPercent: 30,
+          rating: 4.8,
+          reviewCount: 120,
+          category: 'Fashion',
+          colors: [
+            '#FF6B9D',
+            '#000000',
+            '#D4A574',
+            '#F5E6D3',
+          ],
+          isFlashSale: true,
+        ),
+        ProductModel(
+          id: '2',
+          name: 'Sport Shoes',
+          image: '',
+          price: 3200,
+          originalPrice: 4300,
+          discountPercent: 25,
+          rating: 4.6,
+          reviewCount: 98,
+          category: 'Shoes',
+          isFlashSale: true,
+        ),
+        ProductModel(
+          id: '3',
+          name: 'Smart Watch',
+          image: '',
+          price: 4500,
+          originalPrice: 7500,
+          discountPercent: 40,
+          rating: 4.7,
+          reviewCount: 86,
+          category: 'Watches',
+          isFlashSale: true,
+        ),
+      ]);
+
+    update();
+  }
+
+  void changeBannerIndex(int index) {
+    if (bannerIndex.value == index) {
+      return;
+    }
+
+    bannerIndex.value = index;
+  }
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\modules\product\bindings\product_binding.dart ====================
+
+import 'package:get/get.dart';
+import '../controllers/product_controller.dart';
+
+class ProductBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.put<ProductController>(ProductController());
+  }
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\modules\product\controllers\product_controller.dart ====================
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../../../app/routes/app_routes.dart';
+import '../../../app/theme/app_colors.dart';
+import '../../../data/model/product_model.dart';
+import '../../../modules/cart/controllers/cart_controller.dart';
+import '../../../modules/wishlist/controllers/wishlist_controller.dart';
+class ProductController extends GetxController {
+  final Rxn<ProductModel> product = Rxn<ProductModel>();
+
+  final RxString selectedColor = ''.obs;
+  final RxString selectedSize = ''.obs;
+  final RxInt quantity = 1.obs;
+  final RxInt currentImageIndex = 0.obs;
+  final RxBool isWishlisted = false.obs;
+
+  late final CartController _cartCtrl;
+  late final WishlistController _wishCtrl;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    _cartCtrl = Get.find<CartController>();
+    _wishCtrl = Get.find<WishlistController>();
+
+    _loadProduct();
+  }
+
+  void _loadProduct() {
+    final argument = Get.arguments;
+
+    final loadedProduct = argument is ProductModel
+        ? argument
+        : _fallbackProduct;
+
+    product.value = loadedProduct;
+
+    selectedColor.value = loadedProduct.colors.isNotEmpty
+        ? loadedProduct.colors.first
+        : '';
+
+    selectedSize.value = '';
+    quantity.value = 1;
+    currentImageIndex.value = 0;
+
+    isWishlisted.value =
+        _wishCtrl.isWished(loadedProduct.id);
+  }
+
+  static final ProductModel _fallbackProduct = ProductModel(
+    id: '1',
+    name: 'Trendy Handbag',
+    image: '',
+    price: 2100,
+    originalPrice: 3000,
+    discountPercent: 30,
+    rating: 4.8,
+    reviewCount: 120,
+    category: 'Fashion',
+    colors: [
+      '#FF6B9D',
+      '#000000',
+      '#D4A574',
+      '#F5E6D3',
+    ],
+  );
+
+  void selectColor(String color) {
+    if (selectedColor.value == color) return;
+
+    selectedColor.value = color;
+  }
+
+  void selectSize(String size) {
+    if (selectedSize.value == size) return;
+
+    selectedSize.value = size;
+  }
+
+  void toggleWishlist() {
+    final currentProduct = product.value;
+
+    if (currentProduct == null) return;
+
+    final wished =
+    _wishCtrl.isWished(currentProduct.id);
+
+    if (wished) {
+      _wishCtrl.removeItem(currentProduct);
+      isWishlisted.value = false;
+    } else {
+      _wishCtrl.addItem(currentProduct);
+      isWishlisted.value = true;
+    }
+  }
+
+  void increaseQty() {
+    quantity.value++;
+  }
+
+  void decreaseQty() {
+    if (quantity.value <= 1) return;
+
+    quantity.value--;
+  }
+
+  void changeImage(int index) {
+    if (index < 0) return;
+    if (currentImageIndex.value == index) return;
+
+    currentImageIndex.value = index;
+  }
+
+  void addToCart() {
+    final currentProduct = product.value;
+
+    if (currentProduct == null) return;
+
+    _cartCtrl.addToCart(
+      currentProduct,
+      color: selectedColor.value,
+      size: selectedSize.value,
+      qty: quantity.value,
+    );
+
+    Get.snackbar(
+      'âœ… Added!',
+      '${currentProduct.name} cart à¦ à¦¯à§‹à¦— à¦¹à¦¯à¦¼à§‡à¦›à§‡',
+      backgroundColor: AppColors.primary,
+      colorText: Colors.white,
+      snackPosition: SnackPosition.BOTTOM,
+      borderRadius: 12,
+      margin: const EdgeInsets.all(16),
+      duration: const Duration(milliseconds: 800),
+    );
+  }
+
+  void buyNow() {
+    final currentProduct = product.value;
+
+    if (currentProduct == null) return;
+
+    _cartCtrl.addToCart(
+      currentProduct,
+      color: selectedColor.value,
+      size: selectedSize.value,
+      qty: quantity.value,
+    );
+
+    Get.toNamed(AppRoutes.checkout);
+  }
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\modules\profile\bindings\profile_binding.dart ====================
+
+import 'package:get/get.dart';
+import '../controllers/profile_controller.dart';
+
+class ProfileBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.put<ProfileController>(ProfileController());
+  }
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\modules\profile\controllers\profile_controller.dart ====================
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import '../../../app/routes/app_routes.dart';
+import '../../../app/theme/app_colors.dart';
+import '../../../data/model/user_model.dart';
+
+class ProfileController extends GetxController {
+  final user = Rxn<UserModel>();
+
+  @override
+  void onInit() {
+    super.onInit();
+    loadUser();
+  }
+
+  void loadUser() {
+    user.value = UserModel(
+      id: '1',
+      name: 'Imran Hossain',
+      email: 'imran@gmail.com',
+      phone: '01700000000',
+      address: 'House 12, Road 5, Dhanmondi, Dhaka, 1205',
+    );
+  }
+
+  void logout() {
+    Get.defaultDialog(
+      title: 'Logout',
+      middleText: 'Are you sure you want to logout?',
+      textConfirm: 'Logout',
+      textCancel: 'Cancel',
+      confirmTextColor: Colors.white,
+      buttonColor: AppColors.primary,
+      onConfirm: () {
+        final box = GetStorage();
+        box.write('isLoggedIn', false);
+        Get.offAllNamed(AppRoutes.login);
+      },
+    );
+  }
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\modules\splash\bindings\splash_binding.dart ====================
+
+import 'package:get/get.dart';
+
+class SplashBinding extends Bindings {
+  @override
+  void dependencies() {}
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\modules\splash\controllers\splash_controller.dart ====================
+
+import 'package:get/get.dart';
+
+import '../../../app/routes/app_routes.dart';
+
+class SplashController extends GetxController {
+  bool _isNavigating = false;
+
+  @override
+  void onReady() {
+    super.onReady();
+    _startNavigation();
+  }
+
+  Future<void> _startNavigation() async {
+    if (_isNavigating) return;
+
+    _isNavigating = true;
+
+    await Future.delayed(
+      const Duration(milliseconds: 2200),
+    );
+
+    if (isClosed) return;
+
+    Get.offAllNamed(AppRoutes.login);
+  }
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\modules\wishlist\bindings\wishlist_binding.dart ====================
+
+import 'package:get/get.dart';
+
+class WishlistBinding extends Bindings {
+  @override
+  void dependencies() {}
+}
+
+
+==================== C:\Users\This pc\pinkora_ecommerce\lib\modules\wishlist\controllers\wishlist_controller.dart ====================
+
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'dart:convert';
+import '../../../data/model/product_model.dart';
+
+class WishlistController extends GetxController {
+  final _box = GetStorage();
+  final wishlistItems = <ProductModel>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadFromStorage();
+  }
+
+  void _saveToStorage() {
+    final data = wishlistItems.map((p) => {
+      'id': p.id,
+      'name': p.name,
+      'image': p.image,
+      'price': p.price,
+      'originalPrice': p.originalPrice,
+      'discountPercent': p.discountPercent,
+      'rating': p.rating,
+      'reviewCount': p.reviewCount,
+      'category': p.category,
+    }).toList();
+    _box.write('wishlist_items', jsonEncode(data));
+  }
+
+  void _loadFromStorage() {
+    final raw = _box.read<String>('wishlist_items');
+    if (raw != null && raw.isNotEmpty) {
+      try {
+        final List list = jsonDecode(raw);
+        wishlistItems.value = list.map((e) => ProductModel(
+          id: e['id'],
+          name: e['name'],
+          image: e['image'] ?? '',
+          price: (e['price'] as num).toDouble(),
+          originalPrice: (e['originalPrice'] as num).toDouble(),
+          discountPercent: e['discountPercent'],
+          rating: (e['rating'] as num).toDouble(),
+          reviewCount: e['reviewCount'],
+          category: e['category'],
+        )).toList();
+      } catch (_) {
+        wishlistItems.clear();
+      }
+    }
+  }
+
+  void addItem(ProductModel product) {
+    if (!wishlistItems.any((e) => e.id == product.id)) {
+      wishlistItems.add(product);
+      _saveToStorage();
+    }
+  }
+  void removeItem(ProductModel product) {
+    wishlistItems.removeWhere((e) => e.id == product.id);
+    _saveToStorage();
+  }
+  bool isWished(String id) =>
+      wishlistItems.any((e) => e.id == id);
+
+  bool get isEmpty => wishlistItems.isEmpty;
+}

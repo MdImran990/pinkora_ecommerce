@@ -6,7 +6,7 @@ class CheckoutBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<CheckoutController>(
-          () => CheckoutController(),
+      CheckoutController.new,
     );
   }
 }
