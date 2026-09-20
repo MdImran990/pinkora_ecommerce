@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../controllers/auth_controller.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/social_login_button.dart';
+
+const SystemUiOverlayStyle _authOverlayStyle = SystemUiOverlayStyle(
+  statusBarColor: Colors.transparent,
+  statusBarIconBrightness: Brightness.dark,
+  systemNavigationBarColor: Color(0xFFFFD6EC),
+  systemNavigationBarIconBrightness: Brightness.dark,
+);
 
 class LoginScreen extends GetView<AuthController> {
   const LoginScreen({super.key});
@@ -31,6 +39,10 @@ class _AnimatedLoginBody extends StatefulWidget {
 class _AnimatedLoginBodyState extends State<_AnimatedLoginBody>
     with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
+
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   late final Animation<double> _logoFade;
   late final Animation<Offset> _logoSlide;
@@ -124,6 +136,8 @@ class _AnimatedLoginBodyState extends State<_AnimatedLoginBody>
   @override
   void dispose() {
     _animationController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -146,7 +160,11 @@ class _AnimatedLoginBodyState extends State<_AnimatedLoginBody>
     final authController = widget.controller;
 
     return Scaffold(
-      body: Container(
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: _authOverlayStyle,
+        child: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -164,7 +182,7 @@ class _AnimatedLoginBodyState extends State<_AnimatedLoginBody>
             ScrollViewKeyboardDismissBehavior.onDrag,
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Form(
-              key: authController.formKey,
+              key: _formKey,
               child: Column(
                 children: [
                   const SizedBox(height: 40),
@@ -217,7 +235,7 @@ class _AnimatedLoginBodyState extends State<_AnimatedLoginBody>
                     child: Column(
                       children: [
                         AuthTextField(
-                          controller: authController.emailController,
+                          controller: _emailController,
                           hint: 'Email or Phone',
                           prefixIcon: Icons.email_outlined,
                           keyboardType: TextInputType.emailAddress,
@@ -234,7 +252,7 @@ class _AnimatedLoginBodyState extends State<_AnimatedLoginBody>
                         Obx(
                               () => AuthTextField(
                             controller:
-                            authController.passwordController,
+                            _passwordController,
                             hint: 'Password',
                             prefixIcon: Icons.lock_outline,
                             isPassword: true,
@@ -331,7 +349,11 @@ class _AnimatedLoginBodyState extends State<_AnimatedLoginBody>
                           child: ElevatedButton(
                             onPressed: isLoading
                                 ? null
-                                : authController.login,
+                                : () {
+                                    if (_formKey.currentState!.validate()) {
+                                      authController.login();
+                                    }
+                                  },
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
                               AppColors.primary,
@@ -405,6 +427,7 @@ class _AnimatedLoginBodyState extends State<_AnimatedLoginBody>
               ),
             ),
           ),
+        ),
         ),
       ),
     );

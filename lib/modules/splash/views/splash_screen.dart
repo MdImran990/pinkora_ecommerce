@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 import '../../../app/routes/app_routes.dart';
 import '../../../app/theme/app_colors.dart';
@@ -29,14 +30,18 @@ class _SplashScreenState extends State<SplashScreen>
 
     _navigationTimer = Timer(
       const Duration(milliseconds: 2200),
-      _goToLogin,
+      _goNext,
     );
   }
 
-  void _goToLogin() {
+  void _goNext() {
     if (!mounted) return;
 
-    Get.offAllNamed(AppRoutes.login);
+    final isLoggedIn = GetStorage().read<bool>('isLoggedIn') ?? false;
+
+    Get.offAllNamed(
+      isLoggedIn ? AppRoutes.home : AppRoutes.login,
+    );
   }
 
   @override

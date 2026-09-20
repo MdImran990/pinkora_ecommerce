@@ -4,15 +4,18 @@ import 'package:get_storage/get_storage.dart';
 
 import '../../../app/routes/app_routes.dart';
 
+/// Holds only observable state and actions (no TextEditingController and
+/// no GlobalKey). Each auth screen owns its own text controllers and form
+/// key, so they are disposed together with that screen and can never be
+/// used after disposal.
+///
+/// This controller is registered as permanent (see AuthBinding), so it
+/// lives for the whole app session and is shared by login, register and
+/// forgot-password screens.
 class AuthController extends GetxController {
   final isPasswordHidden = true.obs;
   final isLoading = false.obs;
   final rememberMe = false.obs;
-  final formKey = GlobalKey<FormState>();
-
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final nameController = TextEditingController();
 
   void togglePassword() => isPasswordHidden.toggle();
 
@@ -21,8 +24,9 @@ class AuthController extends GetxController {
   }
 
   // ── LOGIN ──
+  // The screen validates its form before calling this.
   Future<void> login() async {
-    if (!formKey.currentState!.validate()) return;
+    if (isLoading.value) return;
 
     isLoading.value = true;
 
@@ -39,8 +43,9 @@ class AuthController extends GetxController {
   }
 
   // ── REGISTER ──
+  // The screen validates its form before calling this.
   Future<void> register() async {
-    if (!formKey.currentState!.validate()) return;
+    if (isLoading.value) return;
 
     isLoading.value = true;
 
@@ -69,10 +74,12 @@ class AuthController extends GetxController {
   }
 
   // ── FORGOT PASSWORD ──
-  Future<void> forgotPassword() async {
-    final email = emailController.text.trim();
+  Future<void> forgotPassword(String email) async {
+    if (isLoading.value) return;
 
-    if (email.isEmpty) {
+    final value = email.trim();
+
+    if (value.isEmpty) {
       Get.snackbar(
         'Email Required',
         'Please enter your email or phone number',
@@ -119,14 +126,5 @@ class AuthController extends GetxController {
 
   void goToForgotPassword() {
     Get.toNamed(AppRoutes.forgotPassword);
-  }
-
-  @override
-  void onClose() {
-    emailController.dispose();
-    passwordController.dispose();
-    nameController.dispose();
-
-    super.onClose();
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../app/routes/app_routes.dart';
@@ -6,6 +7,13 @@ import '../../../app/theme/app_colors.dart';
 import '../controllers/auth_controller.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/social_login_button.dart';
+
+const SystemUiOverlayStyle _authOverlayStyle = SystemUiOverlayStyle(
+  statusBarColor: Colors.transparent,
+  statusBarIconBrightness: Brightness.dark,
+  systemNavigationBarColor: Color(0xFFFFD6EC),
+  systemNavigationBarIconBrightness: Brightness.dark,
+);
 
 class RegisterScreen extends GetView<AuthController> {
   const RegisterScreen({super.key});
@@ -33,6 +41,11 @@ class _AnimatedRegisterBody extends StatefulWidget {
 class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
     with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
+
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   late final Animation<double> _backFade;
   late final Animation<Offset> _backSlide;
@@ -140,6 +153,9 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
   @override
   void dispose() {
     _animationController.dispose();
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -166,7 +182,11 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
     final authController = widget.controller;
 
     return Scaffold(
-      body: Container(
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: _authOverlayStyle,
+        child: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -184,7 +204,7 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
             ScrollViewKeyboardDismissBehavior.onDrag,
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Form(
-              key: authController.formKey,
+              key: _formKey,
               child: Column(
                 children: [
                   const SizedBox(height: 16),
@@ -277,7 +297,7 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
                     child: Column(
                       children: [
                         AuthTextField(
-                          controller: authController.nameController,
+                          controller: _nameController,
                           hint: 'Full Name',
                           prefixIcon: Icons.person_outline,
                           validator: (value) {
@@ -291,7 +311,7 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
                         const SizedBox(height: 16),
 
                         AuthTextField(
-                          controller: authController.emailController,
+                          controller: _emailController,
                           hint: 'Email or Phone',
                           prefixIcon: Icons.email_outlined,
                           keyboardType: TextInputType.emailAddress,
@@ -308,7 +328,7 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
                         Obx(
                               () => AuthTextField(
                             controller:
-                            authController.passwordController,
+                            _passwordController,
                             hint: 'Password',
                             prefixIcon: Icons.lock_outline,
                             isPassword: true,
@@ -345,7 +365,11 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
                           child: ElevatedButton(
                             onPressed: isLoading
                                 ? null
-                                : authController.register,
+                                : () {
+                                    if (_formKey.currentState!.validate()) {
+                                      authController.register();
+                                    }
+                                  },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primary,
                               disabledBackgroundColor:
@@ -410,6 +434,7 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
               ),
             ),
           ),
+        ),
         ),
       ),
     );

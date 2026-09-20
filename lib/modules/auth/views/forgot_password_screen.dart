@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../app/routes/app_routes.dart';
 import '../../../app/theme/app_colors.dart';
 import '../controllers/auth_controller.dart';
 import '../widgets/auth_text_field.dart';
+
+const SystemUiOverlayStyle _authOverlayStyle = SystemUiOverlayStyle(
+  statusBarColor: Colors.transparent,
+  statusBarIconBrightness: Brightness.dark,
+  systemNavigationBarColor: Color(0xFFFFD6EC),
+  systemNavigationBarIconBrightness: Brightness.dark,
+);
 
 class ForgotPasswordScreen extends GetView<AuthController> {
   const ForgotPasswordScreen({super.key});
@@ -33,6 +41,9 @@ class _AnimatedForgotPasswordBodyState
     extends State<_AnimatedForgotPasswordBody>
     with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
+
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
 
   late final Animation<double> _backFade;
   late final Animation<Offset> _backSlide;
@@ -153,6 +164,7 @@ class _AnimatedForgotPasswordBodyState
   @override
   void dispose() {
     _animationController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
@@ -179,7 +191,11 @@ class _AnimatedForgotPasswordBodyState
     final authController = widget.controller;
 
     return Scaffold(
-      body: Container(
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: _authOverlayStyle,
+        child: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -197,7 +213,7 @@ class _AnimatedForgotPasswordBodyState
             ScrollViewKeyboardDismissBehavior.onDrag,
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Form(
-              key: authController.formKey,
+              key: _formKey,
               child: Column(
                 children: [
                   const SizedBox(height: 16),
@@ -313,7 +329,7 @@ class _AnimatedForgotPasswordBodyState
                     child: Column(
                       children: [
                         AuthTextField(
-                          controller: authController.emailController,
+                          controller: _emailController,
                           hint: 'Email or Phone',
                           prefixIcon: Icons.email_outlined,
                           keyboardType: TextInputType.emailAddress,
@@ -338,7 +354,9 @@ class _AnimatedForgotPasswordBodyState
                               child: ElevatedButton(
                                 onPressed: isLoading
                                     ? null
-                                    : authController.forgotPassword,
+                                    : () => authController.forgotPassword(
+                                        _emailController.text,
+                                      ),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.primary,
                                   disabledBackgroundColor:
@@ -429,6 +447,7 @@ class _AnimatedForgotPasswordBodyState
               ),
             ),
           ),
+        ),
         ),
       ),
     );
