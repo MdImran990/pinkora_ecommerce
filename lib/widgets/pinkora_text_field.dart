@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
+
 import '../app/theme/app_colors.dart';
 
 class PinkoraTextField extends StatelessWidget {
-  final TextEditingController controller;
-  final String hint;
-  final IconData? prefixIcon;
-  final bool isPassword;
-  final String? Function(String?)? validator;
-  final TextInputType keyboardType;
-  final int maxLines;
-
   const PinkoraTextField({
     super.key,
     required this.controller,
@@ -20,6 +13,14 @@ class PinkoraTextField extends StatelessWidget {
     this.keyboardType = TextInputType.text,
     this.maxLines = 1,
   });
+
+  final TextEditingController controller;
+  final String hint;
+  final IconData? prefixIcon;
+  final bool isPassword;
+  final String? Function(String?)? validator;
+  final TextInputType keyboardType;
+  final int maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +37,11 @@ class PinkoraTextField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hint,
         prefixIcon: prefixIcon != null
-            ? Icon(prefixIcon, color: AppColors.grey, size: 20)
+            ? Icon(
+          prefixIcon,
+          color: AppColors.grey,
+          size: 20,
+        )
             : null,
       ),
     );

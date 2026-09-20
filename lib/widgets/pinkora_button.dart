@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
+
 import '../app/theme/app_colors.dart';
 
 class PinkoraButton extends StatelessWidget {
-  final String label;
-  final VoidCallback onTap;
-  final bool isOutlined;
-  final bool isLoading;
-  final double? width;
-
   const PinkoraButton({
     super.key,
     required this.label,
@@ -17,8 +12,16 @@ class PinkoraButton extends StatelessWidget {
     this.width,
   });
 
+  final String label;
+  final VoidCallback onTap;
+  final bool isOutlined;
+  final bool isLoading;
+  final double? width;
+
   @override
   Widget build(BuildContext context) {
+    final buttonChild = _buildChild();
+
     return SizedBox(
       width: width ?? double.infinity,
       height: 52,
@@ -27,12 +30,14 @@ class PinkoraButton extends StatelessWidget {
         onPressed: isLoading ? null : onTap,
         style: OutlinedButton.styleFrom(
           side: const BorderSide(
-              color: AppColors.primary, width: 1.5),
+            color: AppColors.primary,
+            width: 1.5,
+          ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
           ),
         ),
-        child: _child(),
+        child: buttonChild,
       )
           : ElevatedButton(
         onPressed: isLoading ? null : onTap,
@@ -43,12 +48,12 @@ class PinkoraButton extends StatelessWidget {
           ),
           elevation: 0,
         ),
-        child: _child(),
+        child: buttonChild,
       ),
     );
   }
 
-  Widget _child() {
+  Widget _buildChild() {
     if (isLoading) {
       return const SizedBox(
         width: 22,
@@ -59,6 +64,7 @@ class PinkoraButton extends StatelessWidget {
         ),
       );
     }
+
     return Text(
       label,
       style: TextStyle(
