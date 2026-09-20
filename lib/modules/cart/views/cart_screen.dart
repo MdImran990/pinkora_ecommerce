@@ -990,6 +990,9 @@ class _AnimatedApplyButtonState
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
             disabledBackgroundColor: AppColors.primary,
+            // The app theme gives every ElevatedButton an infinite minimum
+            // width. Inside a Row that breaks layout, so reset it here.
+            minimumSize: const Size(0, 48),
             padding: const EdgeInsets.symmetric(
               horizontal: 18,
               vertical: 14,
