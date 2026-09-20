@@ -48,7 +48,8 @@ class CategoryChipRow extends StatelessWidget {
           return GestureDetector(
             key: ValueKey(category.id),
             onTap: () => Get.toNamed(
-              AppRoutes.category,
+              AppRoutes.productList,
+              arguments: category,
             ),
             child: Column(
               children: [

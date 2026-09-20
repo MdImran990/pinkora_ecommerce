@@ -367,7 +367,11 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
                                 ? null
                                 : () {
                                     if (_formKey.currentState!.validate()) {
-                                      authController.register();
+                                      authController.register(
+                                        name: _nameController.text.trim(),
+                                        email: _emailController.text.trim(),
+                                        password: _passwordController.text,
+                                      );
                                     }
                                   },
                             style: ElevatedButton.styleFrom(
@@ -517,7 +521,7 @@ class _RegisterBottomSection extends StatelessWidget {
                   color: Color(0xFF4285F4),
                 ),
               ),
-              onTap: () {},
+              onTap: () => Get.find<AuthController>().socialLogin('Google'),
             ),
             const SizedBox(width: 16),
             SocialLoginButton(
@@ -530,7 +534,7 @@ class _RegisterBottomSection extends StatelessWidget {
                   color: Color(0xFF1877F2),
                 ),
               ),
-              onTap: () {},
+              onTap: () => Get.find<AuthController>().socialLogin('Facebook'),
             ),
             const SizedBox(width: 16),
             SocialLoginButton(
@@ -540,7 +544,7 @@ class _RegisterBottomSection extends StatelessWidget {
                 size: 28,
                 color: AppColors.black,
               ),
-              onTap: () {},
+              onTap: () => Get.find<AuthController>().socialLogin('Apple'),
             ),
           ],
         ),

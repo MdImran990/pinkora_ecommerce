@@ -127,7 +127,7 @@ class ProductController extends GetxController {
 
     Get.snackbar(
       '✅ Added!',
-      '${currentProduct.name} cart এ যোগ হয়েছে',
+      '${currentProduct.name} added to your cart',
       backgroundColor: AppColors.primary,
       colorText: Colors.white,
       snackPosition: SnackPosition.BOTTOM,
@@ -147,6 +147,13 @@ class ProductController extends GetxController {
       color: selectedColor.value,
       size: selectedSize.value,
       qty: quantity.value,
+    );
+
+    // Only this product goes to checkout (not the rest of the cart).
+    _cartCtrl.selectOnly(
+      currentProduct.id,
+      selectedColor.value,
+      selectedSize.value,
     );
 
     Get.toNamed(AppRoutes.checkout);

@@ -48,7 +48,9 @@ class ProfileScreen extends GetView<ProfileController> {
 
                 return _AnimatedProfileHeader(
                   name: user?.name ?? 'User',
-                  email: user?.email ?? '',
+                  email: (user == null || user.email.isNotEmpty)
+                      ? (user?.email ?? '')
+                      : user.phone,
                 );
               },
             ),
@@ -79,7 +81,7 @@ class ProfileScreen extends GetView<ProfileController> {
                     ProfileMenuTile(
                       icon: Icons.shopping_bag_outlined,
                       title: 'My Orders',
-                      onTap: () {},
+                      onTap: () => Get.toNamed(AppRoutes.orders),
                       iconColor: AppColors.primary,
                       iconBgColor:
                       AppColors.primaryLight,
@@ -100,7 +102,7 @@ class ProfileScreen extends GetView<ProfileController> {
                     ProfileMenuTile(
                       icon: Icons.location_on_outlined,
                       title: 'My Address',
-                      onTap: () {},
+                      onTap: () => Get.toNamed(AppRoutes.addresses),
                       iconColor:
                       const Color(0xFF3D5AFE),
                       iconBgColor:
@@ -110,7 +112,7 @@ class ProfileScreen extends GetView<ProfileController> {
                     ProfileMenuTile(
                       icon: Icons.credit_card_outlined,
                       title: 'Payment Methods',
-                      onTap: () {},
+                      onTap: () => Get.toNamed(AppRoutes.paymentMethods),
                       iconColor:
                       const Color(0xFF4CAF50),
                       iconBgColor:
@@ -120,7 +122,7 @@ class ProfileScreen extends GetView<ProfileController> {
                     ProfileMenuTile(
                       icon: Icons.notifications_outlined,
                       title: 'Notifications',
-                      onTap: () {},
+                      onTap: () => Get.toNamed(AppRoutes.notifications),
                       iconColor:
                       const Color(0xFFFF9800),
                       iconBgColor:
@@ -130,7 +132,7 @@ class ProfileScreen extends GetView<ProfileController> {
                     ProfileMenuTile(
                       icon: Icons.help_outline_rounded,
                       title: 'Help & Support',
-                      onTap: () {},
+                      onTap: () => Get.toNamed(AppRoutes.help),
                       iconColor:
                       const Color(0xFF9C27B0),
                       iconBgColor:
@@ -140,7 +142,7 @@ class ProfileScreen extends GetView<ProfileController> {
                     ProfileMenuTile(
                       icon: Icons.settings_outlined,
                       title: 'Settings',
-                      onTap: () {},
+                      onTap: () => Get.toNamed(AppRoutes.settings),
                       isLast: true,
                     ),
                   ],
@@ -228,6 +230,8 @@ class _SettingsButtonState extends State<_SettingsButton>
 
   void _tapUp(TapUpDetails details) {
     _controller.reverse();
+
+    Get.toNamed(AppRoutes.settings);
   }
 
   @override

@@ -1,33 +1,88 @@
-import 'package:flutter/material.dart';
+import 'dart:math' as math;
+
 import 'package:get/get.dart';
 
+import '../../../app/routes/app_routes.dart';
 import '../../../data/model/cart_item_model.dart';
 import '../../../data/model/product_model.dart';
-import '../../../app/theme/app_colors.dart';
-import '../../../app/routes/app_routes.dart';
+import '../../../data/repositories/cart_repository.dart';
+import '../../../widgets/custom_snackbar.dart';
 
 class CartController extends GetxController {
+  final CartRepository _repo = Get.find<CartRepository>();
+
   final RxList<CartItemModel> cartItems = <CartItemModel>[].obs;
-  final RxDouble discount = 0.0.obs;
 
-  final TextEditingController couponController =
-  TextEditingController();
+  /// Applied coupon code ('' = none).
+  final RxString couponCode = ''.obs;
 
-  final double deliveryFee = 80.0;
+  static const double standardDeliveryFee = 80.0;
+
+  // Demo coupons (real validation comes with the backend).
+  static const Map<String, double> _fixedCoupons = {
+    'PINKORA50': 500.0,
+  };
+
+  static const Map<String, double> _percentCoupons = {
+    'WELCOME10': 10.0,
+  };
+
+  @override
+  void onInit() {
+    super.onInit();
+    cartItems.assignAll(_repo.load());
+  }
+
+  // ── Totals (only checked items count) ──
 
   int get itemCount => cartItems.length;
 
+  List<CartItemModel> get selectedItems {
+    return cartItems.where((item) => item.isSelected).toList();
+  }
+
+  bool get hasSelection => cartItems.any((item) => item.isSelected);
+
+  bool get isAllSelected {
+    return cartItems.isNotEmpty &&
+        cartItems.every((item) => item.isSelected);
+  }
+
   double get subtotal {
-    return cartItems.fold(
-      0.0,
-          (sum, item) => sum + item.totalPrice,
-    );
+    double sum = 0.0;
+
+    for (final item in cartItems) {
+      if (item.isSelected) sum += item.totalPrice;
+    }
+
+    return sum;
+  }
+
+  double get deliveryFee => hasSelection ? standardDeliveryFee : 0.0;
+
+  double get discountAmount {
+    final code = couponCode.value;
+    final sub = subtotal;
+
+    if (code.isEmpty || sub <= 0) return 0.0;
+
+    final fixed = _fixedCoupons[code];
+
+    if (fixed != null) return math.min(fixed, sub);
+
+    final percent = _percentCoupons[code];
+
+    if (percent != null) return (sub * percent / 100).roundToDouble();
+
+    return 0.0;
   }
 
   double get total {
-    final value = subtotal + deliveryFee - discount.value;
+    final value = subtotal + deliveryFee - discountAmount;
     return value < 0 ? 0.0 : value;
   }
+
+  // ── Items ──
 
   void addToCart(
       ProductModel product, {
@@ -37,18 +92,14 @@ class CartController extends GetxController {
       }) {
     if (qty <= 0) return;
 
-    final index = cartItems.indexWhere(
-          (item) => item.product.id == product.id,
-    );
+    final key = CartItemModel.keyOf(product.id, color, size);
+    final index = cartItems.indexWhere((item) => item.key == key);
 
     if (index != -1) {
       final existing = cartItems[index];
 
-      cartItems[index] = CartItemModel(
-        product: existing.product,
+      cartItems[index] = existing.copyWith(
         quantity: existing.quantity + qty,
-        selectedColor: existing.selectedColor,
-        selectedSize: existing.selectedSize,
       );
     } else {
       cartItems.add(
@@ -61,7 +112,7 @@ class CartController extends GetxController {
       );
     }
 
-    cartItems.refresh();
+    _persist();
   }
 
   void increaseQty(int index) {
@@ -69,14 +120,9 @@ class CartController extends GetxController {
 
     final item = cartItems[index];
 
-    cartItems[index] = CartItemModel(
-      product: item.product,
-      quantity: item.quantity + 1,
-      selectedColor: item.selectedColor,
-      selectedSize: item.selectedSize,
-    );
+    cartItems[index] = item.copyWith(quantity: item.quantity + 1);
 
-    cartItems.refresh();
+    _persist();
   }
 
   void decreaseQty(int index) {
@@ -86,71 +132,126 @@ class CartController extends GetxController {
 
     if (item.quantity <= 1) return;
 
-    cartItems[index] = CartItemModel(
-      product: item.product,
-      quantity: item.quantity - 1,
-      selectedColor: item.selectedColor,
-      selectedSize: item.selectedSize,
-    );
+    cartItems[index] = item.copyWith(quantity: item.quantity - 1);
 
-    cartItems.refresh();
+    _persist();
   }
 
   void removeItem(int index) {
     if (index < 0 || index >= cartItems.length) return;
 
     cartItems.removeAt(index);
-    cartItems.refresh();
+
+    _persist();
+  }
+
+  void toggleSelect(int index) {
+    if (index < 0 || index >= cartItems.length) return;
+
+    final item = cartItems[index];
+
+    cartItems[index] = item.copyWith(isSelected: !item.isSelected);
+
+    _persist();
+  }
+
+  /// Used by "Buy Now": only this product goes to checkout.
+  void selectOnly(String productId, String color, String size) {
+    final key = CartItemModel.keyOf(productId, color, size);
+
+    cartItems.assignAll(
+      cartItems
+          .map((item) => item.copyWith(isSelected: item.key == key))
+          .toList(),
+    );
+
+    _persist();
+  }
+
+  /// Removes the ordered (checked) items and resets the coupon.
+  void removeSelected() {
+    cartItems.removeWhere((item) => item.isSelected);
+    couponCode.value = '';
+
+    _persist();
   }
 
   void clearCart() {
     cartItems.clear();
-    discount.value = 0.0;
-    couponController.clear();
+    couponCode.value = '';
+
+    _persist();
   }
 
-  void applyCoupon() {
-    final code = couponController.text.trim().toUpperCase();
+  // ── Coupon ──
 
-    if (code == 'PINKORA50') {
-      discount.value = 500.0;
+  bool applyCoupon(String raw) {
+    final code = raw.trim().toUpperCase();
 
-      Get.snackbar(
-        'Coupon Applied! 🎉',
-        '৳500 discount added',
-        backgroundColor: AppColors.success,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-        borderRadius: 12,
-        margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 2),
+    if (code.isEmpty) {
+      CustomSnackbar.error(
+        'Coupon Required',
+        'Please enter a coupon code',
       );
-    } else {
-      discount.value = 0.0;
-
-      Get.snackbar(
-        'Invalid Coupon',
-        'Please enter a valid coupon code',
-        backgroundColor: AppColors.sale,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-        borderRadius: 12,
-        margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 2),
-      );
+      return false;
     }
+
+    if (!hasSelection) {
+      CustomSnackbar.error(
+        'No Items Selected',
+        'Select at least one item to use a coupon',
+      );
+      return false;
+    }
+
+    if (_fixedCoupons.containsKey(code)) {
+      couponCode.value = code;
+
+      CustomSnackbar.success(
+        'Coupon Applied! 🎉',
+        '৳${_fixedCoupons[code]!.toInt()} discount added',
+      );
+      return true;
+    }
+
+    if (_percentCoupons.containsKey(code)) {
+      couponCode.value = code;
+
+      CustomSnackbar.success(
+        'Coupon Applied! 🎉',
+        '${_percentCoupons[code]!.toInt()}% discount added',
+      );
+      return true;
+    }
+
+    couponCode.value = '';
+
+    CustomSnackbar.error(
+      'Invalid Coupon',
+      'Please enter a valid coupon code',
+    );
+    return false;
   }
+
+  void removeCoupon() {
+    couponCode.value = '';
+  }
+
+  // ── Checkout ──
 
   void proceedToCheckout() {
     if (cartItems.isEmpty) {
-      Get.snackbar(
+      CustomSnackbar.error(
         'Cart is Empty',
         'Please add a product before checkout',
-        backgroundColor: AppColors.sale,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-        borderRadius: 12,
-        margin: const EdgeInsets.all(16),
+      );
+      return;
+    }
+
+    if (!hasSelection) {
+      CustomSnackbar.error(
+        'No Items Selected',
+        'Please select at least one item',
       );
       return;
     }
@@ -158,9 +259,7 @@ class CartController extends GetxController {
     Get.toNamed(AppRoutes.checkout);
   }
 
-  @override
-  void onClose() {
-    couponController.dispose();
-    super.onClose();
+  void _persist() {
+    _repo.save(cartItems.toList());
   }
 }

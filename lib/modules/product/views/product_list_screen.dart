@@ -3,67 +3,94 @@ import 'package:get/get.dart';
 
 import '../../../app/routes/app_routes.dart';
 import '../../../app/theme/app_colors.dart';
+import '../../../data/model/category_model.dart';
 import '../../../data/model/product_model.dart';
+import '../../../data/repositories/product_repository.dart';
 import '../../../modules/cart/controllers/cart_controller.dart';
 import '../../../modules/wishlist/controllers/wishlist_controller.dart';
 import '../../../widgets/bottom_nav_bar.dart';
+import '../../../widgets/empty_state.dart';
 
-class ProductListScreen extends StatelessWidget {
+/// Product grid. Accepts optional Get.arguments:
+///  - CategoryModel                 -> only that category
+///  - {'flashSale': true}           -> flash sale products
+///  - {'focusSearch': true}         -> opens with the search field focused
+class ProductListScreen extends StatefulWidget {
   const ProductListScreen({super.key});
 
-  static final List<ProductModel> products = [
-    ProductModel(
-      id: '1',
-      name: 'Trendy Handbag',
-      image: '',
-      price: 2100,
-      originalPrice: 3000,
-      discountPercent: 30,
-      rating: 4.8,
-      reviewCount: 120,
-      category: 'Fashion',
-      colors: ['#FF6B9D', '#000000'],
-    ),
-    ProductModel(
-      id: '2',
-      name: 'Sport Shoes',
-      image: '',
-      price: 3200,
-      originalPrice: 4300,
-      discountPercent: 25,
-      rating: 4.6,
-      reviewCount: 98,
-      category: 'Shoes',
-    ),
-    ProductModel(
-      id: '3',
-      name: 'Smart Watch',
-      image: '',
-      price: 4500,
-      originalPrice: 7500,
-      discountPercent: 40,
-      rating: 4.7,
-      reviewCount: 86,
-      category: 'Watches',
-    ),
-    ProductModel(
-      id: '4',
-      name: 'Lipstick Set',
-      image: '',
-      price: 850,
-      originalPrice: 1200,
-      discountPercent: 29,
-      rating: 4.5,
-      reviewCount: 210,
-      category: 'Beauty',
-    ),
-  ];
+  @override
+  State<ProductListScreen> createState() =>
+      _ProductListScreenState();
+}
+
+class _ProductListScreenState extends State<ProductListScreen> {
+  final ProductRepository _repo = Get.find<ProductRepository>();
+  final CartController _cartCtrl = Get.find<CartController>();
+  final WishlistController _wishCtrl = Get.find<WishlistController>();
+
+  final TextEditingController _searchController =
+  TextEditingController();
+  final FocusNode _searchFocus = FocusNode();
+
+  List<ProductModel> _products = [];
+
+  String _title = 'All Products';
+  String? _category;
+  bool _flashSaleOnly = false;
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    var focusSearch = false;
+    final argument = Get.arguments;
+
+    if (argument is CategoryModel) {
+      _category = argument.name;
+      _title = argument.name;
+    } else if (argument is Map) {
+      if (argument['flashSale'] == true) {
+        _flashSaleOnly = true;
+        _title = 'Flash Sale';
+      }
+
+      focusSearch = argument['focusSearch'] == true;
+    }
+
+    _load();
+
+    if (focusSearch) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _searchFocus.requestFocus();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _searchFocus.dispose();
+    super.dispose();
+  }
+
+  Future<void> _load() async {
+    final result = await _repo.getProducts(
+      category: _category,
+      flashSaleOnly: _flashSaleOnly,
+      query: _searchController.text,
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      _products = result;
+      _loading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final cartCtrl = Get.find<CartController>();
-    final wishCtrl = Get.find<WishlistController>();
-
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg,
       appBar: AppBar(
@@ -88,49 +115,106 @@ class ProductListScreen extends StatelessWidget {
             ),
           ),
         ),
-        title: const Text(
-          'All Products',
-          style: TextStyle(
+        title: Text(
+          _title,
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: AppColors.black,
           ),
         ),
       ),
-      body: GridView.builder(
-        padding: const EdgeInsets.fromLTRB(
-          16,
-          8,
-          16,
-          16,
-        ),
-        physics: const BouncingScrollPhysics(),
-        cacheExtent: 700,
-        keyboardDismissBehavior:
-        ScrollViewKeyboardDismissBehavior.onDrag,
-        gridDelegate:
-        const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 14,
-          mainAxisSpacing: 14,
-          childAspectRatio: 0.78,
-        ),
-        itemCount: products.length,
-        itemBuilder: (context, index) {
-          final product = products[index];
-
-          return RepaintBoundary(
-            key: ValueKey(product.id),
-            child: _ProductGridCard(
-              product: product,
-              cartCtrl: cartCtrl,
-              wishCtrl: wishCtrl,
-              index: index,
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+            child: TextField(
+              controller: _searchController,
+              focusNode: _searchFocus,
+              textInputAction: TextInputAction.search,
+              onChanged: (_) => _load(),
+              decoration: InputDecoration(
+                hintText: 'Search products...',
+                prefixIcon: const Icon(
+                  Icons.search_rounded,
+                  color: AppColors.grey,
+                ),
+                suffixIcon: _searchController.text.isEmpty
+                    ? null
+                    : IconButton(
+                  icon: const Icon(
+                    Icons.close_rounded,
+                    size: 18,
+                    color: AppColors.grey,
+                  ),
+                  onPressed: () {
+                    _searchController.clear();
+                    _load();
+                  },
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+              ),
             ),
-          );
-        },
+          ),
+          Expanded(child: _buildBody()),
+        ],
       ),
       bottomNavigationBar: const PinkoraBottomNav(),
+    );
+  }
+
+  Widget _buildBody() {
+    if (_loading) {
+      return const Center(
+        child: CircularProgressIndicator(
+          color: AppColors.primary,
+        ),
+      );
+    }
+
+    if (_products.isEmpty) {
+      return const EmptyState(
+        icon: Icons.search_off_rounded,
+        title: 'No products found',
+        message: 'Try a different search or category.',
+      );
+    }
+
+    return GridView.builder(
+      padding: const EdgeInsets.fromLTRB(
+        16,
+        8,
+        16,
+        16,
+      ),
+      physics: const BouncingScrollPhysics(),
+      cacheExtent: 700,
+      keyboardDismissBehavior:
+      ScrollViewKeyboardDismissBehavior.onDrag,
+      gridDelegate:
+      const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 14,
+        mainAxisSpacing: 14,
+        childAspectRatio: 0.78,
+      ),
+      itemCount: _products.length,
+      itemBuilder: (context, index) {
+        final product = _products[index];
+
+        return RepaintBoundary(
+          key: ValueKey(product.id),
+          child: _ProductGridCard(
+            product: product,
+            cartCtrl: _cartCtrl,
+            wishCtrl: _wishCtrl,
+            index: index,
+          ),
+        );
+      },
     );
   }
 }

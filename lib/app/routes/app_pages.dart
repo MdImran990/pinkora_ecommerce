@@ -27,6 +27,20 @@ import '../../modules/wishlist/views/wishlist_screen.dart';
 import '../../modules/profile/bindings/profile_binding.dart';
 import '../../modules/profile/views/profile_screen.dart';
 
+import '../../modules/orders/views/orders_screen.dart';
+import '../../modules/orders/views/order_detail_screen.dart';
+import '../../modules/orders/views/order_success_screen.dart';
+
+import '../../modules/address/views/address_screen.dart';
+import '../../modules/address/views/address_form_screen.dart';
+
+import '../../modules/payment/views/payment_methods_screen.dart';
+import '../../modules/notifications/views/notifications_screen.dart';
+import '../../modules/help/views/help_screen.dart';
+
+import '../../modules/settings/views/settings_screen.dart';
+import '../../modules/settings/views/edit_profile_screen.dart';
+
 import 'app_routes.dart';
 
 class AppPages {
@@ -99,7 +113,6 @@ class AppPages {
     GetPage(
       name: AppRoutes.productList,
       page: () => const ProductListScreen(),
-      binding: ProductBinding(),
       transition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 180),
     ),
@@ -155,6 +168,106 @@ class AppPages {
       name: AppRoutes.profile,
       page: () => const ProfileScreen(),
       binding: ProfileBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
+    ),
+
+    // =========================
+    // ORDERS
+    // =========================
+    GetPage(
+      name: AppRoutes.orders,
+      page: () => const OrdersScreen(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
+    ),
+
+    // =========================
+    // ORDER DETAIL
+    // =========================
+    GetPage(
+      name: AppRoutes.orderDetail,
+      page: () => const OrderDetailScreen(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
+    ),
+
+    // =========================
+    // ORDER SUCCESS
+    // =========================
+    GetPage(
+      name: AppRoutes.orderSuccess,
+      page: () => const OrderSuccessScreen(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
+    ),
+
+    // =========================
+    // ADDRESSES
+    // =========================
+    GetPage(
+      name: AppRoutes.addresses,
+      page: () => const AddressScreen(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
+    ),
+
+    // =========================
+    // ADDRESS FORM
+    // =========================
+    GetPage(
+      name: AppRoutes.addressForm,
+      page: () => const AddressFormScreen(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
+    ),
+
+    // =========================
+    // PAYMENT METHODS
+    // =========================
+    GetPage(
+      name: AppRoutes.paymentMethods,
+      page: () => const PaymentMethodsScreen(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
+    ),
+
+    // =========================
+    // NOTIFICATIONS
+    // =========================
+    GetPage(
+      name: AppRoutes.notifications,
+      page: () => const NotificationsScreen(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
+    ),
+
+    // =========================
+    // HELP & SUPPORT
+    // =========================
+    GetPage(
+      name: AppRoutes.help,
+      page: () => const HelpScreen(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
+    ),
+
+    // =========================
+    // SETTINGS
+    // =========================
+    GetPage(
+      name: AppRoutes.settings,
+      page: () => const SettingsScreen(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 180),
+    ),
+
+    // =========================
+    // EDIT PROFILE
+    // =========================
+    GetPage(
+      name: AppRoutes.editProfile,
+      page: () => const EditProfileScreen(),
       transition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 180),
     ),

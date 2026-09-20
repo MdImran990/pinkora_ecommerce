@@ -20,7 +20,7 @@ class CheckoutScreen extends GetView<CheckoutController> {
         elevation: 0,
         leading: GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: Get.back,
+          onTap: controller.handleBack,
           child: Container(
             margin: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -103,9 +103,11 @@ class CheckoutScreen extends GetView<CheckoutController> {
                   width: double.infinity,
                   height: 52,
                   child: ElevatedButton(
-                    onPressed: step == 3
+                    onPressed: controller.isPlacing.value
+                        ? null
+                        : (step == 3
                         ? controller.placeOrder
-                        : controller.nextStep,
+                        : controller.nextStep),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       shape: RoundedRectangleBorder(
@@ -114,7 +116,11 @@ class CheckoutScreen extends GetView<CheckoutController> {
                       elevation: 0,
                     ),
                     child: Text(
-                      step == 3 ? 'Place Order' : 'Continue',
+                      step == 3
+                          ? (controller.isPlacing.value
+                          ? 'Placing Order...'
+                          : 'Place Order')
+                          : 'Continue',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -172,7 +178,10 @@ class _ConfirmStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final address = controller.addressController.text;
+    final selected = controller.selectedAddress.value;
+    final address = selected == null
+        ? '-'
+        : '${selected.name} • ${selected.phone}\n${selected.address}';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,6 +230,18 @@ class _ConfirmStep extends StatelessWidget {
               controller.selectedPayment.value,
             ),
           ),
+        ),
+
+        const SizedBox(height: 12),
+
+        _SummaryCard(
+          title: 'Items (${controller.items.length})',
+          icon: Icons.shopping_bag_rounded,
+          content: controller.items
+              .map(
+                (item) => '${item.product.name} × ${item.quantity}',
+          )
+              .join('\n'),
         ),
 
         const SizedBox(height: 80),
@@ -347,9 +368,9 @@ class _OrderSummary extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(
           () {
-        const subtotal = CheckoutController.subtotal;
+        final subtotal = controller.subtotal;
         final deliveryFee = controller.deliveryFee;
-        const discount = CheckoutController.discount;
+        final discount = controller.discount;
         final total = controller.total;
 
         return Container(

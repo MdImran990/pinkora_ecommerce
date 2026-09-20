@@ -8,6 +8,7 @@ import '../widgets/flash_sale_section.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../widgets/bottom_nav_bar.dart';
+import '../../notifications/controllers/notification_controller.dart';
 
 class HomeScreen extends GetView<HomeController> {
   const HomeScreen({super.key});
@@ -22,7 +23,7 @@ class HomeScreen extends GetView<HomeController> {
           ScrollViewKeyboardDismissBehavior.onDrag,
           slivers: [
             // ── APP BAR ──
-            const SliverToBoxAdapter(
+            SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.fromLTRB(16, 12, 16, 0),
                 child: Row(
@@ -47,7 +48,13 @@ class HomeScreen extends GetView<HomeController> {
                       size: 18,
                     ),
                     Spacer(),
-                    SizedBox(
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => Get.toNamed(AppRoutes.notifications),
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          SizedBox(
                       width: 38,
                       height: 38,
                       child: DecoratedBox(
@@ -69,16 +76,62 @@ class HomeScreen extends GetView<HomeController> {
                         ),
                       ),
                     ),
+                          Positioned(
+                            right: -2,
+                            top: -2,
+                            child: Obx(
+                                  () {
+                                final unread = Get.find<NotificationController>()
+                                    .unreadCount;
+
+                                if (unread == 0) {
+                                  return const SizedBox.shrink();
+                                }
+
+                                return Container(
+                                  constraints: const BoxConstraints(
+                                    minWidth: 16,
+                                    minHeight: 16,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.sale,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    unread > 9 ? '9+' : '$unread',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
 
             // ── SEARCH BAR ──
-            const SliverToBoxAdapter(
+            SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.fromLTRB(16, 14, 16, 0),
-                child: SizedBox(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => Get.toNamed(
+                    AppRoutes.productList,
+                    arguments: {'focusSearch': true},
+                  ),
+                  child: SizedBox(
                   height: 48,
                   child: DecoratedBox(
                     decoration: BoxDecoration(
@@ -133,6 +186,7 @@ class HomeScreen extends GetView<HomeController> {
                     ),
                   ),
                 ),
+                ),
               ),
             ),
 
@@ -170,6 +224,7 @@ class HomeScreen extends GetView<HomeController> {
                       products: ctrl.flashSaleProducts,
                       onSeeAll: () => Get.toNamed(
                         AppRoutes.productList,
+                        arguments: {'flashSale': true},
                       ),
                     );
                   },

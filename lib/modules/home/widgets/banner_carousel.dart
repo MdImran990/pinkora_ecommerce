@@ -5,6 +5,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../controllers/home_controller.dart';
 import '../../../app/theme/app_colors.dart';
+import '../../../app/routes/app_routes.dart';
 
 class BannerCarousel extends GetView<HomeController> {
   const BannerCarousel({super.key});
@@ -153,7 +154,15 @@ class _BannerCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 14),
-                  Container(
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => Get.toNamed(
+                      AppRoutes.productList,
+                      arguments: {
+                        'flashSale': banner.title == 'Flash Deal',
+                      },
+                    ),
+                    child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 18,
                       vertical: 8,
@@ -170,6 +179,7 @@ class _BannerCard extends StatelessWidget {
                         color: AppColors.primary,
                       ),
                     ),
+                  ),
                   ),
                 ],
               ),

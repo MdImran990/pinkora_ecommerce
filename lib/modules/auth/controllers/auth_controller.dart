@@ -1,21 +1,23 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 
 import '../../../app/routes/app_routes.dart';
+import '../../../data/repositories/auth_repository.dart';
+import '../../../widgets/custom_snackbar.dart';
 
 /// Holds only observable state and actions (no TextEditingController and
 /// no GlobalKey). Each auth screen owns its own text controllers and form
-/// key, so they are disposed together with that screen and can never be
-/// used after disposal.
+/// key, so they are disposed together with that screen.
 ///
-/// This controller is registered as permanent (see AuthBinding), so it
-/// lives for the whole app session and is shared by login, register and
-/// forgot-password screens.
+/// Registered as permanent (see AppBinding / AuthBinding).
 class AuthController extends GetxController {
+  final AuthRepository _repo = Get.find<AuthRepository>();
+
   final isPasswordHidden = true.obs;
   final isLoading = false.obs;
   final rememberMe = false.obs;
+
+  /// Email saved by "Remember me" (used to prefill the login form).
+  String? get rememberedEmail => _repo.rememberedEmail;
 
   void togglePassword() => isPasswordHidden.toggle();
 
@@ -23,54 +25,73 @@ class AuthController extends GetxController {
     rememberMe.value = val ?? false;
   }
 
-  // ── LOGIN ──
-  // The screen validates its form before calling this.
-  Future<void> login() async {
-    if (isLoading.value) return;
-
-    isLoading.value = true;
-
-    await Future.delayed(
-      const Duration(seconds: 2),
-    );
-
-    final box = GetStorage();
-    await box.write('isLoggedIn', true);
-
-    isLoading.value = false;
-
-    Get.offAllNamed(AppRoutes.home);
+  String _messageOf(Object error) {
+    return error.toString().replaceFirst('Exception: ', '');
   }
 
-  // ── REGISTER ──
-  // The screen validates its form before calling this.
-  Future<void> register() async {
+  // ── LOGIN ── (the screen validates its form first)
+  Future<void> login({
+    required String email,
+    required String password,
+  }) async {
     if (isLoading.value) return;
 
     isLoading.value = true;
 
-    await Future.delayed(
-      const Duration(seconds: 2),
-    );
+    try {
+      // Small delay to mimic a network call.
+      await Future.delayed(const Duration(milliseconds: 900));
 
-    isLoading.value = false;
+      await _repo.login(identifier: email, password: password);
 
-    Get.offAllNamed(AppRoutes.login);
+      await _repo.setRememberedEmail(
+        rememberMe.value ? email.trim() : null,
+      );
 
-    await Future.delayed(
-      const Duration(milliseconds: 500),
-    );
+      isLoading.value = false;
 
-    Get.snackbar(
-      'Account Created! 🎉',
-      'Please login with your credentials',
-      backgroundColor: const Color(0xFF4CAF50),
-      colorText: Colors.white,
-      snackPosition: SnackPosition.TOP,
-      borderRadius: 12,
-      margin: const EdgeInsets.all(16),
-      duration: const Duration(seconds: 3),
-    );
+      Get.offAllNamed(AppRoutes.home);
+    } catch (e) {
+      isLoading.value = false;
+
+      CustomSnackbar.error('Login Failed', _messageOf(e));
+    }
+  }
+
+  // ── REGISTER ── (the screen validates its form first)
+  Future<void> register({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    if (isLoading.value) return;
+
+    isLoading.value = true;
+
+    try {
+      await Future.delayed(const Duration(milliseconds: 900));
+
+      await _repo.register(
+        name: name,
+        identifier: email,
+        password: password,
+      );
+
+      isLoading.value = false;
+
+      Get.offAllNamed(AppRoutes.login);
+
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      CustomSnackbar.success(
+        'Account Created! 🎉',
+        'Please login with your credentials',
+      );
+    } catch (e) {
+      isLoading.value = false;
+
+      CustomSnackbar.error('Registration Failed', _messageOf(e));
+    }
   }
 
   // ── FORGOT PASSWORD ──
@@ -80,15 +101,9 @@ class AuthController extends GetxController {
     final value = email.trim();
 
     if (value.isEmpty) {
-      Get.snackbar(
+      CustomSnackbar.error(
         'Email Required',
         'Please enter your email or phone number',
-        backgroundColor: const Color(0xFFE91E63),
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-        borderRadius: 12,
-        margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 2),
       );
       return;
     }
@@ -97,22 +112,29 @@ class AuthController extends GetxController {
 
     // Temporary local delay.
     // API / OTP / email reset will be connected later.
-    await Future.delayed(
-      const Duration(seconds: 2),
-    );
+    await Future.delayed(const Duration(seconds: 1));
 
     isLoading.value = false;
 
-    Get.snackbar(
+    CustomSnackbar.success(
       'Reset Link Sent! 📩',
       'Please check your email or phone',
-      backgroundColor: const Color(0xFF4CAF50),
-      colorText: Colors.white,
-      snackPosition: SnackPosition.TOP,
-      borderRadius: 12,
-      margin: const EdgeInsets.all(16),
-      duration: const Duration(seconds: 3),
     );
+  }
+
+  // ── SOCIAL LOGIN (needs OAuth setup + backend) ──
+  void socialLogin(String provider) {
+    CustomSnackbar.info(
+      'Coming Soon',
+      '$provider login will be available after backend setup',
+    );
+  }
+
+  // ── LOGOUT ──
+  Future<void> logout() async {
+    await _repo.logout();
+
+    Get.offAllNamed(AppRoutes.login);
   }
 
   // ── NAVIGATION ──

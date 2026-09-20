@@ -100,6 +100,13 @@ class _AnimatedLoginBodyState extends State<_AnimatedLoginBody>
     );
 
     _animationController.forward();
+
+    final savedEmail = widget.controller.rememberedEmail;
+
+    if (savedEmail != null && savedEmail.isNotEmpty) {
+      _emailController.text = savedEmail;
+      widget.controller.rememberMe.value = true;
+    }
   }
 
   Animation<double> _interval(double begin, double end) {
@@ -351,7 +358,10 @@ class _AnimatedLoginBodyState extends State<_AnimatedLoginBody>
                                 ? null
                                 : () {
                                     if (_formKey.currentState!.validate()) {
-                                      authController.login();
+                                      authController.login(
+                                        email: _emailController.text.trim(),
+                                        password: _passwordController.text,
+                                      );
                                     }
                                   },
                             style: ElevatedButton.styleFrom(
@@ -510,7 +520,7 @@ class _SocialLoginSection extends StatelessWidget {
                   color: Color(0xFF4285F4),
                 ),
               ),
-              onTap: () {},
+              onTap: () => Get.find<AuthController>().socialLogin('Google'),
             ),
 
             const SizedBox(width: 16),
@@ -525,7 +535,7 @@ class _SocialLoginSection extends StatelessWidget {
                   color: Color(0xFF1877F2),
                 ),
               ),
-              onTap: () {},
+              onTap: () => Get.find<AuthController>().socialLogin('Facebook'),
             ),
 
             const SizedBox(width: 16),
@@ -537,7 +547,7 @@ class _SocialLoginSection extends StatelessWidget {
                 size: 28,
                 color: AppColors.black,
               ),
-              onTap: () {},
+              onTap: () => Get.find<AuthController>().socialLogin('Apple'),
             ),
           ],
         ),

@@ -21,7 +21,7 @@ class CategoryScreen extends GetView<CategoryController> {
         automaticallyImplyLeading: true,
         leading: GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: Get.back,
+          onTap: () => Get.offAllNamed(AppRoutes.home),
           child: Container(
             margin: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -46,13 +46,20 @@ class CategoryScreen extends GetView<CategoryController> {
             color: AppColors.black,
           ),
         ),
-        actions: const [
+        actions: [
           Padding(
-            padding: EdgeInsets.only(right: 16),
-            child: Icon(
-              Icons.search_rounded,
-              color: AppColors.black,
-              size: 24,
+            padding: const EdgeInsets.only(right: 16),
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => Get.toNamed(
+                AppRoutes.productList,
+                arguments: {'focusSearch': true},
+              ),
+              child: const Icon(
+                Icons.search_rounded,
+                color: AppColors.black,
+                size: 24,
+              ),
             ),
           ),
         ],

@@ -6,7 +6,17 @@ import 'package:get_storage/get_storage.dart';
 import 'app/routes/app_pages.dart';
 import 'app/routes/app_routes.dart';
 import 'app/theme/app_theme.dart';
+import 'data/repositories/address_repository.dart';
+import 'data/repositories/auth_repository.dart';
+import 'data/repositories/cart_repository.dart';
+import 'data/repositories/notification_repository.dart';
+import 'data/repositories/order_repository.dart';
+import 'data/repositories/product_repository.dart';
+import 'modules/address/controllers/address_controller.dart';
+import 'modules/auth/controllers/auth_controller.dart';
 import 'modules/cart/controllers/cart_controller.dart';
+import 'modules/notifications/controllers/notification_controller.dart';
+import 'modules/orders/controllers/orders_controller.dart';
 import 'modules/wishlist/controllers/wishlist_controller.dart';
 
 Future<void> main() async {
@@ -57,21 +67,34 @@ class PinkoraApp extends StatelessWidget {
   }
 }
 
+/// App-wide dependencies (kept alive for the whole session).
+///
+/// Repositories are the only place that talks to data. When the backend is
+/// ready, swap the repository implementations here - screens and controllers
+/// stay the same.
 class AppBinding extends Bindings {
+  void _putOnce<T>(T Function() create) {
+    if (!Get.isRegistered<T>()) {
+      Get.put<T>(create(), permanent: true);
+    }
+  }
+
   @override
   void dependencies() {
-    if (!Get.isRegistered<CartController>()) {
-      Get.put<CartController>(
-        CartController(),
-        permanent: true,
-      );
-    }
+    // Repositories (must come first: controllers read them)
+    _putOnce<AuthRepository>(AuthRepository.new);
+    _putOnce<ProductRepository>(ProductRepository.new);
+    _putOnce<CartRepository>(CartRepository.new);
+    _putOnce<OrderRepository>(OrderRepository.new);
+    _putOnce<AddressRepository>(AddressRepository.new);
+    _putOnce<NotificationRepository>(NotificationRepository.new);
 
-    if (!Get.isRegistered<WishlistController>()) {
-      Get.put<WishlistController>(
-        WishlistController(),
-        permanent: true,
-      );
-    }
+    // Global controllers
+    _putOnce<AuthController>(AuthController.new);
+    _putOnce<CartController>(CartController.new);
+    _putOnce<WishlistController>(WishlistController.new);
+    _putOnce<AddressController>(AddressController.new);
+    _putOnce<OrdersController>(OrdersController.new);
+    _putOnce<NotificationController>(NotificationController.new);
   }
 }

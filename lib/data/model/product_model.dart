@@ -30,4 +30,38 @@ class ProductModel {
     this.isFlashSale = false,
     this.isFeatured = false,
   });
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'image': image,
+    'images': images,
+    'price': price,
+    'originalPrice': originalPrice,
+    'discountPercent': discountPercent,
+    'rating': rating,
+    'reviewCount': reviewCount,
+    'category': category,
+    'colors': colors,
+    'sizes': sizes,
+    'isFlashSale': isFlashSale,
+    'isFeatured': isFeatured,
+  };
+
+  factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
+    id: json['id']?.toString() ?? '',
+    name: json['name']?.toString() ?? '',
+    image: json['image']?.toString() ?? '',
+    images: List<String>.from((json['images'] as List?) ?? const []),
+    price: (json['price'] as num?)?.toDouble() ?? 0.0,
+    originalPrice: (json['originalPrice'] as num?)?.toDouble() ?? 0.0,
+    discountPercent: (json['discountPercent'] as num?)?.toInt() ?? 0,
+    rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
+    reviewCount: (json['reviewCount'] as num?)?.toInt() ?? 0,
+    category: json['category']?.toString() ?? '',
+    colors: List<String>.from((json['colors'] as List?) ?? const []),
+    sizes: List<String>.from((json['sizes'] as List?) ?? const []),
+    isFlashSale: json['isFlashSale'] == true,
+    isFeatured: json['isFeatured'] == true,
+  );
 }

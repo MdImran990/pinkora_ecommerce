@@ -113,7 +113,7 @@ class CartScreen extends StatelessWidget {
                       final item = ctrl.cartItems[index];
 
                       return RepaintBoundary(
-                        key: ValueKey(item.product.id),
+                        key: ValueKey(item.key),
                         child: _CartItemCard(
                           item: item,
                           index: index,
@@ -474,18 +474,35 @@ class _CartItemCardState extends State<_CartItemCard>
               // CHECKBOX
               // --------------------------------------------------
 
-              Container(
-                width: 20,
-                height: 20,
-                margin: const EdgeInsets.only(right: 10),
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: const Icon(
-                  Icons.check_rounded,
-                  color: Colors.white,
-                  size: 13,
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => widget.controller.toggleSelect(widget.index),
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 140),
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: item.isSelected
+                          ? AppColors.primary
+                          : AppColors.white,
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(
+                        color: item.isSelected
+                            ? AppColors.primary
+                            : AppColors.grey,
+                        width: 1.2,
+                      ),
+                    ),
+                    child: item.isSelected
+                        ? const Icon(
+                      Icons.check_rounded,
+                      color: Colors.white,
+                      size: 13,
+                    )
+                        : null,
+                  ),
                 ),
               ),
 
@@ -833,57 +850,7 @@ class _CartSummary extends StatelessWidget {
             // COUPON
             // ----------------------------------------------------
 
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: controller.couponController,
-                    textInputAction: TextInputAction.done,
-                    onSubmitted: (_) =>
-                        controller.applyCoupon(),
-                    decoration: InputDecoration(
-                      hintText: 'Apply Coupon Code',
-                      hintStyle: const TextStyle(
-                        color: AppColors.grey,
-                        fontSize: 13,
-                      ),
-                      filled: true,
-                      fillColor: AppColors.white,
-                      contentPadding:
-                      const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 12,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: AppColors.border,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: AppColors.border,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: AppColors.primary,
-                          width: 1.5,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(width: 10),
-
-                _AnimatedApplyButton(
-                  onTap: controller.applyCoupon,
-                ),
-              ],
-            ),
+            _CouponBox(controller: controller),
 
             const SizedBox(height: 14),
 
@@ -906,6 +873,17 @@ class _CartSummary extends StatelessWidget {
               value:
               '৳ ${controller.deliveryFee.toInt()}',
             ),
+
+            if (controller.discountAmount > 0) ...[
+              const SizedBox(height: 7),
+
+              _PriceRow(
+                label: 'Discount',
+                value:
+                '- ৳ ${controller.discountAmount.toInt()}',
+                valueColor: AppColors.success,
+              ),
+            ],
 
             const SizedBox(height: 8),
 
@@ -1145,11 +1123,13 @@ class _PriceRow extends StatelessWidget {
     required this.label,
     required this.value,
     this.isBold = false,
+    this.valueColor,
   });
 
   final String label;
   final String value;
   final bool isBold;
+  final Color? valueColor;
 
   @override
   Widget build(BuildContext context) {
@@ -1175,10 +1155,151 @@ class _PriceRow extends StatelessWidget {
             fontWeight: isBold
                 ? FontWeight.w700
                 : FontWeight.w500,
-            color: isBold
-                ? AppColors.black
-                : AppColors.darkGrey,
+            color: valueColor ??
+                (isBold
+                    ? AppColors.black
+                    : AppColors.darkGrey),
           ),
+        ),
+      ],
+    );
+  }
+}
+
+
+// ================================================================
+// COUPON BOX
+// ================================================================
+
+class _CouponBox extends StatefulWidget {
+  const _CouponBox({
+    required this.controller,
+  });
+
+  final CartController controller;
+
+  @override
+  State<_CouponBox> createState() => _CouponBoxState();
+}
+
+class _CouponBoxState extends State<_CouponBox> {
+  // Owned by this widget, so it is disposed together with the screen.
+  final TextEditingController _textController =
+  TextEditingController();
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+
+  void _apply() {
+    FocusScope.of(context).unfocus();
+
+    final applied = widget.controller.applyCoupon(_textController.text);
+
+    if (applied) _textController.clear();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: _textController,
+                textCapitalization: TextCapitalization.characters,
+                textInputAction: TextInputAction.done,
+                onSubmitted: (_) => _apply(),
+                decoration: InputDecoration(
+                  hintText: 'Apply Coupon Code',
+                  hintStyle: const TextStyle(
+                    color: AppColors.grey,
+                    fontSize: 13,
+                  ),
+                  filled: true,
+                  fillColor: AppColors.white,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppColors.border,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppColors.border,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppColors.primary,
+                      width: 1.5,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(width: 10),
+
+            _AnimatedApplyButton(
+              onTap: _apply,
+            ),
+          ],
+        ),
+
+        Obx(
+              () {
+            final code = widget.controller.couponCode.value;
+
+            if (code.isEmpty) return const SizedBox.shrink();
+
+            return Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.local_offer_rounded,
+                    size: 16,
+                    color: AppColors.success,
+                  ),
+
+                  const SizedBox(width: 6),
+
+                  Expanded(
+                    child: Text(
+                      'Coupon $code applied',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.success,
+                      ),
+                    ),
+                  ),
+
+                  GestureDetector(
+                    onTap: widget.controller.removeCoupon,
+                    child: const Text(
+                      'Remove',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.error,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ],
     );
