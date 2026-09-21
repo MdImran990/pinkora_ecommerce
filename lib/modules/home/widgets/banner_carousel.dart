@@ -16,7 +16,8 @@ class BannerCarousel extends GetView<HomeController> {
       title: 'Big Sale',
       sub: 'Up to 70% OFF',
       button: 'Shop Now',
-      image: 'https://fakestoreapi.com/img/81XH0e8fefL._AC_UY879_.jpg',
+      image:
+      'https://cdn.dummyjson.com/product-images/fragrances/gucci-bloom-eau-de/1.webp|https://cdn.dummyjson.com/product-images/fragrances/dolce-shine-eau-de/1.webp',
     ),
     _BannerData(
       title: 'New Arrivals',
