@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../app/theme/app_colors.dart';
+import '../../../widgets/product_image.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../data/model/product_model.dart';
 import '../../../modules/cart/controllers/cart_controller.dart';
@@ -44,22 +45,13 @@ class ProductCardHome extends StatelessWidget {
             children: [
               Stack(
                 children: [
-                  Container(
+                  ProductImage(
+                    url: product.image,
+                    width: double.infinity,
                     height: 130,
-                    decoration: const BoxDecoration(
-                      color: AppColors.primaryLight,
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(16),
-                      ),
-                    ),
-                    child: Center(
-                      child: Icon(
-                        Icons.shopping_bag_outlined,
-                        size: 60,
-                        color: AppColors.primary.withValues(
-                          alpha: 0.4,
-                        ),
-                      ),
+                    iconSize: 60,
+                    radius: const BorderRadius.vertical(
+                      top: Radius.circular(16),
                     ),
                   ),
 

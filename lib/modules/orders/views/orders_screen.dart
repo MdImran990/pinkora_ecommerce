@@ -8,6 +8,7 @@ import '../../../data/model/order_model.dart';
 import '../../../widgets/app_card.dart';
 import '../../../widgets/empty_state.dart';
 import '../../../widgets/pinkora_app_bar.dart';
+import '../../../widgets/product_image.dart';
 import '../controllers/orders_controller.dart';
 import '../widgets/order_status_chip.dart';
 
@@ -181,18 +182,14 @@ class _OrderCard extends StatelessWidget {
             ),
             Row(
               children: [
-                Container(
+                ProductImage(
+                  url: order.items.isEmpty
+                      ? ''
+                      : order.items.first.product.image,
                   width: 44,
                   height: 44,
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryLight,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(
-                    Icons.shopping_bag_outlined,
-                    color: AppColors.primary,
-                    size: 22,
-                  ),
+                  iconSize: 22,
+                  radius: BorderRadius.circular(10),
                 ),
                 const SizedBox(width: 12),
                 Expanded(

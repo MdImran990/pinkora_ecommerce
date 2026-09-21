@@ -9,6 +9,7 @@ import '../../../data/model/order_model.dart';
 import '../../../widgets/app_card.dart';
 import '../../../widgets/empty_state.dart';
 import '../../../widgets/pinkora_app_bar.dart';
+import '../../../widgets/product_image.dart';
 import '../controllers/orders_controller.dart';
 import '../widgets/order_status_chip.dart';
 
@@ -331,18 +332,12 @@ class _ItemRow extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
-          Container(
+          ProductImage(
+            url: item.product.image,
             width: 52,
             height: 52,
-            decoration: BoxDecoration(
-              color: AppColors.primaryLight,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(
-              Icons.shopping_bag_outlined,
-              color: AppColors.primary,
-              size: 24,
-            ),
+            iconSize: 24,
+            radius: BorderRadius.circular(10),
           ),
           const SizedBox(width: 12),
           Expanded(

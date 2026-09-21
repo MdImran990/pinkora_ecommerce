@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../../../data/model/category_model.dart';
+import '../../../widgets/product_image.dart';
 
 class CategoryGridCard extends StatefulWidget {
   const CategoryGridCard({
@@ -172,20 +173,16 @@ class _CategoryGridCardState extends State<CategoryGridCard>
               children: [
                 Expanded(
                   child: RepaintBoundary(
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(16),
-                        ),
-                      ).copyWith(
-                        color: backgroundColor,
-                      ),
-                      child: Center(
-                        child: Icon(
-                          icon,
-                          size: 48,
-                          color: iconColor,
-                        ),
+                    child: ProductImage(
+                      url: widget.category.image,
+                      width: double.infinity,
+                      height: double.infinity,
+                      icon: icon,
+                      iconSize: 48,
+                      iconColor: iconColor,
+                      backgroundColor: backgroundColor,
+                      radius: const BorderRadius.vertical(
+                        top: Radius.circular(16),
                       ),
                     ),
                   ),

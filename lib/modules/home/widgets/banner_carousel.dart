@@ -6,6 +6,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../controllers/home_controller.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/routes/app_routes.dart';
+import '../../../widgets/product_image.dart';
 
 class BannerCarousel extends GetView<HomeController> {
   const BannerCarousel({super.key});
@@ -15,16 +16,21 @@ class BannerCarousel extends GetView<HomeController> {
       title: 'Big Sale',
       sub: 'Up to 70% OFF',
       button: 'Shop Now',
+      image: 'https://fakestoreapi.com/img/81XH0e8fefL._AC_UY879_.jpg',
     ),
     _BannerData(
       title: 'New Arrivals',
       sub: 'Fresh Styles',
       button: 'Explore',
+      image:
+      'https://cdn.dummyjson.com/product-images/womens-bags/blue-women\'s-handbag/thumbnail.webp|https://cdn.dummyjson.com/products/images/womens-bags/Blue%20Women\'s%20Handbag/thumbnail.png',
     ),
     _BannerData(
       title: 'Flash Deal',
       sub: 'Limited Time',
       button: 'Grab Now',
+      image:
+      'https://cdn.dummyjson.com/product-images/mens-watches/rolex-datejust/thumbnail.webp|https://cdn.dummyjson.com/products/images/mens-watches/Rolex%20Datejust/thumbnail.png',
     ),
   ];
 
@@ -74,11 +80,13 @@ class _BannerData {
   final String title;
   final String sub;
   final String button;
+  final String image;
 
   const _BannerData({
     required this.title,
     required this.sub,
     required this.button,
+    required this.image,
   });
 }
 
@@ -128,6 +136,38 @@ class _BannerCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.08),
                   shape: BoxShape.circle,
+                ),
+              ),
+            ),
+            Positioned(
+              right: 18,
+              top: 0,
+              bottom: 0,
+              child: Center(
+                child: Container(
+                  width: 116,
+                  height: 116,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white,
+                      width: 3,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.15),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: ProductImage(
+                    url: banner.image,
+                    width: 110,
+                    height: 110,
+                    iconSize: 40,
+                    radius: BorderRadius.circular(55),
+                  ),
                 ),
               ),
             ),

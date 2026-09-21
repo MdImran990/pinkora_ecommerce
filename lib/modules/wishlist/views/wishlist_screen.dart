@@ -5,6 +5,7 @@ import '../controllers/wishlist_controller.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../widgets/bottom_nav_bar.dart';
+import '../../../widgets/product_image.dart';
 
 class WishlistScreen extends StatelessWidget {
   const WishlistScreen({super.key});
@@ -402,19 +403,12 @@ class _WishlistItemState extends State<_WishlistItem>
               // PRODUCT IMAGE
               // ──────────────────────────────────────
               RepaintBoundary(
-                child: Container(
+                child: ProductImage(
+                  url: product.image,
                   width: 80,
                   height: 80,
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryLight,
-                    borderRadius:
-                    BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.shopping_bag_outlined,
-                    color: AppColors.primary,
-                    size: 36,
-                  ),
+                  iconSize: 36,
+                  radius: BorderRadius.circular(12),
                 ),
               ),
 

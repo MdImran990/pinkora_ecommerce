@@ -6,6 +6,7 @@ import '../../../data/model/cart_item_model.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../widgets/bottom_nav_bar.dart';
+import '../../../widgets/product_image.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -510,18 +511,12 @@ class _CartItemCardState extends State<_CartItemCard>
               // PRODUCT IMAGE
               // --------------------------------------------------
 
-              Container(
+              ProductImage(
+                url: item.product.image,
                 width: 70,
                 height: 70,
-                decoration: BoxDecoration(
-                  color: AppColors.primaryLight,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(
-                  Icons.shopping_bag_outlined,
-                  color: AppColors.primary,
-                  size: 32,
-                ),
+                iconSize: 32,
+                radius: BorderRadius.circular(10),
               ),
 
               const SizedBox(width: 10),

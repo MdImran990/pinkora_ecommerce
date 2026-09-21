@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 
 import '../controllers/product_controller.dart';
 import '../../../app/theme/app_colors.dart';
+import '../../../data/model/product_model.dart';
+import '../../../widgets/product_image.dart';
 
 class ProductImageGallery extends GetView<ProductController> {
   const ProductImageGallery({super.key});
@@ -13,6 +15,15 @@ class ProductImageGallery extends GetView<ProductController> {
     Color(0xFFF5ECD7),
     Color(0xFFF0EEE8),
   ];
+
+  /// All pictures of a product (falls back to the single main image).
+  static List<String> _urlsOf(ProductModel? product) {
+    if (product == null) return const [];
+
+    if (product.images.isNotEmpty) return product.images;
+
+    return product.image.isEmpty ? const [] : [product.image];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +37,10 @@ class ProductImageGallery extends GetView<ProductController> {
             final product = controller.product.value;
             final imageIndex =
                 controller.currentImageIndex.value;
+            final urls = _urlsOf(product);
+            final mainUrl = urls.isEmpty
+                ? ''
+                : urls[imageIndex >= urls.length ? 0 : imageIndex];
 
             return RepaintBoundary(
               child: AnimatedSwitcher(
@@ -59,13 +74,10 @@ class ProductImageGallery extends GetView<ProductController> {
                   color: AppColors.primaryLight,
                   child: Stack(
                     children: [
-                      Center(
-                        child: Icon(
-                          Icons.shopping_bag_rounded,
-                          size: 140,
-                          color: AppColors.primary.withValues(
-                            alpha: 0.3,
-                          ),
+                      Positioned.fill(
+                        child: ProductImage(
+                          url: mainUrl,
+                          iconSize: 140,
                         ),
                       ),
 
@@ -116,6 +128,12 @@ class ProductImageGallery extends GetView<ProductController> {
               () {
             final selectedIndex =
                 controller.currentImageIndex.value;
+            final thumbUrls = _urlsOf(controller.product.value);
+
+            // One picture only -> no thumbnail strip needed.
+            if (thumbUrls.length < 2) {
+              return const SizedBox.shrink();
+            }
 
             return SizedBox(
               height: 60,
@@ -128,7 +146,7 @@ class ProductImageGallery extends GetView<ProductController> {
                 physics:
                 const BouncingScrollPhysics(),
                 cacheExtent: 200,
-                itemCount: _thumbColors.length,
+                itemCount: thumbUrls.length,
                 separatorBuilder: (_, __) =>
                 const SizedBox(width: 10),
                 itemBuilder: (context, index) {
@@ -138,7 +156,8 @@ class ProductImageGallery extends GetView<ProductController> {
                   return RepaintBoundary(
                     key: ValueKey(index),
                     child: _ThumbnailItem(
-                      color: _thumbColors[index],
+                      color: _thumbColors[index % _thumbColors.length],
+                      imageUrl: thumbUrls[index],
                       isSelected: isSelected,
                       onTap: () =>
                           controller.changeImage(index),
@@ -160,11 +179,13 @@ class ProductImageGallery extends GetView<ProductController> {
 
 class _ThumbnailItem extends StatefulWidget {
   final Color color;
+  final String imageUrl;
   final bool isSelected;
   final VoidCallback onTap;
 
   const _ThumbnailItem({
     required this.color,
+    required this.imageUrl,
     required this.isSelected,
     required this.onTap,
   });
@@ -261,12 +282,12 @@ class _ThumbnailItemState
             duration:
             const Duration(milliseconds: 160),
             curve: Curves.easeOutBack,
-            child: Icon(
-              Icons.shopping_bag_outlined,
-              size: 28,
-              color: AppColors.primary.withValues(
-                alpha: widget.isSelected ? 0.55 : 0.4,
-              ),
+            child: ProductImage(
+              url: widget.imageUrl,
+              width: double.infinity,
+              height: double.infinity,
+              iconSize: 28,
+              radius: BorderRadius.circular(8),
             ),
           ),
         ),

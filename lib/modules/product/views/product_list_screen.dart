@@ -10,6 +10,7 @@ import '../../../modules/cart/controllers/cart_controller.dart';
 import '../../../modules/wishlist/controllers/wishlist_controller.dart';
 import '../../../widgets/bottom_nav_bar.dart';
 import '../../../widgets/empty_state.dart';
+import '../../../widgets/product_image.dart';
 
 /// Product grid. Accepts optional Get.arguments:
 ///  - CategoryModel                 -> only that category
@@ -349,20 +350,13 @@ class _ProductGridCardState extends State<_ProductGridCard>
               Stack(
                 children: [
                   RepaintBoundary(
-                    child: Container(
+                    child: ProductImage(
+                      url: product.image,
+                      width: double.infinity,
                       height: 120,
-                      decoration: const BoxDecoration(
-                        color: AppColors.primaryLight,
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(16),
-                        ),
-                      ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.shopping_bag_outlined,
-                          size: 56,
-                          color: AppColors.primary,
-                        ),
+                      iconSize: 56,
+                      radius: const BorderRadius.vertical(
+                        top: Radius.circular(16),
                       ),
                     ),
                   ),
