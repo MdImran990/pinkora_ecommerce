@@ -5,8 +5,8 @@ import '../controllers/cart_controller.dart';
 import '../../../data/model/cart_item_model.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/routes/app_routes.dart';
-import '../../../widgets/bottom_nav_bar.dart';
 import '../../../widgets/product_image.dart';
+import '../../main/controllers/main_controller.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -29,7 +29,7 @@ class CartScreen extends StatelessWidget {
 
         leading: GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: () => Get.offAllNamed(AppRoutes.home),
+          onTap: () => Get.find<MainController>().setIndex(0),
           child: Container(
             margin: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -149,7 +149,6 @@ class CartScreen extends StatelessWidget {
         },
       ),
 
-      bottomNavigationBar: const PinkoraBottomNav(),
     );
   }
 }
@@ -217,7 +216,7 @@ class _EmptyCartState extends State<_EmptyCart>
   }
 
   void _shopNow() {
-    Get.offAllNamed(AppRoutes.home);
+    Get.find<MainController>().setIndex(0);
   }
 
   @override

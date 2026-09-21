@@ -5,6 +5,7 @@ import '../../../app/theme/app_colors.dart';
 import '../../../data/model/user_model.dart';
 import '../../../data/repositories/auth_repository.dart';
 import '../../auth/controllers/auth_controller.dart';
+import '../widgets/avatar_picker_sheet.dart';
 
 class ProfileController extends GetxController {
   final AuthRepository _repo = Get.find<AuthRepository>();
@@ -24,6 +25,29 @@ class ProfileController extends GetxController {
           name: 'Pinkora User',
           email: '',
         );
+  }
+
+  /// Opens the avatar chooser.
+  void showAvatarPicker() {
+    Get.bottomSheet(
+      AvatarPickerSheet(controller: this),
+      backgroundColor: AppColors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+    );
+  }
+
+  Future<void> changeAvatar(String value) async {
+    final current = user.value;
+
+    if (current == null) return;
+
+    final updated = current.copyWith(avatar: value);
+
+    await _repo.updateProfile(updated);
+
+    user.value = updated;
   }
 
   void logout() {

@@ -7,6 +7,7 @@ import '../../../app/theme/app_colors.dart';
 import '../controllers/auth_controller.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/social_login_button.dart';
+import '../../../core/utils/validators.dart';
 
 const SystemUiOverlayStyle _authOverlayStyle = SystemUiOverlayStyle(
   statusBarColor: Colors.transparent,
@@ -46,6 +47,7 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmController = TextEditingController();
 
   late final Animation<double> _backFade;
   late final Animation<Offset> _backSlide;
@@ -156,6 +158,7 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmController.dispose();
     super.dispose();
   }
 
@@ -316,9 +319,21 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
                           prefixIcon: Icons.email_outlined,
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Email required';
+                            final text = value?.trim() ?? '';
+
+                            if (text.isEmpty) {
+                              return 'Email or phone required';
                             }
+
+                            final validEmail =
+                                Validators.email(text) == null;
+                            final validPhone =
+                                Validators.phone(text) == null;
+
+                            if (!validEmail && !validPhone) {
+                              return 'Enter a valid email or phone';
+                            }
+
                             return null;
                           },
                         ),
@@ -339,6 +354,27 @@ class _AnimatedRegisterBodyState extends State<_AnimatedRegisterBody>
                             validator: (value) {
                               if (value == null || value.length < 6) {
                                 return 'Min 6 characters';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        Obx(
+                              () => AuthTextField(
+                            controller: _confirmController,
+                            hint: 'Confirm Password',
+                            prefixIcon: Icons.lock_outline,
+                            isPassword: true,
+                            isPasswordHidden:
+                            authController.isPasswordHidden.value,
+                            onTogglePassword:
+                            authController.togglePassword,
+                            validator: (value) {
+                              if (value != _passwordController.text) {
+                                return 'Passwords do not match';
                               }
                               return null;
                             },

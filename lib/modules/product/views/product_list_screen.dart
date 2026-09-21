@@ -11,6 +11,19 @@ import '../../../modules/wishlist/controllers/wishlist_controller.dart';
 import '../../../widgets/bottom_nav_bar.dart';
 import '../../../widgets/empty_state.dart';
 import '../../../widgets/product_image.dart';
+import '../../../widgets/skeletons.dart';
+
+enum _SortOption {
+  relevance('Relevance'),
+  priceLow('Price: Low to High'),
+  priceHigh('Price: High to Low'),
+  rating('Top Rated'),
+  discount('Biggest Discount');
+
+  const _SortOption(this.label);
+
+  final String label;
+}
 
 /// Product grid. Accepts optional Get.arguments:
 ///  - CategoryModel                 -> only that category
@@ -34,6 +47,11 @@ class _ProductListScreenState extends State<ProductListScreen> {
   final FocusNode _searchFocus = FocusNode();
 
   List<ProductModel> _products = [];
+
+  _SortOption _sort = _SortOption.relevance;
+
+  /// null = no price filter
+  RangeValues? _priceRange;
 
   String _title = 'All Products';
   String? _category;
@@ -88,6 +106,283 @@ class _ProductListScreenState extends State<ProductListScreen> {
       _products = result;
       _loading = false;
     });
+  }
+
+  /// Lowest and highest price of the loaded products.
+  RangeValues get _bounds {
+    if (_products.isEmpty) return const RangeValues(0, 1);
+
+    var low = _products.first.price;
+    var high = _products.first.price;
+
+    for (final p in _products) {
+      if (p.price < low) low = p.price;
+      if (p.price > high) high = p.price;
+    }
+
+    return RangeValues(low.floorToDouble(), high.ceilToDouble());
+  }
+
+  /// Products after the price filter and the sort option are applied.
+  List<ProductModel> get _visible {
+    final range = _priceRange;
+
+    final list = _products.where((p) {
+      if (range == null) return true;
+
+      return p.price >= range.start && p.price <= range.end;
+    }).toList();
+
+    switch (_sort) {
+      case _SortOption.priceLow:
+        list.sort((a, b) => a.price.compareTo(b.price));
+        break;
+      case _SortOption.priceHigh:
+        list.sort((a, b) => b.price.compareTo(a.price));
+        break;
+      case _SortOption.rating:
+        list.sort((a, b) => b.rating.compareTo(a.rating));
+        break;
+      case _SortOption.discount:
+        list.sort(
+              (a, b) => b.discountPercent.compareTo(a.discountPercent),
+        );
+        break;
+      case _SortOption.relevance:
+        break;
+    }
+
+    return list;
+  }
+
+  void _openSort() {
+    Get.bottomSheet(
+      SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Sort by',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.black,
+                ),
+              ),
+              const SizedBox(height: 8),
+              for (final option in _SortOption.values)
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(
+                    option.label,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: option == _sort
+                          ? FontWeight.w700
+                          : FontWeight.w500,
+                      color: option == _sort
+                          ? AppColors.primary
+                          : AppColors.black,
+                    ),
+                  ),
+                  trailing: option == _sort
+                      ? const Icon(
+                    Icons.check_rounded,
+                    color: AppColors.primary,
+                  )
+                      : null,
+                  onTap: () {
+                    setState(() => _sort = option);
+                    Get.back();
+                  },
+                ),
+            ],
+          ),
+        ),
+      ),
+      backgroundColor: AppColors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+    );
+  }
+
+  void _openFilter() {
+    final bounds = _bounds;
+
+    if (bounds.end <= bounds.start) return;
+
+    // Keep the saved range inside the current bounds (a new search can
+    // change them).
+    var current = bounds;
+
+    final saved = _priceRange;
+
+    if (saved != null) {
+      final start = saved.start < bounds.start ? bounds.start : saved.start;
+      final end = saved.end > bounds.end ? bounds.end : saved.end;
+
+      if (start <= end) current = RangeValues(start, end);
+    }
+
+    Get.bottomSheet(
+      StatefulBuilder(
+        builder: (context, setSheet) {
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Price range',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    '৳ ${current.start.toInt()}  -  ৳ ${current.end.toInt()}',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  RangeSlider(
+                    values: current,
+                    min: bounds.start,
+                    max: bounds.end,
+                    divisions: 20,
+                    activeColor: AppColors.primary,
+                    onChanged: (value) {
+                      setSheet(() => current = value);
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () {
+                            setState(() => _priceRange = null);
+                            Get.back();
+                          },
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: const Size(0, 48),
+                            foregroundColor: AppColors.primary,
+                            side: const BorderSide(
+                              color: AppColors.primary,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          child: const Text('Reset'),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            setState(() => _priceRange = current);
+                            Get.back();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(0, 48),
+                          ),
+                          child: const Text('Apply'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+      backgroundColor: AppColors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+    );
+  }
+
+  Widget _toolbarButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    bool active = false,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: active ? AppColors.primaryLight : AppColors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: active ? AppColors.primary : AppColors.border,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16, color: AppColors.primary),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: AppColors.black,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildToolbar() {
+    if (_loading) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              '${_visible.length} items',
+              style: const TextStyle(
+                fontSize: 12,
+                color: AppColors.grey,
+              ),
+            ),
+          ),
+          _toolbarButton(
+            icon: Icons.swap_vert_rounded,
+            label: _sort == _SortOption.relevance ? 'Sort' : _sort.label,
+            active: _sort != _SortOption.relevance,
+            onTap: _openSort,
+          ),
+          const SizedBox(width: 8),
+          _toolbarButton(
+            icon: Icons.tune_rounded,
+            label: 'Filter',
+            active: _priceRange != null,
+            onTap: _openFilter,
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -160,6 +455,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
               ),
             ),
           ),
+          _buildToolbar(),
           Expanded(child: _buildBody()),
         ],
       ),
@@ -169,14 +465,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   Widget _buildBody() {
     if (_loading) {
-      return const Center(
-        child: CircularProgressIndicator(
-          color: AppColors.primary,
-        ),
-      );
+      return const ProductGridSkeleton();
     }
 
-    if (_products.isEmpty) {
+    final visible = _visible;
+
+    if (visible.isEmpty) {
       return const EmptyState(
         icon: Icons.search_off_rounded,
         title: 'No products found',
@@ -202,9 +496,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
         mainAxisSpacing: 14,
         childAspectRatio: 0.78,
       ),
-      itemCount: _products.length,
+      itemCount: visible.length,
       itemBuilder: (context, index) {
-        final product = _products[index];
+        final product = visible[index];
 
         return RepaintBoundary(
           key: ValueKey(product.id),

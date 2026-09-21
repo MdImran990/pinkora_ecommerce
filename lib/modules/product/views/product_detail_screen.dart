@@ -6,6 +6,8 @@ import '../widgets/product_image_gallery.dart';
 import '../widgets/color_selector.dart';
 import '../widgets/quantity_stepper.dart';
 import '../widgets/rating_row.dart';
+import '../widgets/product_extras.dart';
+import '../../../data/model/product_model.dart';
 import '../../../app/theme/app_colors.dart';
 
 class ProductDetailScreen extends GetView<ProductController> {
@@ -13,20 +15,30 @@ class ProductDetailScreen extends GetView<ProductController> {
 
   @override
   Widget build(BuildContext context) {
-    final p = controller.product.value;
+    // Rebuilds when another product is opened from "You may also like".
+    return Obx(
+          () {
+        final p = controller.product.value;
 
-    if (p == null) {
-      return const Scaffold(
-        backgroundColor: AppColors.scaffoldBg,
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
+        if (p == null) {
+          return const Scaffold(
+            backgroundColor: AppColors.scaffoldBg,
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
 
+        return _buildScreen(context, p);
+      },
+    );
+  }
+
+  Widget _buildScreen(BuildContext context, ProductModel p) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg,
       body: CustomScrollView(
+        controller: controller.scrollController,
         keyboardDismissBehavior:
         ScrollViewKeyboardDismissBehavior.onDrag,
         cacheExtent: 800,
@@ -120,7 +132,7 @@ class ProductDetailScreen extends GetView<ProductController> {
               // ─────────────────────────────────────────
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
-                onTap: () {},
+                onTap: controller.shareProduct,
                 child: Container(
                   margin: const EdgeInsets.only(right: 16),
                   width: 38,
@@ -347,6 +359,16 @@ class ProductDetailScreen extends GetView<ProductController> {
                   ],
                 ),
               ),
+            ),
+          ),
+
+          // ─────────────────────────────────────────────
+          // DESCRIPTION, REVIEWS, RELATED PRODUCTS
+          // ─────────────────────────────────────────────
+          SliverToBoxAdapter(
+            child: ProductExtras(
+              controller: controller,
+              product: p,
             ),
           ),
 

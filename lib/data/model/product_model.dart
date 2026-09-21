@@ -13,6 +13,7 @@ class ProductModel {
   final List<String> sizes;
   final bool isFlashSale;
   final bool isFeatured;
+  final String description;
 
   ProductModel({
     required this.id,
@@ -29,6 +30,7 @@ class ProductModel {
     this.sizes = const [],
     this.isFlashSale = false,
     this.isFeatured = false,
+    this.description = '',
   });
 
   Map<String, dynamic> toJson() => {
@@ -46,6 +48,7 @@ class ProductModel {
     'sizes': sizes,
     'isFlashSale': isFlashSale,
     'isFeatured': isFeatured,
+    'description': description,
   };
 
   factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
@@ -63,5 +66,6 @@ class ProductModel {
     sizes: List<String>.from((json['sizes'] as List?) ?? const []),
     isFlashSale: json['isFlashSale'] == true,
     isFeatured: json['isFeatured'] == true,
+    description: json['description']?.toString() ?? '',
   );
 }

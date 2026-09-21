@@ -7,8 +7,8 @@ import '../widgets/category_chip_row.dart';
 import '../widgets/flash_sale_section.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/routes/app_routes.dart';
-import '../../../widgets/bottom_nav_bar.dart';
 import '../../notifications/controllers/notification_controller.dart';
+import '../../../widgets/skeletons.dart';
 
 class HomeScreen extends GetView<HomeController> {
   const HomeScreen({super.key});
@@ -220,6 +220,10 @@ class HomeScreen extends GetView<HomeController> {
                 padding: const EdgeInsets.only(top: 20),
                 child: GetBuilder<HomeController>(
                   builder: (ctrl) {
+                    if (ctrl.isLoading) {
+                      return const FlashSaleSkeleton();
+                    }
+
                     return FlashSaleSection(
                       products: ctrl.flashSaleProducts,
                       onSeeAll: () => Get.toNamed(
@@ -239,7 +243,6 @@ class HomeScreen extends GetView<HomeController> {
           ],
         ),
       ),
-      bottomNavigationBar: const PinkoraBottomNav(),
     );
   }
 }

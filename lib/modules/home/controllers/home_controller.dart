@@ -9,6 +9,9 @@ class HomeController extends GetxController {
 
   final RxInt bannerIndex = 0.obs;
 
+  /// True until the first data load finishes (shows skeletons).
+  bool isLoading = true;
+
   final List<CategoryModel> categories = <CategoryModel>[];
   final List<ProductModel> flashSaleProducts = <ProductModel>[];
 
@@ -19,8 +22,12 @@ class HomeController extends GetxController {
   }
 
   Future<void> loadData() async {
-    final allCategories = await _repo.getCategories();
-    final flashSale = await _repo.getFlashSaleProducts();
+    // Start both requests together so they load in parallel.
+    final categoriesFuture = _repo.getCategories();
+    final flashSaleFuture = _repo.getFlashSaleProducts();
+
+    final allCategories = await categoriesFuture;
+    final flashSale = await flashSaleFuture;
 
     if (isClosed) return;
 
@@ -31,6 +38,8 @@ class HomeController extends GetxController {
     flashSaleProducts
       ..clear()
       ..addAll(flashSale);
+
+    isLoading = false;
 
     update();
   }

@@ -9,11 +9,20 @@ class PinkoraBottomNav extends StatelessWidget {
   const PinkoraBottomNav({
     super.key,
     this.currentIndex,
+    this.onTabSelected,
   });
 
   final int? currentIndex;
 
-  void _goTo(String route) {
+  /// When set (inside MainShell) tabs switch instantly without navigation.
+  final ValueChanged<int>? onTabSelected;
+
+  void _select(int index, String route) {
+    if (onTabSelected != null) {
+      onTabSelected!(index);
+      return;
+    }
+
     if (Get.currentRoute == route) return;
 
     Get.offAllNamed(route);
@@ -68,14 +77,14 @@ class PinkoraBottomNav extends StatelessWidget {
                   activeIcon: Icons.home_rounded,
                   label: 'Home',
                   isSelected: selectedIndex == 0,
-                  onTap: () => _goTo(AppRoutes.home),
+                  onTap: () => _select(0, AppRoutes.home),
                 ),
                 _NavItem(
                   icon: Icons.category_outlined,
                   activeIcon: Icons.category_rounded,
                   label: 'Category',
                   isSelected: selectedIndex == 1,
-                  onTap: () => _goTo(AppRoutes.category),
+                  onTap: () => _select(1, AppRoutes.category),
                 ),
                 Obx(
                       () => _NavItem(
@@ -83,7 +92,7 @@ class PinkoraBottomNav extends StatelessWidget {
                     activeIcon: Icons.shopping_cart_rounded,
                     label: 'Cart',
                     isSelected: selectedIndex == 2,
-                    onTap: () => _goTo(AppRoutes.cart),
+                    onTap: () => _select(2, AppRoutes.cart),
                     badge: cartController.cartItems.length,
                   ),
                 ),
@@ -92,14 +101,14 @@ class PinkoraBottomNav extends StatelessWidget {
                   activeIcon: Icons.favorite_rounded,
                   label: 'Wishlist',
                   isSelected: selectedIndex == 3,
-                  onTap: () => _goTo(AppRoutes.wishlist),
+                  onTap: () => _select(3, AppRoutes.wishlist),
                 ),
                 _NavItem(
                   icon: Icons.person_outline_rounded,
                   activeIcon: Icons.person_rounded,
                   label: 'Profile',
                   isSelected: selectedIndex == 4,
-                  onTap: () => _goTo(AppRoutes.profile),
+                  onTap: () => _select(4, AppRoutes.profile),
                 ),
               ],
             ),

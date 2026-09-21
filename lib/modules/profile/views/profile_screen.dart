@@ -5,7 +5,8 @@ import '../controllers/profile_controller.dart';
 import '../widgets/profile_menu_tile.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/routes/app_routes.dart';
-import '../../../widgets/bottom_nav_bar.dart';
+import '../widgets/avatar_view.dart';
+import '../../main/controllers/main_controller.dart';
 
 class ProfileScreen extends GetView<ProfileController> {
   const ProfileScreen({super.key});
@@ -47,6 +48,8 @@ class ProfileScreen extends GetView<ProfileController> {
                 final user = controller.user.value;
 
                 return _AnimatedProfileHeader(
+                  avatar: user?.avatar ?? '',
+                  onAvatarTap: controller.showAvatarPicker,
                   name: user?.name ?? 'User',
                   email: (user == null || user.email.isNotEmpty)
                       ? (user?.email ?? '')
@@ -90,9 +93,7 @@ class ProfileScreen extends GetView<ProfileController> {
                     ProfileMenuTile(
                       icon: Icons.favorite_border_rounded,
                       title: 'Wishlist',
-                      onTap: () => Get.toNamed(
-                        AppRoutes.wishlist,
-                      ),
+                      onTap: () => Get.find<MainController>().setIndex(3),
                       iconColor:
                       const Color(0xFFE53935),
                       iconBgColor:
@@ -169,7 +170,6 @@ class ProfileScreen extends GetView<ProfileController> {
         ),
       ),
 
-      bottomNavigationBar: const PinkoraBottomNav(),
     );
   }
 }
@@ -270,10 +270,14 @@ class _SettingsButtonState extends State<_SettingsButton>
 
 class _AnimatedProfileHeader extends StatefulWidget {
   const _AnimatedProfileHeader({
+    required this.avatar,
+    required this.onAvatarTap,
     required this.name,
     required this.email,
   });
 
+  final String avatar;
+  final VoidCallback onAvatarTap;
   final String name;
   final String email;
 
@@ -354,25 +358,16 @@ class _AnimatedProfileHeaderState
                 // ============================================
                 // AVATAR
                 // ============================================
-                RepaintBoundary(
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: widget.onAvatarTap,
+                  child: RepaintBoundary(
                   child: Stack(
                     children: [
-                      Container(
-                        width: 90,
-                        height: 90,
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryLight,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: AppColors.primary,
-                            width: 2.5,
-                          ),
-                        ),
-                        child: const Icon(
-                          Icons.person_rounded,
-                          size: 50,
-                          color: AppColors.primary,
-                        ),
+                      AvatarView(
+                        avatar: widget.avatar,
+                        name: widget.name,
+                        size: 90,
                       ),
 
                       Positioned(
@@ -395,6 +390,7 @@ class _AnimatedProfileHeaderState
                       ),
                     ],
                   ),
+                ),
                 ),
 
                 const SizedBox(height: 14),

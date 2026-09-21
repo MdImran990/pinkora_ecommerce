@@ -7,25 +7,15 @@ import '../../modules/auth/bindings/auth_binding.dart';
 import '../../modules/auth/views/login_screen.dart';
 import '../../modules/auth/views/register_screen.dart';
 import '../../modules/auth/views/forgot_password_screen.dart';
-import '../../modules/home/bindings/home_binding.dart';
-import '../../modules/home/views/home_screen.dart';
 
-import '../../modules/category/bindings/category_binding.dart';
-import '../../modules/category/views/category_screen.dart';
 import '../../modules/product/bindings/product_binding.dart';
 import '../../modules/product/views/product_detail_screen.dart';
 import '../../modules/product/views/product_list_screen.dart';
-import '../../modules/cart/bindings/cart_binding.dart';
-import '../../modules/cart/views/cart_screen.dart';
 
 import '../../modules/checkout/bindings/checkout_binding.dart';
 import '../../modules/checkout/views/checkout_screen.dart';
 
-import '../../modules/wishlist/bindings/wishlist_binding.dart';
-import '../../modules/wishlist/views/wishlist_screen.dart';
 
-import '../../modules/profile/bindings/profile_binding.dart';
-import '../../modules/profile/views/profile_screen.dart';
 
 import '../../modules/orders/views/orders_screen.dart';
 import '../../modules/orders/views/order_detail_screen.dart';
@@ -40,6 +30,8 @@ import '../../modules/help/views/help_screen.dart';
 
 import '../../modules/settings/views/settings_screen.dart';
 import '../../modules/settings/views/edit_profile_screen.dart';
+
+import '../../modules/main/views/main_shell.dart';
 
 import 'app_routes.dart';
 
@@ -90,8 +82,7 @@ class AppPages {
     // =========================
     GetPage(
       name: AppRoutes.home,
-      page: () => const HomeScreen(),
-      binding: HomeBinding(),
+      page: () => const MainShell(initialIndex: 0),
       transition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 180),
     ),
@@ -101,8 +92,7 @@ class AppPages {
     // =========================
     GetPage(
       name: AppRoutes.category,
-      page: () => const CategoryScreen(),
-      binding: CategoryBinding(),
+      page: () => const MainShell(initialIndex: 1),
       transition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 180),
     ),
@@ -133,8 +123,7 @@ class AppPages {
     // =========================
     GetPage(
       name: AppRoutes.cart,
-      page: () => const CartScreen(),
-      binding: CartBinding(),
+      page: () => const MainShell(initialIndex: 2),
       transition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 180),
     ),
@@ -155,8 +144,7 @@ class AppPages {
     // =========================
     GetPage(
       name: AppRoutes.wishlist,
-      page: () => const WishlistScreen(),
-      binding: WishlistBinding(),
+      page: () => const MainShell(initialIndex: 3),
       transition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 180),
     ),
@@ -166,8 +154,7 @@ class AppPages {
     // =========================
     GetPage(
       name: AppRoutes.profile,
-      page: () => const ProfileScreen(),
-      binding: ProfileBinding(),
+      page: () => const MainShell(initialIndex: 4),
       transition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 180),
     ),

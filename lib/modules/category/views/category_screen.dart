@@ -5,8 +5,9 @@ import '../controllers/category_controller.dart';
 import '../widgets/category_grid_card.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/routes/app_routes.dart';
-import '../../../widgets/bottom_nav_bar.dart';
 import '../../../data/model/category_model.dart';
+import '../../../widgets/skeletons.dart';
+import '../../main/controllers/main_controller.dart';
 
 class CategoryScreen extends GetView<CategoryController> {
   const CategoryScreen({super.key});
@@ -21,7 +22,7 @@ class CategoryScreen extends GetView<CategoryController> {
         automaticallyImplyLeading: true,
         leading: GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: () => Get.offAllNamed(AppRoutes.home),
+          onTap: () => Get.find<MainController>().setIndex(0),
           child: Container(
             margin: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -66,6 +67,10 @@ class CategoryScreen extends GetView<CategoryController> {
       ),
       body: Obx(
             () {
+          if (controller.isLoading.value) {
+            return const CategoryGridSkeleton();
+          }
+
           final categories = controller.categories;
 
           return GridView.builder(
@@ -100,7 +105,6 @@ class CategoryScreen extends GetView<CategoryController> {
           );
         },
       ),
-      bottomNavigationBar: const PinkoraBottomNav(),
     );
   }
 }

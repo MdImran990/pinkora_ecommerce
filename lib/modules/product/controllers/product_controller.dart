@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../app/routes/app_routes.dart';
 import '../../../app/theme/app_colors.dart';
+import '../../../widgets/custom_snackbar.dart';
 import '../../../data/model/product_model.dart';
+import '../../../data/model/review_model.dart';
+import '../../../data/repositories/product_repository.dart';
 import '../../../modules/cart/controllers/cart_controller.dart';
 import '../../../modules/wishlist/controllers/wishlist_controller.dart';
 class ProductController extends GetxController {
@@ -17,6 +21,13 @@ class ProductController extends GetxController {
 
   late final CartController _cartCtrl;
   late final WishlistController _wishCtrl;
+  late final ProductRepository _repo;
+
+  final RxList<ReviewModel> reviews = <ReviewModel>[].obs;
+  final RxList<ProductModel> related = <ProductModel>[].obs;
+
+  /// Lets the screen jump back to the top when another product is opened.
+  final ScrollController scrollController = ScrollController();
 
   @override
   void onInit() {
@@ -24,6 +35,7 @@ class ProductController extends GetxController {
 
     _cartCtrl = Get.find<CartController>();
     _wishCtrl = Get.find<WishlistController>();
+    _repo = Get.find<ProductRepository>();
 
     _loadProduct();
   }
@@ -35,6 +47,23 @@ class ProductController extends GetxController {
         ? argument
         : _fallbackProduct;
 
+    _apply(loadedProduct);
+  }
+
+  /// Opens another product on the same screen (used by "You may also like").
+  void showProduct(ProductModel next) {
+    _apply(next);
+
+    if (scrollController.hasClients) {
+      scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeOutCubic,
+      );
+    }
+  }
+
+  void _apply(ProductModel loadedProduct) {
     product.value = loadedProduct;
 
     selectedColor.value = loadedProduct.colors.isNotEmpty
@@ -47,6 +76,48 @@ class ProductController extends GetxController {
 
     isWishlisted.value =
         _wishCtrl.isWished(loadedProduct.id);
+
+    _loadExtras(loadedProduct);
+  }
+
+  Future<void> _loadExtras(ProductModel current) async {
+    reviews.clear();
+    related.clear();
+
+    final loadedReviews = await _repo.getReviews(current.id);
+    final loadedRelated = await _repo.getRelatedProducts(current);
+
+    // Ignore the result if the screen was closed or another product opened.
+    if (isClosed || product.value?.id != current.id) return;
+
+    reviews.assignAll(loadedReviews);
+    related.assignAll(loadedRelated);
+  }
+
+  /// Copies a short sharing text (a real share sheet needs the share_plus
+  /// package and a product link from the backend).
+  Future<void> shareProduct() async {
+    final current = product.value;
+
+    if (current == null) return;
+
+    await Clipboard.setData(
+      ClipboardData(
+        text: 'Check out ${current.name} on Pinkora - '
+            '৳${current.price.toInt()} (${current.discountPercent}% OFF)',
+      ),
+    );
+
+    CustomSnackbar.success(
+      'Copied!',
+      'Product details copied. You can paste and share them.',
+    );
+  }
+
+  @override
+  void onClose() {
+    scrollController.dispose();
+    super.onClose();
   }
 
   static final ProductModel _fallbackProduct = ProductModel(

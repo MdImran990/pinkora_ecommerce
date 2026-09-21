@@ -46,8 +46,8 @@ class AuthTextField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hint,
 
-        prefixIcon: const Icon(
-          Icons.person_outline_rounded,
+        prefixIcon: Icon(
+          prefixIcon,
           color: AppColors.grey,
           size: 20,
         ),

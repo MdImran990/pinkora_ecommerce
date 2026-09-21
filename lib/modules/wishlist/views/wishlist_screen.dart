@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import '../controllers/wishlist_controller.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/routes/app_routes.dart';
-import '../../../widgets/bottom_nav_bar.dart';
 import '../../../widgets/product_image.dart';
+import '../../main/controllers/main_controller.dart';
 
 class WishlistScreen extends StatelessWidget {
   const WishlistScreen({super.key});
@@ -70,7 +70,6 @@ class WishlistScreen extends StatelessWidget {
         },
       ),
 
-      bottomNavigationBar: const PinkoraBottomNav(),
     );
   }
 }
@@ -263,7 +262,7 @@ class _AnimatedStartShoppingButtonState
       const Duration(milliseconds: 15),
           () {
         if (mounted) {
-          Get.offAllNamed(AppRoutes.home);
+          Get.find<MainController>().setIndex(0);
         }
       },
     );

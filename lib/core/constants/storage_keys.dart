@@ -6,6 +6,7 @@ class StorageKeys {
   static const String currentUser = 'current_user';
   static const String accounts = 'accounts';
   static const String rememberedEmail = 'remembered_email';
+  static const String authToken = 'auth_token';
 
   static const String cartItems = 'cart_items';
   static const String wishlistItems = 'wishlist_items';

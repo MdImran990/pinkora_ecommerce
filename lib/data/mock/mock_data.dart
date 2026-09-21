@@ -70,6 +70,7 @@ class MockData {
       images: [
         'https://cdn.dummyjson.com/product-images/womens-bags/blue-women\'s-handbag/thumbnail.webp|https://cdn.dummyjson.com/products/images/womens-bags/Blue%20Women\'s%20Handbag/thumbnail.png',
       ],
+      description: 'A roomy, stylish handbag with a structured shape, inner pockets and a secure zip. Perfect for work, shopping and everyday outings.',
       price: 2100,
       originalPrice: 3000,
       discountPercent: 30,
@@ -86,6 +87,7 @@ class MockData {
       images: [
         'https://cdn.dummyjson.com/product-images/mens-shoes/nike-air-jordan-1-red-and-black/thumbnail.webp|https://cdn.dummyjson.com/product-images/mens-shoes/puma-future-rider-trainers/thumbnail.webp',
       ],
+      description: 'Lightweight sports shoes with a cushioned sole and breathable upper. Great grip and comfort for running, gym and daily wear.',
       price: 3200,
       originalPrice: 4300,
       discountPercent: 26,
@@ -102,6 +104,7 @@ class MockData {
       images: [
         'https://cdn.dummyjson.com/product-images/mobile-accessories/apple-watch-series-4-gold/thumbnail.webp|https://cdn.dummyjson.com/products/images/mobile-accessories/Apple%20Watch%20Series%204%20Gold/thumbnail.png',
       ],
+      description: 'A smart watch that tracks your steps, heart rate and notifications. Comfortable strap and a bright, easy-to-read display.',
       price: 4500,
       originalPrice: 7500,
       discountPercent: 40,
@@ -118,6 +121,7 @@ class MockData {
       images: [
         'https://cdn.dummyjson.com/product-images/beauty/red-lipstick/1.webp',
       ],
+      description: 'A creamy, long-lasting lipstick set in flattering shades. Smooth to apply and comfortable to wear all day.',
       price: 850,
       originalPrice: 1200,
       discountPercent: 29,
@@ -132,6 +136,7 @@ class MockData {
       images: [
         'https://cdn.dummyjson.com/product-images/womens-dresses/corset-leather-with-skirt/thumbnail.webp|https://cdn.dummyjson.com/products/images/womens-dresses/Corset%20Leather%20With%20Skirt/thumbnail.png',
       ],
+      description: 'A stylish corset-style dress made from soft, quality material. A flattering fit for parties and special occasions.',
       price: 2900,
       originalPrice: 3900,
       discountPercent: 26,
@@ -147,6 +152,7 @@ class MockData {
       images: [
         'https://cdn.dummyjson.com/product-images/mobile-accessories/apple-airpods-max-silver/thumbnail.webp',
       ],
+      description: 'Premium over-ear wireless headphones with rich sound, active noise cancellation and a soft, comfortable fit.',
       price: 3800,
       originalPrice: 5000,
       discountPercent: 24,
@@ -163,6 +169,7 @@ class MockData {
       images: [
         'https://cdn.dummyjson.com/product-images/womens-shoes/golden-shoes-woman/thumbnail.webp|https://cdn.dummyjson.com/products/images/womens-shoes/Golden%20Shoes%20Woman/thumbnail.png',
       ],
+      description: 'Elegant golden party shoes that go beautifully with dresses and traditional outfits. Comfortable heel for long events.',
       price: 2400,
       originalPrice: 3200,
       discountPercent: 25,
@@ -178,6 +185,7 @@ class MockData {
       images: [
         'https://cdn.dummyjson.com/product-images/mens-watches/rolex-datejust/thumbnail.webp|https://cdn.dummyjson.com/products/images/mens-watches/Rolex%20Datejust/thumbnail.png',
       ],
+      description: 'A classic stainless-steel watch with a timeless dial. Water resistant and built to last for years.',
       price: 3900,
       originalPrice: 5200,
       discountPercent: 25,
@@ -194,6 +202,7 @@ class MockData {
       images: [
         'https://cdn.dummyjson.com/product-images/womens-bags/heshe-women\'s-leather-bag/thumbnail.webp|https://cdn.dummyjson.com/products/images/womens-bags/Heshe%20Women\'s%20Leather%20Bag/thumbnail.png|https://cdn.dummyjson.com/product-images/womens-bags/prada-women-bag/thumbnail.webp|https://cdn.dummyjson.com/products/images/womens-bags/Prada%20Women%20Bag/thumbnail.png|https://cdn.dummyjson.com/product-images/womens-bags/white-faux-leather-backpack/thumbnail.webp|https://cdn.dummyjson.com/products/images/womens-bags/White%20Faux%20Leather%20Backpack/thumbnail.png|https://cdn.dummyjson.com/product-images/womens-bags/women-handbag-black/thumbnail.webp|https://cdn.dummyjson.com/products/images/womens-bags/Women%20Handbag%20Black/thumbnail.png',
       ],
+      description: 'A durable leather shoulder bag with plenty of space for your daily essentials. Sturdy straps and a smart finish.',
       price: 1850,
       originalPrice: 2500,
       discountPercent: 26,
@@ -209,6 +218,7 @@ class MockData {
       images: [
         'https://cdn.dummyjson.com/product-images/sunglasses/green-and-black-glasses/thumbnail.webp|https://cdn.dummyjson.com/products/images/sunglasses/Green%20and%20Black%20Glasses/thumbnail.png',
       ],
+      description: 'Trendy sunglasses with UV protection lenses. Lightweight frame that looks great on every face shape.',
       price: 750,
       originalPrice: 1000,
       discountPercent: 25,
@@ -225,6 +235,7 @@ class MockData {
         'https://cdn.dummyjson.com/product-images/furniture/bedside-table-african-cherry/2.webp',
         'https://cdn.dummyjson.com/product-images/furniture/bedside-table-african-cherry/3.webp',
       ],
+      description: 'A solid wooden bedside table with a spacious drawer. Adds storage and a warm, natural look to your bedroom.',
       price: 8500,
       originalPrice: 10500,
       discountPercent: 19,
@@ -239,6 +250,7 @@ class MockData {
       images: [
         'https://cdn.dummyjson.com/product-images/beauty/eyeshadow-palette-with-mirror/1.webp',
       ],
+      description: 'A pigmented eyeshadow palette with a built-in mirror. Blendable shades from soft neutrals to bold colors.',
       price: 1450,
       originalPrice: 1900,
       discountPercent: 24,
@@ -253,6 +265,7 @@ class MockData {
       images: [
         'https://cdn.dummyjson.com/product-images/smartphones/samsung-galaxy-s8/thumbnail.webp|https://cdn.dummyjson.com/products/images/smartphones/Samsung%20Galaxy%20S8/thumbnail.png',
       ],
+      description: 'A fast, reliable smartphone with a bright display, great camera and long battery life for everyday use.',
       price: 18500,
       originalPrice: 22000,
       discountPercent: 16,
@@ -269,6 +282,7 @@ class MockData {
         'https://cdn.dummyjson.com/product-images/furniture/annibale-colombo-sofa/2.webp',
         'https://cdn.dummyjson.com/product-images/furniture/annibale-colombo-sofa/3.webp',
       ],
+      description: 'A comfortable, modern sofa with soft cushioning and a sturdy frame. The centerpiece your living room needs.',
       price: 32000,
       originalPrice: 40000,
       discountPercent: 20,
@@ -283,6 +297,7 @@ class MockData {
       images: [
         'https://cdn.dummyjson.com/product-images/womens-dresses/black-women\'s-gown/thumbnail.webp|https://cdn.dummyjson.com/products/images/womens-dresses/Black%20Women\'s%20Gown/thumbnail.png|https://cdn.dummyjson.com/product-images/womens-dresses/dress-pea/thumbnail.webp|https://cdn.dummyjson.com/products/images/womens-dresses/Dress%20Pea/thumbnail.png|https://cdn.dummyjson.com/product-images/womens-dresses/corset-with-black-skirt/thumbnail.webp|https://cdn.dummyjson.com/products/images/womens-dresses/Corset%20With%20Black%20Skirt/thumbnail.png',
       ],
+      description: 'A graceful black evening gown with a smooth finish. Made for weddings, dinners and celebrations.',
       price: 3400,
       originalPrice: 4600,
       discountPercent: 26,
@@ -298,6 +313,7 @@ class MockData {
       images: [
         'https://cdn.dummyjson.com/product-images/womens-dresses/marni-red-&-black-suit/thumbnail.webp|https://cdn.dummyjson.com/products/images/womens-dresses/Marni%20Red%20&%20Black%20Suit/thumbnail.png|https://cdn.dummyjson.com/product-images/womens-dresses/corset-with-black-skirt/thumbnail.webp|https://cdn.dummyjson.com/products/images/womens-dresses/Corset%20With%20Black%20Skirt/thumbnail.png|https://cdn.dummyjson.com/product-images/womens-dresses/dress-pea/thumbnail.webp|https://cdn.dummyjson.com/products/images/womens-dresses/Dress%20Pea/thumbnail.png',
       ],
+      description: 'A modern two-piece suit set with a sharp cut. Look polished at the office or at any formal event.',
       price: 3100,
       originalPrice: 4200,
       discountPercent: 26,
@@ -313,6 +329,7 @@ class MockData {
       images: [
         'https://cdn.dummyjson.com/product-images/womens-jewellery/green-crystal-earring/thumbnail.webp|https://cdn.dummyjson.com/products/images/womens-jewellery/Green%20Crystal%20Earring/thumbnail.png|https://cdn.dummyjson.com/product-images/womens-jewellery/green-oval-earring/thumbnail.webp|https://cdn.dummyjson.com/products/images/womens-jewellery/Green%20Oval%20Earring/thumbnail.png|https://cdn.dummyjson.com/product-images/womens-jewellery/tropical-earring/thumbnail.webp|https://cdn.dummyjson.com/products/images/womens-jewellery/Tropical%20Earring/thumbnail.png',
       ],
+      description: 'Sparkling crystal earrings that add a touch of elegance to any outfit. Lightweight and comfortable to wear.',
       price: 550,
       originalPrice: 800,
       discountPercent: 31,
@@ -327,6 +344,7 @@ class MockData {
       images: [
         'https://cdn.dummyjson.com/product-images/sunglasses/classic-sun-glasses/thumbnail.webp|https://cdn.dummyjson.com/products/images/sunglasses/Classic%20Sun%20Glasses/thumbnail.png|https://cdn.dummyjson.com/product-images/sunglasses/black-sun-glasses/thumbnail.webp|https://cdn.dummyjson.com/products/images/sunglasses/Black%20Sun%20Glasses/thumbnail.png|https://cdn.dummyjson.com/product-images/sunglasses/party-glasses/thumbnail.webp|https://cdn.dummyjson.com/products/images/sunglasses/Party%20Glasses/thumbnail.png',
       ],
+      description: 'Classic sunglasses with a timeless shape and dark lenses. UV protection for sunny days.',
       price: 680,
       originalPrice: 900,
       discountPercent: 24,
@@ -341,6 +359,7 @@ class MockData {
       images: [
         'https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/1.webp',
       ],
+      description: 'A lash-lengthening mascara for full, defined lashes. Smudge-resistant and easy to remove.',
       price: 720,
       originalPrice: 950,
       discountPercent: 24,
@@ -357,6 +376,7 @@ class MockData {
         'https://cdn.dummyjson.com/product-images/fragrances/chanel-coco-noir-eau-de/2.webp',
         'https://cdn.dummyjson.com/product-images/fragrances/chanel-coco-noir-eau-de/3.webp',
       ],
+      description: 'A rich, long-lasting perfume with warm and elegant notes. A signature scent for special evenings.',
       price: 6800,
       originalPrice: 8500,
       discountPercent: 20,
@@ -371,6 +391,7 @@ class MockData {
       images: [
         'https://cdn.dummyjson.com/product-images/womens-watches/rolex-cellini-moonphase/thumbnail.webp|https://cdn.dummyjson.com/products/images/womens-watches/Rolex%20Cellini%20Moonphase/thumbnail.png',
       ],
+      description: 'A refined ladies watch with a moonphase dial and a shining finish. A perfect gift for someone special.',
       price: 12000,
       originalPrice: 15000,
       discountPercent: 20,
@@ -386,6 +407,7 @@ class MockData {
       images: [
         'https://cdn.dummyjson.com/product-images/home-decoration/table-lamp/thumbnail.webp|https://cdn.dummyjson.com/products/images/home-decoration/Table%20Lamp/thumbnail.png',
       ],
+      description: 'A stylish table lamp with warm light. Creates a cozy atmosphere in your bedroom or living room.',
       price: 1350,
       originalPrice: 1800,
       discountPercent: 25,
@@ -400,6 +422,7 @@ class MockData {
       images: [
         'https://cdn.dummyjson.com/product-images/smartphones/oppo-a57/thumbnail.webp|https://cdn.dummyjson.com/products/images/smartphones/Oppo%20A57/thumbnail.png',
       ],
+      description: 'An affordable smartphone with a large screen, dual cameras and a battery that lasts all day.',
       price: 16500,
       originalPrice: 19000,
       discountPercent: 13,

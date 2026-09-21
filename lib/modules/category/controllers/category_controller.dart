@@ -8,6 +8,9 @@ class CategoryController extends GetxController {
 
   final RxList<CategoryModel> categories = <CategoryModel>[].obs;
 
+  /// True until the first data load finishes (shows skeletons).
+  final RxBool isLoading = true.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -20,5 +23,6 @@ class CategoryController extends GetxController {
     if (isClosed) return;
 
     categories.assignAll(result);
+    isLoading.value = false;
   }
 }
