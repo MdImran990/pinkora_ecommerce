@@ -18,6 +18,7 @@ import 'modules/auth/controllers/auth_controller.dart';
 import 'modules/cart/controllers/cart_controller.dart';
 import 'modules/category/controllers/category_controller.dart';
 import 'modules/home/controllers/home_controller.dart';
+import 'core/services/location_controller.dart';
 import 'modules/main/controllers/main_controller.dart';
 import 'modules/profile/controllers/profile_controller.dart';
 import 'modules/notifications/controllers/notification_controller.dart';
@@ -106,6 +107,7 @@ class AppBinding extends Bindings {
     // Bottom-tab screens (kept alive so tabs switch instantly)
     _putOnce<MainController>(MainController.new);
     _putOnce<HomeController>(HomeController.new);
+    _putOnce<LocationController>(LocationController.new);
     _putOnce<CategoryController>(CategoryController.new);
     _putOnce<ProfileController>(ProfileController.new);
   }

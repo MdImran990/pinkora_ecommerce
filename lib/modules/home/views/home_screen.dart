@@ -28,26 +28,61 @@ class HomeScreen extends GetView<HomeController> {
                 padding: EdgeInsets.fromLTRB(16, 12, 16, 0),
                 child: Row(
                   children: [
-                    Icon(
-                      Icons.location_on_rounded,
-                      color: AppColors.primary,
-                      size: 18,
-                    ),
-                    SizedBox(width: 4),
-                    Text(
-                      'Dhaka, Bangladesh',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.black,
+                    Expanded(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () =>
+                            Get.find<LocationController>().handleTap(),
+                        child: Obx(
+                              () {
+                            final location =
+                            Get.find<LocationController>();
+                            final loading = location.status.value ==
+                                LocationStatus.loading;
+
+                            return Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.location_on_rounded,
+                                  color: AppColors.primary,
+                                  size: 18,
+                                ),
+                                const SizedBox(width: 4),
+                                Flexible(
+                                  child: Text(
+                                    location.label.value,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.black,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 2),
+                                if (loading)
+                                  const SizedBox(
+                                    width: 12,
+                                    height: 12,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: AppColors.primary,
+                                    ),
+                                  )
+                                else
+                                  const Icon(
+                                    Icons.refresh_rounded,
+                                    color: AppColors.grey,
+                                    size: 15,
+                                  ),
+                              ],
+                            );
+                          },
+                        ),
                       ),
                     ),
-                    Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      color: AppColors.black,
-                      size: 18,
-                    ),
-                    Spacer(),
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () => Get.toNamed(AppRoutes.notifications),

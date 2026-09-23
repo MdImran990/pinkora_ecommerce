@@ -17,6 +17,10 @@ dependencies:
   # HTTP (used by lib/data/providers/dio_provider.dart)
   dio: ^5.4.0
 
+  # Location (shows the user's current area on the Home screen)
+  geolocator: ^13.0.1
+  geocoding: ^3.0.0
+
   # UI
   card_swiper: ^3.0.1
   smooth_page_indicator: ^1.1.0
