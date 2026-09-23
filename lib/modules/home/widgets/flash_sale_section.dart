@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../data/model/product_model.dart';
 import 'product_card_home.dart';
+import '../../../widgets/staggered_fade_in.dart';
 
 class FlashSaleSection extends StatelessWidget {
   final List<ProductModel> products;
@@ -61,9 +62,13 @@ class FlashSaleSection extends StatelessWidget {
             separatorBuilder: (_, __) =>
             const SizedBox(width: 14),
             itemBuilder: (context, index) {
-              return ProductCardHome(
-                key: ValueKey(products[index].id),
-                product: products[index],
+              return StaggeredFadeIn(
+                index: index,
+                direction: AxisDirection.right,
+                child: ProductCardHome(
+                  key: ValueKey(products[index].id),
+                  product: products[index],
+                ),
               );
             },
           ),

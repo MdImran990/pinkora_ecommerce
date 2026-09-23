@@ -12,6 +12,7 @@ import '../../../widgets/bottom_nav_bar.dart';
 import '../../../widgets/empty_state.dart';
 import '../../../widgets/product_image.dart';
 import '../../../widgets/skeletons.dart';
+import '../../../widgets/staggered_fade_in.dart';
 
 enum _SortOption {
   relevance('Relevance'),
@@ -500,13 +501,16 @@ class _ProductListScreenState extends State<ProductListScreen> {
       itemBuilder: (context, index) {
         final product = visible[index];
 
-        return RepaintBoundary(
-          key: ValueKey(product.id),
-          child: _ProductGridCard(
-            product: product,
-            cartCtrl: _cartCtrl,
-            wishCtrl: _wishCtrl,
-            index: index,
+        return StaggeredFadeIn(
+          index: index % 6,
+          child: RepaintBoundary(
+            key: ValueKey(product.id),
+            child: _ProductGridCard(
+              product: product,
+              cartCtrl: _cartCtrl,
+              wishCtrl: _wishCtrl,
+              index: index,
+            ),
           ),
         );
       },

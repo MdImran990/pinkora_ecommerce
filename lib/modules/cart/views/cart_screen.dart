@@ -6,6 +6,7 @@ import '../../../data/model/cart_item_model.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../widgets/product_image.dart';
+import '../../../widgets/staggered_fade_in.dart';
 import '../../main/controllers/main_controller.dart';
 
 class CartScreen extends StatelessWidget {
@@ -113,12 +114,15 @@ class CartScreen extends StatelessWidget {
                         (context, index) {
                       final item = ctrl.cartItems[index];
 
-                      return RepaintBoundary(
-                        key: ValueKey(item.key),
-                        child: _CartItemCard(
-                          item: item,
-                          index: index,
-                          controller: ctrl,
+                      return StaggeredFadeIn(
+                        index: index,
+                        child: RepaintBoundary(
+                          key: ValueKey(item.key),
+                          child: _CartItemCard(
+                            item: item,
+                            index: index,
+                            controller: ctrl,
+                          ),
                         ),
                       );
                     },

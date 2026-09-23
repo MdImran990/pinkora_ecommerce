@@ -5,6 +5,7 @@ import '../controllers/wishlist_controller.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../widgets/product_image.dart';
+import '../../../app/routes/app_routes.dart';
 import '../../main/controllers/main_controller.dart';
 
 class WishlistScreen extends StatelessWidget {
@@ -380,7 +381,13 @@ class _WishlistItemState extends State<_WishlistItem>
       opacity: _fadeAnimation,
       child: SlideTransition(
         position: _slideAnimation,
-        child: Container(
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => Get.toNamed(
+            AppRoutes.productDetail,
+            arguments: product,
+          ),
+          child: Container(
           margin: const EdgeInsets.only(bottom: 14),
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
@@ -457,6 +464,7 @@ class _WishlistItemState extends State<_WishlistItem>
               ),
             ],
           ),
+        ),
         ),
       ),
     );

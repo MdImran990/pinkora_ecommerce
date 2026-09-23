@@ -11,6 +11,7 @@ import '../../../widgets/pinkora_app_bar.dart';
 import '../../../widgets/product_image.dart';
 import '../controllers/orders_controller.dart';
 import '../widgets/order_status_chip.dart';
+import '../../../widgets/staggered_fade_in.dart';
 
 class OrdersScreen extends StatelessWidget {
   const OrdersScreen({super.key});
@@ -51,7 +52,10 @@ class OrdersScreen extends StatelessWidget {
                   physics: const BouncingScrollPhysics(),
                   itemCount: list.length,
                   itemBuilder: (context, index) {
-                    return _OrderCard(order: list[index]);
+                    return StaggeredFadeIn(
+                      index: index,
+                      child: _OrderCard(order: list[index]),
+                    );
                   },
                 );
               },
