@@ -5,7 +5,6 @@ import '../controllers/wishlist_controller.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../widgets/product_image.dart';
-import '../../../app/routes/app_routes.dart';
 import '../../main/controllers/main_controller.dart';
 
 class WishlistScreen extends StatelessWidget {
