@@ -8,7 +8,8 @@ import '../../../widgets/product_image.dart';
 /// [avatar] can be:
 /// - empty                 -> the first letter of the name
 /// - an emoji (preset)     -> shown as text
-/// - http(s) URL / assets  -> a real photo (used once the backend gives one)
+/// - http(s) URL / assets  -> a real photo (from the backend)
+/// - a local device path   -> a photo picked from the gallery
 class AvatarView extends StatelessWidget {
   const AvatarView({
     super.key,
@@ -22,7 +23,9 @@ class AvatarView extends StatelessWidget {
   final double size;
 
   bool get _isPicture {
-    return avatar.startsWith('http') || avatar.startsWith('assets/');
+    return avatar.startsWith('http') ||
+        avatar.startsWith('assets/') ||
+        avatar.startsWith('/');
   }
 
   @override

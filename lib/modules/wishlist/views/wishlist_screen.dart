@@ -23,7 +23,26 @@ class WishlistScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.scaffoldBg,
         elevation: 0,
-        automaticallyImplyLeading: false,
+        centerTitle: true,
+        leading: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => Get.find<MainController>().setIndex(0),
+          child: Container(
+            margin: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: AppColors.border,
+              ),
+            ),
+            child: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              size: 16,
+              color: AppColors.black,
+            ),
+          ),
+        ),
         title: const Text(
           'My Wishlist',
           style: TextStyle(
@@ -332,6 +351,11 @@ class _WishlistItemState extends State<_WishlistItem>
   late final Animation<double> _fadeAnimation;
   late final Animation<Offset> _slideAnimation;
 
+  // Plays a short fade + collapse before the item actually leaves the list,
+  // so removing it never causes an abrupt jump.
+  bool _removing = false;
+  bool _collapsed = false;
+
   @override
   void initState() {
     super.initState();
@@ -366,6 +390,20 @@ class _WishlistItemState extends State<_WishlistItem>
     );
   }
 
+  Future<void> _handleRemove() async {
+    if (_removing) return;
+
+    setState(() => _removing = true);
+    await Future.delayed(const Duration(milliseconds: 200));
+
+    if (!mounted) return;
+    setState(() => _collapsed = true);
+    await Future.delayed(const Duration(milliseconds: 220));
+
+    if (!mounted) return;
+    widget.onRemove();
+  }
+
   @override
   void dispose() {
     _entryController.dispose();
@@ -376,6 +414,21 @@ class _WishlistItemState extends State<_WishlistItem>
   Widget build(BuildContext context) {
     final product = widget.product;
 
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 220),
+      curve: Curves.easeInOut,
+      alignment: Alignment.topCenter,
+      child: _collapsed
+          ? const SizedBox(width: double.infinity)
+          : AnimatedOpacity(
+        duration: const Duration(milliseconds: 200),
+        opacity: _removing ? 0 : 1,
+        child: _buildCard(product),
+      ),
+    );
+  }
+
+  Widget _buildCard(dynamic product) {
     return FadeTransition(
       opacity: _fadeAnimation,
       child: SlideTransition(
@@ -459,7 +512,7 @@ class _WishlistItemState extends State<_WishlistItem>
               // DELETE BUTTON
               // ──────────────────────────────────────
               _AnimatedDeleteButton(
-                onTap: widget.onRemove,
+                onTap: _handleRemove,
               ),
             ],
           ),

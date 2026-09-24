@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +11,8 @@ import '../app/theme/app_colors.dart';
 /// - a network URL (http/https)      -> loaded and cached
 /// - several URLs joined with '|'    -> the next one is tried if a URL fails
 /// - an 'assets/...' path            -> bundled image
+/// - a local device file path        -> loaded with Image.file (e.g. a
+///                                      profile photo picked from gallery)
 /// - empty, or every URL failed      -> pink placeholder with an icon
 class ProductImage extends StatelessWidget {
   const ProductImage({
@@ -81,6 +85,13 @@ class ProductImage extends StatelessWidget {
     } else if (urls.first.startsWith('assets/')) {
       content = Image.asset(
         urls.first,
+        fit: fit,
+        errorBuilder: (context, error, stackTrace) => _placeholder(),
+      );
+    } else if (!urls.first.startsWith('http')) {
+      // A path on the device (e.g. a profile photo saved to app storage).
+      content = Image.file(
+        File(urls.first),
         fit: fit,
         errorBuilder: (context, error, stackTrace) => _placeholder(),
       );

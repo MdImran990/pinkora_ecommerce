@@ -6,8 +6,8 @@ import '../controllers/profile_controller.dart';
 
 /// Bottom sheet to choose a profile avatar.
 ///
-/// Uploading a real photo needs the backend (image upload), so for now the
-/// user picks a preset avatar or uses the first letter of the name.
+/// The user can pick a real photo from their gallery (saved on the device),
+/// or choose one of the fun preset avatars instead.
 class AvatarPickerSheet extends StatelessWidget {
   const AvatarPickerSheet({
     super.key,
@@ -32,8 +32,31 @@ class AvatarPickerSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(
+              width: double.infinity,
+              height: 46,
+              child: OutlinedButton.icon(
+                onPressed: () {
+                  Get.back();
+                  controller.pickAvatarFromGallery();
+                },
+                icon: const Icon(
+                  Icons.photo_library_outlined,
+                  size: 19,
+                ),
+                label: const Text('Choose from Gallery'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.primary,
+                  side: const BorderSide(color: AppColors.primary),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 18),
             const Text(
-              'Choose your avatar',
+              'Or pick a fun avatar',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
