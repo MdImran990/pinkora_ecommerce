@@ -58,6 +58,10 @@ class ProfileController extends GetxController {
   /// Lets the user pick a photo from their gallery, copies it into the
   /// app's own storage (so it survives cache clean-ups and app restarts),
   /// and saves that path as the avatar.
+  ///
+  /// Every pick is saved under a new file name. Flutter's Image.file caches
+  /// a picture by its file path, so writing over the same path again would
+  /// keep showing the old photo - a fresh path avoids that stale cache.
   Future<void> pickAvatarFromGallery() async {
     try {
       final picked = await ImagePicker().pickImage(
@@ -70,22 +74,25 @@ class ProfileController extends GetxController {
 
       final directory = await getApplicationDocumentsDirectory();
       final extension = picked.path.split('.').last;
-      final savedPath = '${directory.path}/profile_avatar.$extension';
-
-      // Overwrite any photo picked earlier.
+      final stamp = DateTime.now().millisecondsSinceEpoch;
+      final savedPath = '${directory.path}/avatar_$stamp.$extension';
       final oldAvatar = user.value?.avatar ?? '';
 
-      if (oldAvatar.startsWith('/') && oldAvatar != savedPath) {
-        final oldFile = File(oldAvatar);
+      await File(picked.path).copy(savedPath);
+      await changeAvatar(savedPath);
 
-        if (await oldFile.exists()) {
-          await oldFile.delete();
+      // Clean up the previous photo now that the new one is saved.
+      if (oldAvatar.startsWith('/') && oldAvatar != savedPath) {
+        try {
+          final oldFile = File(oldAvatar);
+
+          if (await oldFile.exists()) {
+            await oldFile.delete();
+          }
+        } catch (_) {
+          // Not critical if the old file can't be removed.
         }
       }
-
-      await File(picked.path).copy(savedPath);
-
-      await changeAvatar(savedPath);
     } catch (_) {
       CustomSnackbar.error(
         'Could not set photo',

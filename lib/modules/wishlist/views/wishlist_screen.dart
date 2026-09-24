@@ -64,27 +64,29 @@ class WishlistScreen extends StatelessWidget {
             return const _EmptyWishlist();
           }
 
-          return ListView.builder(
+          // A plain children list (not .builder) is used here on purpose:
+          // it lets Flutter match each item by its key even after another
+          // item is removed and the rest shift position, so a delete only
+          // animates the deleted card - the others don't reset or "jump".
+          return ListView(
             padding: const EdgeInsets.all(16),
             physics: const BouncingScrollPhysics(),
             cacheExtent: 700,
             keyboardDismissBehavior:
             ScrollViewKeyboardDismissBehavior.onDrag,
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              final product = items[index];
-
-              return RepaintBoundary(
-                key: ValueKey(product.id),
-                child: _WishlistItem(
-                  product: product,
-                  index: index,
-                  onRemove: () {
-                    controller.removeItem(product);
-                  },
+            children: [
+              for (var index = 0; index < items.length; index++)
+                RepaintBoundary(
+                  key: ValueKey(items[index].id),
+                  child: _WishlistItem(
+                    product: items[index],
+                    index: index,
+                    onRemove: () {
+                      controller.removeItem(items[index]);
+                    },
+                  ),
                 ),
-              );
-            },
+            ],
           );
         },
       ),
