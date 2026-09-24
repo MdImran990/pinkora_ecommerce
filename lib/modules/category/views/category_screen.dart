@@ -55,6 +55,7 @@ class CategoryScreen extends GetView<CategoryController> {
               onTap: () => Get.toNamed(
                 AppRoutes.productList,
                 arguments: {'focusSearch': true},
+                preventDuplicates: false,
               ),
               child: const Icon(
                 Icons.search_rounded,
@@ -98,6 +99,7 @@ class CategoryScreen extends GetView<CategoryController> {
                   onTap: () => Get.toNamed(
                     AppRoutes.productList,
                     arguments: category,
+                    preventDuplicates: false,
                   ),
                 ),
               );

@@ -8,6 +8,13 @@ import 'package:get_storage/get_storage.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../app/theme/app_colors.dart';
 
+const SystemUiOverlayStyle _splashOverlayStyle = SystemUiOverlayStyle(
+  statusBarColor: Colors.transparent,
+  statusBarIconBrightness: Brightness.dark,
+  systemNavigationBarColor: Color(0xFFFFB3D9),
+  systemNavigationBarIconBrightness: Brightness.dark,
+);
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -56,12 +63,7 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: const SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.dark,
-          systemNavigationBarColor: Color(0xFFFFB3D9),
-          systemNavigationBarIconBrightness: Brightness.dark,
-        ),
+        value: _splashOverlayStyle,
         child: Container(
           width: double.infinity,
           height: double.infinity,

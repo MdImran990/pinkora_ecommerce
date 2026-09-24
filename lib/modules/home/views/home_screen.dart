@@ -166,6 +166,7 @@ class HomeScreen extends GetView<HomeController> {
                   onTap: () => Get.toNamed(
                     AppRoutes.productList,
                     arguments: {'focusSearch': true},
+                    preventDuplicates: false,
                   ),
                   child: const SizedBox(
                     height: 48,
@@ -265,6 +266,7 @@ class HomeScreen extends GetView<HomeController> {
                       onSeeAll: () => Get.toNamed(
                         AppRoutes.productList,
                         arguments: {'flashSale': true},
+                        preventDuplicates: false,
                       ),
                     );
                   },

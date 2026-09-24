@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../data/model/category_model.dart';
 import '../../../app/routes/app_routes.dart';
+import '../../../widgets/product_image.dart';
 
 class CategoryChipRow extends StatelessWidget {
   final List<CategoryModel> categories;
@@ -50,20 +51,27 @@ class CategoryChipRow extends StatelessWidget {
             onTap: () => Get.toNamed(
               AppRoutes.productList,
               arguments: category,
+              preventDuplicates: false,
             ),
             child: Column(
               children: [
                 Container(
                   width: 52,
                   height: 52,
+                  padding: const EdgeInsets.all(2),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryLight,
-                    borderRadius: BorderRadius.circular(14),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: AppColors.primary.withValues(alpha: 0.35),
+                    ),
                   ),
-                  child: Icon(
-                    _icon(category.name),
-                    color: AppColors.primary,
-                    size: 26,
+                  child: ProductImage(
+                    url: category.image,
+                    width: double.infinity,
+                    height: double.infinity,
+                    icon: _icon(category.name),
+                    iconSize: 24,
+                    radius: BorderRadius.circular(50),
                   ),
                 ),
                 const SizedBox(height: 6),

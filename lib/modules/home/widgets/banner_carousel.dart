@@ -202,6 +202,7 @@ class _BannerCard extends StatelessWidget {
                       arguments: {
                         'flashSale': banner.title == 'Flash Deal',
                       },
+                      preventDuplicates: false,
                     ),
                     child: Container(
                     padding: const EdgeInsets.symmetric(
