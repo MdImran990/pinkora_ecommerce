@@ -53,9 +53,8 @@ class _RatingRowState extends State<RatingRow>
     return RepaintBoundary(
       child: Row(
         children: [
-          // ─────────────────────────────────────────
           // STARS
-          // ─────────────────────────────────────────
+
           for (int i = 0; i < 5; i++)
             _AnimatedStar(
               index: i,
@@ -97,9 +96,7 @@ class _RatingRowState extends State<RatingRow>
   }
 }
 
-// ═══════════════════════════════════════════════════════
 // SMOOTH STAR
-// ═══════════════════════════════════════════════════════
 
 class _AnimatedStar extends StatelessWidget {
   final int index;

@@ -53,9 +53,7 @@ class ColorSelector extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════════
 // ULTRA-SMOOTH COLOR ITEM
-// ═══════════════════════════════════════════════════════
 
 class _ColorItem extends StatefulWidget {
   final String colorCode;

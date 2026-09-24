@@ -68,9 +68,7 @@ class QuantityStepper extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════════
 // ULTRA-SMOOTH STEP BUTTON
-// ═══════════════════════════════════════════════════════
 
 class _StepBtn extends StatefulWidget {
   final IconData icon;

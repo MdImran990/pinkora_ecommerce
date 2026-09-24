@@ -43,9 +43,8 @@ class ProductDetailScreen extends GetView<ProductController> {
         ScrollViewKeyboardDismissBehavior.onDrag,
         cacheExtent: 800,
         slivers: [
-          // ─────────────────────────────────────────────
+
           // APP BAR
-          // ─────────────────────────────────────────────
           SliverAppBar(
             backgroundColor: AppColors.scaffoldBg,
             elevation: 0,
@@ -72,9 +71,8 @@ class ProductDetailScreen extends GetView<ProductController> {
             ),
 
             actions: [
-              // ─────────────────────────────────────────
+
               // WISHLIST
-              // ─────────────────────────────────────────
               Obx(
                     () {
                   final isWishlisted =
@@ -127,9 +125,7 @@ class ProductDetailScreen extends GetView<ProductController> {
                 },
               ),
 
-              // ─────────────────────────────────────────
               // SHARE
-              // ─────────────────────────────────────────
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: controller.shareProduct,
@@ -154,18 +150,14 @@ class ProductDetailScreen extends GetView<ProductController> {
             ],
           ),
 
-          // ─────────────────────────────────────────────
           // PRODUCT IMAGE
-          // ─────────────────────────────────────────────
           const SliverToBoxAdapter(
             child: RepaintBoundary(
               child: ProductImageGallery(),
             ),
           ),
 
-          // ─────────────────────────────────────────────
           // PRODUCT INFO
-          // ─────────────────────────────────────────────
           SliverToBoxAdapter(
             child: RepaintBoundary(
               child: Container(
@@ -180,9 +172,7 @@ class ProductDetailScreen extends GetView<ProductController> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ─────────────────────────────────
                     // NAME
-                    // ─────────────────────────────────
                     Text(
                       p.name,
                       style: const TextStyle(
@@ -194,9 +184,7 @@ class ProductDetailScreen extends GetView<ProductController> {
 
                     const SizedBox(height: 8),
 
-                    // ─────────────────────────────────
                     // RATING
-                    // ─────────────────────────────────
                     RepaintBoundary(
                       child: RatingRow(
                         rating: p.rating,
@@ -206,9 +194,7 @@ class ProductDetailScreen extends GetView<ProductController> {
 
                     const SizedBox(height: 14),
 
-                    // ─────────────────────────────────
                     // PRICE
-                    // ─────────────────────────────────
                     RepaintBoundary(
                       child: Row(
                         children: [
@@ -268,9 +254,7 @@ class ProductDetailScreen extends GetView<ProductController> {
 
                     const SizedBox(height: 16),
 
-                    // ─────────────────────────────────
                     // COLOR
-                    // ─────────────────────────────────
                     if (p.colors.isNotEmpty) ...[
                       const Text(
                         'Color',
@@ -298,9 +282,7 @@ class ProductDetailScreen extends GetView<ProductController> {
                       const SizedBox(height: 16),
                     ],
 
-                    // ─────────────────────────────────
                     // QUANTITY
-                    // ─────────────────────────────────
                     Row(
                       mainAxisAlignment:
                       MainAxisAlignment.spaceBetween,
@@ -331,9 +313,7 @@ class ProductDetailScreen extends GetView<ProductController> {
 
                     const SizedBox(height: 32),
 
-                    // ─────────────────────────────────
                     // ACTION BUTTONS
-                    // ─────────────────────────────────
                     Row(
                       children: [
                         Expanded(
@@ -362,9 +342,7 @@ class ProductDetailScreen extends GetView<ProductController> {
             ),
           ),
 
-          // ─────────────────────────────────────────────
           // DESCRIPTION, REVIEWS, RELATED PRODUCTS
-          // ─────────────────────────────────────────────
           SliverToBoxAdapter(
             child: ProductExtras(
               controller: controller,
@@ -381,9 +359,7 @@ class ProductDetailScreen extends GetView<ProductController> {
   }
 }
 
-// ═══════════════════════════════════════════════════════
 // ULTRA-SMOOTH ACTION BUTTON
-// ═══════════════════════════════════════════════════════
 
 class _AnimatedActionButton extends StatefulWidget {
   final VoidCallback onTap;

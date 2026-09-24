@@ -116,7 +116,7 @@ class _ExpandableTextState extends State<_ExpandableText> {
   }
 }
 
-// ── Reviews ──
+// Reviews
 
 class _ReviewsSection extends StatelessWidget {
   const _ReviewsSection({
@@ -340,7 +340,7 @@ class _ReviewTile extends StatelessWidget {
   }
 }
 
-// ── Related products ──
+// Related products
 
 class _RelatedSection extends StatelessWidget {
   const _RelatedSection({required this.controller});
