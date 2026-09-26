@@ -31,6 +31,19 @@ class PaymentBadge extends StatelessWidget {
     'cod': 'assets/icons/payment/cod_icon.png',
   };
 
+  // The 4 source images aren't the same shape (Nagad's is a wide
+  // logo+wordmark, the others are closer to square). Matching everything
+  // to the same fixed WIDTH and HEIGHT box makes the wide one look tiny
+  // by comparison, so the background-free mode instead matches everything
+  // to the same HEIGHT and lets the width follow each logo's own shape -
+  // that's what actually makes all four look "the same size".
+  static const Map<String, double> _aspectRatio = {
+    'bkash': 499 / 475,
+    'nagad': 500 / 238,
+    'card': 130 / 126,
+    'cod': 118 / 136,
+  };
+
   @override
   Widget build(BuildContext context) {
     final logo = _logos[method];
@@ -55,9 +68,11 @@ class PaymentBadge extends StatelessWidget {
 
     if (!withBackground) {
       return SizedBox(
-        width: size,
         height: size,
-        child: Image.asset(logo, fit: BoxFit.contain),
+        child: AspectRatio(
+          aspectRatio: _aspectRatio[method] ?? 1.0,
+          child: Image.asset(logo, fit: BoxFit.contain),
+        ),
       );
     }
 

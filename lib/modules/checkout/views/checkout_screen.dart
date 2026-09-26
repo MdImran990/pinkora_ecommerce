@@ -64,7 +64,7 @@ class CheckoutScreen extends GetView<CheckoutController> {
                 ),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
 
               Expanded(
                 child: AnimatedSwitcher(

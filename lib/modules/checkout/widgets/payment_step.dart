@@ -32,7 +32,7 @@ class PaymentStep extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: 10),
 
         Obx(
               () {
@@ -189,6 +189,7 @@ class _PaymentOptionState extends State<_PaymentOption>
               children: [
                 Column(
                   mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     PaymentBadge(
                       method: widget.value,
@@ -197,6 +198,7 @@ class _PaymentOptionState extends State<_PaymentOption>
                     ),
                     const SizedBox(height: 10),
                     SizedBox(
+                      width: double.infinity,
                       height: 32,
                       child: AnimatedDefaultTextStyle(
                         duration: const Duration(milliseconds: 180),
@@ -212,6 +214,7 @@ class _PaymentOptionState extends State<_PaymentOption>
                         textAlign: TextAlign.center,
                         child: Text(
                           widget.label,
+                          textAlign: TextAlign.center,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
