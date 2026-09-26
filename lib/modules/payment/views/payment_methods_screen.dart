@@ -6,6 +6,7 @@ import '../../../core/constants/storage_keys.dart';
 import '../../../widgets/app_card.dart';
 import '../../../widgets/custom_snackbar.dart';
 import '../../../widgets/pinkora_app_bar.dart';
+import '../../../widgets/payment_badge.dart';
 
 /// Choose the payment method that is pre-selected at checkout.
 /// Real payment (bKash / Nagad / card gateway) is connected with the backend.
@@ -23,29 +24,21 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
       id: 'bkash',
       title: 'bKash',
       subtitle: 'Pay with your bKash account',
-      icon: Icons.account_balance_wallet_rounded,
-      color: Color(0xFFE2136E),
     ),
     _Method(
       id: 'nagad',
       title: 'Nagad',
       subtitle: 'Pay with your Nagad account',
-      icon: Icons.account_balance_wallet_rounded,
-      color: Color(0xFFF6921E),
     ),
     _Method(
       id: 'card',
       title: 'Card Payment',
       subtitle: 'Visa, Mastercard and other cards',
-      icon: Icons.credit_card_rounded,
-      color: Color(0xFF3D5AFE),
     ),
     _Method(
       id: 'cod',
       title: 'Cash on Delivery',
       subtitle: 'Pay when you receive the order',
-      icon: Icons.payments_rounded,
-      color: Color(0xFF4CAF50),
     ),
   ];
 
@@ -99,19 +92,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
                 method.id == _selected ? AppColors.primary : null,
                 child: Row(
                   children: [
-                    Container(
-                      width: 42,
-                      height: 42,
-                      decoration: BoxDecoration(
-                        color: method.color.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(
-                        method.icon,
-                        color: method.color,
-                        size: 22,
-                      ),
-                    ),
+                    PaymentBadge(method: method.id, size: 42),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
@@ -190,13 +171,9 @@ class _Method {
     required this.id,
     required this.title,
     required this.subtitle,
-    required this.icon,
-    required this.color,
   });
 
   final String id;
   final String title;
   final String subtitle;
-  final IconData icon;
-  final Color color;
 }

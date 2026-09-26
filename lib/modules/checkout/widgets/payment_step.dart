@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../controllers/checkout_controller.dart';
 import '../../../app/theme/app_colors.dart';
+import '../../../widgets/payment_badge.dart';
 
 class PaymentStep extends StatelessWidget {
   final CheckoutController controller;
@@ -44,8 +45,6 @@ class PaymentStep extends StatelessWidget {
               children: [
                 _PaymentOption(
                   label: 'bKash',
-                  icon: Icons.account_balance_wallet_rounded,
-                  color: const Color(0xFFE2136E),
                   value: _bkash,
                   groupValue: selected,
                   onTap: () =>
@@ -54,8 +53,6 @@ class PaymentStep extends StatelessWidget {
 
                 _PaymentOption(
                   label: 'Nagad',
-                  icon: Icons.account_balance_wallet_rounded,
-                  color: const Color(0xFFFF6B00),
                   value: _nagad,
                   groupValue: selected,
                   onTap: () =>
@@ -64,8 +61,6 @@ class PaymentStep extends StatelessWidget {
 
                 _PaymentOption(
                   label: 'Card Payment',
-                  icon: Icons.credit_card_rounded,
-                  color: const Color(0xFF3D5AFE),
                   value: _card,
                   groupValue: selected,
                   onTap: () =>
@@ -74,8 +69,6 @@ class PaymentStep extends StatelessWidget {
 
                 _PaymentOption(
                   label: 'Cash on Delivery',
-                  icon: Icons.payments_rounded,
-                  color: const Color(0xFF4CAF50),
                   value: _cod,
                   groupValue: selected,
                   onTap: () =>
@@ -96,16 +89,12 @@ class PaymentStep extends StatelessWidget {
 
 class _PaymentOption extends StatefulWidget {
   final String label;
-  final IconData icon;
-  final Color color;
   final String value;
   final String groupValue;
   final VoidCallback onTap;
 
   const _PaymentOption({
     required this.label,
-    required this.icon,
-    required this.color,
     required this.value,
     required this.groupValue,
     required this.onTap,
@@ -245,11 +234,7 @@ class _PaymentOptionState extends State<_PaymentOption>
 
                 const SizedBox(width: 8),
 
-                Icon(
-                  widget.icon,
-                  color: widget.color,
-                  size: 18,
-                ),
+                PaymentBadge(method: widget.value, size: 22),
 
                 const SizedBox(width: 6),
 

@@ -14,14 +14,14 @@ dependencies:
   get: ^4.6.6
   get_storage: ^2.1.1
 
-  # HTTP (used by lib/data/providers/dio_provider.dart)
+  # HTTP
   dio: ^5.4.0
 
-  # Location (shows the user's current area on the Home screen)
+  # Location
   geolocator: ^13.0.1
   geocoding: ^3.0.0
 
-  # Profile photo (pick from gallery, saved on the device)
+  # Profile photo
   image_picker: ^1.1.2
   path_provider: ^2.1.4
 
@@ -40,7 +40,6 @@ dev_dependencies:
   flutter_lints: ^3.0.0
   flutter_launcher_icons: ^0.14.3
 
-# Generate launcher icons with:  dart run flutter_launcher_icons
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
@@ -55,6 +54,8 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/icons/payment/
+    - assets/fonts/
 
   fonts:
     - family: Poppins
