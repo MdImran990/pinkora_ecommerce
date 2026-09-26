@@ -92,7 +92,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
                 method.id == _selected ? AppColors.primary : null,
                 child: Row(
                   children: [
-                    PaymentBadge(method: method.id, size: 42),
+                    PaymentBadge(method: method.id, size: 48),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(

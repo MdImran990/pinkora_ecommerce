@@ -11,11 +11,18 @@ class PaymentBadge extends StatelessWidget {
     super.key,
     required this.method,
     this.size = 40,
+    this.withBackground = true,
   });
 
   /// 'bkash', 'nagad', 'card' or 'cod'.
   final String method;
   final double size;
+
+  /// When true (default), the logo sits on a small white rounded card of
+  /// its own - good for a plain list row. Set to false to show just the
+  /// logo at full size, for places that already have their own background
+  /// (like a bigger selectable payment tile).
+  final bool withBackground;
 
   static const Map<String, String> _logos = {
     'bkash': 'assets/icons/payment/bkash_logo.png',
@@ -43,6 +50,14 @@ class PaymentBadge extends StatelessWidget {
           color: Colors.white,
           size: size * 0.5,
         ),
+      );
+    }
+
+    if (!withBackground) {
+      return SizedBox(
+        width: size,
+        height: size,
+        child: Image.asset(logo, fit: BoxFit.contain),
       );
     }
 

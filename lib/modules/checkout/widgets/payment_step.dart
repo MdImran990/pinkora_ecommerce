@@ -36,43 +36,35 @@ class PaymentStep extends StatelessWidget {
 
         Obx(
               () {
-            final selected =
-                controller.selectedPayment.value;
+            final selected = controller.selectedPayment.value;
 
-            return Wrap(
-              spacing: 12,
-              runSpacing: 12,
+            Widget option(String label, String value) {
+              return Expanded(
+                child: _PaymentOption(
+                  label: label,
+                  value: value,
+                  groupValue: selected,
+                  onTap: () => controller.selectPayment(value),
+                ),
+              );
+            }
+
+            return Column(
               children: [
-                _PaymentOption(
-                  label: 'bKash',
-                  value: _bkash,
-                  groupValue: selected,
-                  onTap: () =>
-                      controller.selectPayment(_bkash),
+                Row(
+                  children: [
+                    option('bKash', _bkash),
+                    const SizedBox(width: 14),
+                    option('Nagad', _nagad),
+                  ],
                 ),
-
-                _PaymentOption(
-                  label: 'Nagad',
-                  value: _nagad,
-                  groupValue: selected,
-                  onTap: () =>
-                      controller.selectPayment(_nagad),
-                ),
-
-                _PaymentOption(
-                  label: 'Card Payment',
-                  value: _card,
-                  groupValue: selected,
-                  onTap: () =>
-                      controller.selectPayment(_card),
-                ),
-
-                _PaymentOption(
-                  label: 'Cash on Delivery',
-                  value: _cod,
-                  groupValue: selected,
-                  onTap: () =>
-                      controller.selectPayment(_cod),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    option('Card Payment', _card),
+                    const SizedBox(width: 14),
+                    option('Cash on Delivery', _cod),
+                  ],
                 ),
               ],
             );
@@ -109,8 +101,7 @@ class _PaymentOptionState extends State<_PaymentOption>
     with SingleTickerProviderStateMixin {
   late final AnimationController _pressController;
 
-  bool get isSelected =>
-      widget.value == widget.groupValue;
+  bool get isSelected => widget.value == widget.groupValue;
 
   @override
   void initState() {
@@ -120,7 +111,7 @@ class _PaymentOptionState extends State<_PaymentOption>
       vsync: this,
       duration: const Duration(milliseconds: 90),
       lowerBound: 0.0,
-      upperBound: 0.025,
+      upperBound: 0.04,
     );
   }
 
@@ -147,24 +138,20 @@ class _PaymentOptionState extends State<_PaymentOption>
   Widget build(BuildContext context) {
     final selected = isSelected;
 
-    final backgroundColor = selected
-        ? AppColors.primaryLight
-        : AppColors.white;
-
-    final borderColor = selected
-        ? AppColors.primary
-        : AppColors.border;
-
-    final textColor = selected
-        ? AppColors.primary
-        : AppColors.black;
+    final backgroundColor = selected ? AppColors.primaryLight : AppColors.white;
+    final borderColor = selected ? AppColors.primary : AppColors.border;
+    final textColor = selected ? AppColors.primary : AppColors.black;
 
     return RepaintBoundary(
       child: AnimatedBuilder(
         animation: _pressController,
         builder: (context, child) {
+          // A tiny lift + scale-up when selected, on top of the tap-down
+          // press animation, so choosing an option feels tactile.
+          final selectedBump = selected ? 1.03 : 1.0;
+
           return Transform.scale(
-            scale: 1 - _pressController.value,
+            scale: selectedBump - _pressController.value,
             child: child,
           );
         },
@@ -174,84 +161,93 @@ class _PaymentOptionState extends State<_PaymentOption>
           onTapUp: _onTapUp,
           onTapCancel: _onTapCancel,
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
+            duration: const Duration(milliseconds: 220),
             curve: Curves.easeOutCubic,
-            width: (MediaQuery.sizeOf(context).width - 56) / 2,
             padding: const EdgeInsets.symmetric(
               horizontal: 12,
-              vertical: 14,
+              vertical: 16,
             ),
             decoration: BoxDecoration(
               color: backgroundColor,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(18),
               border: Border.all(
                 color: borderColor,
-                width: selected ? 1.5 : 1,
+                width: selected ? 2 : 1,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
+                  color: selected
+                      ? AppColors.primary.withValues(alpha: 0.18)
+                      : Colors.black.withValues(alpha: 0.04),
+                  blurRadius: selected ? 16 : 8,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
-            child: Row(
+            child: Stack(
+              clipBehavior: Clip.none,
               children: [
-                // Radio indicator
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 160),
-                  curve: Curves.easeOutCubic,
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: selected
-                          ? AppColors.primary
-                          : AppColors.grey,
-                      width: 2,
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    PaymentBadge(
+                      method: widget.value,
+                      size: 52,
+                      withBackground: false,
                     ),
-                  ),
-                  child: AnimatedScale(
-                    scale: selected ? 1.0 : 0.0,
-                    duration: const Duration(milliseconds: 160),
-                    curve: Curves.easeOutBack,
-                    child: const Center(
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          shape: BoxShape.circle,
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      height: 32,
+                      child: AnimatedDefaultTextStyle(
+                        duration: const Duration(milliseconds: 180),
+                        curve: Curves.easeOutCubic,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: selected
+                              ? FontWeight.w700
+                              : FontWeight.w600,
+                          color: textColor,
+                          height: 1.3,
                         ),
-                        child: SizedBox(
-                          width: 10,
-                          height: 10,
+                        textAlign: TextAlign.center,
+                        child: Text(
+                          widget.label,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
 
-                const SizedBox(width: 8),
-
-                PaymentBadge(method: widget.value, size: 22),
-
-                const SizedBox(width: 6),
-
-                Expanded(
-                  child: AnimatedDefaultTextStyle(
-                    duration:
-                    const Duration(milliseconds: 160),
-                    curve: Curves.easeOutCubic,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: textColor,
-                    ),
-                    child: Text(
-                      widget.label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                // Selected check badge - pops in with a springy bounce.
+                Positioned(
+                  top: -8,
+                  right: -8,
+                  child: AnimatedScale(
+                    scale: selected ? 1.0 : 0.0,
+                    duration: const Duration(milliseconds: 260),
+                    curve: Curves.easeOutBack,
+                    child: Container(
+                      width: 24,
+                      height: 24,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primary.withValues(alpha: 0.35),
+                            blurRadius: 6,
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.check_rounded,
+                        size: 14,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
