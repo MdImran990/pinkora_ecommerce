@@ -55,7 +55,7 @@ class CheckoutScreen extends GetView<CheckoutController> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(
                   16,
-                  8,
+                  4,
                   16,
                   0,
                 ),
@@ -64,68 +64,80 @@ class CheckoutScreen extends GetView<CheckoutController> {
                 ),
               ),
 
-              const SizedBox(height: 2),
-
               Expanded(
+                // The Continue/Place Order button now scrolls together with
+                // the step's own content instead of always sitting pinned
+                // at the very bottom - for a short step (like Payment) that
+                // means the button sits right under it, with no big empty
+                // gap, and it's still reachable by scrolling for a longer
+                // step (like Address, with several saved addresses).
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 220),
                   switchInCurve: Curves.easeOutCubic,
                   switchOutCurve: Curves.easeInCubic,
+                  layoutBuilder: (currentChild, previousChildren) {
+                    return Stack(
+                      alignment: Alignment.topCenter,
+                      children: [
+                        ...previousChildren,
+                        if (currentChild != null) currentChild,
+                      ],
+                    );
+                  },
                   child: SingleChildScrollView(
                     key: ValueKey(step),
                     keyboardDismissBehavior:
                     ScrollViewKeyboardDismissBehavior.onDrag,
                     physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                    ),
-                    child: _buildStep(step),
-                  ),
-                ),
-              ),
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildStep(step),
 
-              if (step == 3)
-                RepaintBoundary(
-                  child: _OrderSummary(
-                    controller: controller,
-                  ),
-                ),
+                        if (step == 3) ...[
+                          const SizedBox(height: 16),
+                          RepaintBoundary(
+                            child: _OrderSummary(
+                              controller: controller,
+                            ),
+                          ),
+                        ],
 
-              Container(
-                padding: const EdgeInsets.fromLTRB(
-                  16,
-                  12,
-                  16,
-                  24,
-                ),
-                color: AppColors.scaffoldBg,
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: controller.isPlacing.value
-                        ? null
-                        : (step == 3
-                        ? controller.placeOrder
-                        : controller.nextStep),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: Text(
-                      step == 3
-                          ? (controller.isPlacing.value
-                          ? 'Placing Order...'
-                          : 'Place Order')
-                          : 'Continue',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
+                        const SizedBox(height: 24),
+
+                        SizedBox(
+                          height: 52,
+                          child: Obx(
+                                () => ElevatedButton(
+                              onPressed: controller.isPlacing.value
+                                  ? null
+                                  : (step == 3
+                                  ? controller.placeOrder
+                                  : controller.nextStep),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                elevation: 0,
+                              ),
+                              child: Text(
+                                step == 3
+                                    ? (controller.isPlacing.value
+                                    ? 'Placing Order...'
+                                    : 'Place Order')
+                                    : 'Continue',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
