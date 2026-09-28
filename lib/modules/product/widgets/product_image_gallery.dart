@@ -29,7 +29,9 @@ class ProductImageGallery extends GetView<ProductController> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        // ─────────────────────────────────────────────
         // MAIN IMAGE
+        // ─────────────────────────────────────────────
         Obx(
               () {
             final product = controller.product.value;
@@ -79,7 +81,9 @@ class ProductImageGallery extends GetView<ProductController> {
                         ),
                       ),
 
+                      // ─────────────────────────────
                       // DISCOUNT BADGE
+                      // ─────────────────────────────
                       Positioned(
                         top: 16,
                         left: 16,
@@ -117,7 +121,9 @@ class ProductImageGallery extends GetView<ProductController> {
 
         const SizedBox(height: 12),
 
+        // ─────────────────────────────────────────────
         // THUMBNAILS
+        // ─────────────────────────────────────────────
         Obx(
               () {
             final selectedIndex =
@@ -167,7 +173,9 @@ class ProductImageGallery extends GetView<ProductController> {
   }
 }
 
+// ═══════════════════════════════════════════════════════
 // ULTRA-SMOOTH THUMBNAIL
+// ═══════════════════════════════════════════════════════
 
 class _ThumbnailItem extends StatefulWidget {
   final Color color;

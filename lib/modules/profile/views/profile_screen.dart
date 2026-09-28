@@ -15,7 +15,10 @@ class ProfileScreen extends GetView<ProfileController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg,
+
+      // ======================================================
       // APP BAR
+      // ======================================================
       appBar: AppBar(
         backgroundColor: AppColors.scaffoldBg,
         elevation: 0,
@@ -27,14 +30,19 @@ class ProfileScreen extends GetView<ProfileController> {
           ),
         ],
       ),
+
+      // ======================================================
       // BODY
+      // ======================================================
       body: SingleChildScrollView(
         keyboardDismissBehavior:
         ScrollViewKeyboardDismissBehavior.onDrag,
         physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
+            // ==================================================
             // PROFILE HEADER
+            // ==================================================
             Obx(
                   () {
                 final user = controller.user.value;
@@ -50,7 +58,9 @@ class ProfileScreen extends GetView<ProfileController> {
               },
             ),
 
+            // ==================================================
             // MENU
+            // ==================================================
             RepaintBoundary(
               child: Container(
                 margin: const EdgeInsets.symmetric(
@@ -142,8 +152,10 @@ class ProfileScreen extends GetView<ProfileController> {
             ),
 
             const SizedBox(height: 20),
-            // LOGOUT
 
+            // ==================================================
+            // LOGOUT
+            // ==================================================
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 16,
@@ -162,7 +174,9 @@ class ProfileScreen extends GetView<ProfileController> {
   }
 }
 
+// ============================================================
 // SETTINGS BUTTON
+// ============================================================
 
 class _SettingsButton extends StatefulWidget {
   const _SettingsButton();
@@ -249,8 +263,10 @@ class _SettingsButtonState extends State<_SettingsButton>
     );
   }
 }
-// PROFILE HEADER
 
+// ============================================================
+// PROFILE HEADER
+// ============================================================
 
 class _AnimatedProfileHeader extends StatefulWidget {
   const _AnimatedProfileHeader({
@@ -339,9 +355,9 @@ class _AnimatedProfileHeaderState
             ),
             child: Column(
               children: [
-
+                // ============================================
                 // AVATAR
-
+                // ============================================
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: widget.onAvatarTap,
@@ -379,9 +395,9 @@ class _AnimatedProfileHeaderState
 
                 const SizedBox(height: 14),
 
-
+                // ============================================
                 // NAME
-
+                // ============================================
                 Text(
                   widget.name,
                   maxLines: 1,
@@ -395,8 +411,9 @@ class _AnimatedProfileHeaderState
 
                 const SizedBox(height: 4),
 
+                // ============================================
                 // EMAIL
-
+                // ============================================
                 Text(
                   widget.email,
                   maxLines: 1,
