@@ -56,6 +56,10 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/icons/payment/
+    - assets/icons/payment/bkash_logo.png
+    - assets/icons/payment/nagad_logo.png
+    - assets/icons/payment/card_icon.png
+    - assets/icons/payment/cod_icon.png
 
   fonts:
     - family: Poppins

@@ -5,6 +5,7 @@ import '../../../app/theme/app_colors.dart';
 import '../../../data/model/category_model.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../widgets/product_image.dart';
+import '../../../widgets/pressable_scale.dart';
 
 class CategoryChipRow extends StatelessWidget {
   final List<CategoryModel> categories;
@@ -46,8 +47,9 @@ class CategoryChipRow extends StatelessWidget {
         itemBuilder: (context, index) {
           final category = categories[index];
 
-          return GestureDetector(
+          return PressableScale(
             key: ValueKey(category.id),
+            scale: 0.92,
             onTap: () => Get.toNamed(
               AppRoutes.productList,
               arguments: category,

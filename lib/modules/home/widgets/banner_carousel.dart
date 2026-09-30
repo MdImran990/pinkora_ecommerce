@@ -7,6 +7,8 @@ import '../controllers/home_controller.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../widgets/product_image.dart';
+import '../../main/controllers/main_controller.dart';
+import '../../../widgets/pressable_scale.dart';
 
 class BannerCarousel extends GetView<HomeController> {
   const BannerCarousel({super.key});
@@ -195,10 +197,10 @@ class _BannerCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 14),
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
+                  PressableScale(
+                    scale: 0.9,
                     onTap: () => Get.toNamed(
-                      AppRoutes.productList,
+                        AppRoutes.productList,
                       arguments: {
                         'flashSale': banner.title == 'Flash Deal',
                       },

@@ -7,6 +7,7 @@ import '../../../data/model/product_model.dart';
 import '../../../data/model/review_model.dart';
 import '../../../widgets/product_image.dart';
 import '../controllers/product_controller.dart';
+import '../../../widgets/pressable_scale.dart';
 
 /// Description, reviews and "You may also like" (shown under the buy box).
 class ProductExtras extends StatelessWidget {
@@ -370,7 +371,8 @@ class _RelatedSection extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final item = items[index];
 
-                  return GestureDetector(
+                  return PressableScale(
+                    scale: 0.95,
                     onTap: () => controller.showProduct(item),
                     child: SizedBox(
                       width: 130,

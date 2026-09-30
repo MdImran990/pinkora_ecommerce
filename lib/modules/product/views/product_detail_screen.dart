@@ -41,7 +41,7 @@ class ProductDetailScreen extends GetView<ProductController> {
         controller: controller.scrollController,
         keyboardDismissBehavior:
         ScrollViewKeyboardDismissBehavior.onDrag,
-        cacheExtent: 800,
+        cacheExtent: 400,
         slivers: [
           // ─────────────────────────────────────────────
           // APP BAR

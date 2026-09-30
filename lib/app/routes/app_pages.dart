@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../modules/splash/bindings/splash_binding.dart';
@@ -45,6 +46,8 @@ class AppPages {
       page: () => const SplashScreen(),
       binding: SplashBinding(),
       transition: Transition.fadeIn,
+      curve: Curves.easeInOut,
+      transitionDuration: const Duration(milliseconds: 260),
     ),
 
     // =========================
@@ -55,6 +58,8 @@ class AppPages {
       page: () => const LoginScreen(),
       binding: AuthBinding(),
       transition: Transition.fadeIn,
+      curve: Curves.easeInOut,
+      transitionDuration: const Duration(milliseconds: 260),
     ),
 
     // =========================
@@ -65,6 +70,8 @@ class AppPages {
       page: () => const RegisterScreen(),
       binding: AuthBinding(),
       transition: Transition.fadeIn,
+      curve: Curves.easeInOut,
+      transitionDuration: const Duration(milliseconds: 260),
     ),
 
     // =========================
@@ -75,6 +82,8 @@ class AppPages {
       page: () => const ForgotPasswordScreen(),
       binding: AuthBinding(),
       transition: Transition.fadeIn,
+      curve: Curves.easeInOut,
+      transitionDuration: const Duration(milliseconds: 260),
     ),
 
     // =========================
@@ -84,7 +93,8 @@ class AppPages {
       name: AppRoutes.home,
       page: () => const MainShell(initialIndex: 0),
       transition: Transition.fadeIn,
-      transitionDuration: const Duration(milliseconds: 180),
+      curve: Curves.easeInOut,
+      transitionDuration: const Duration(milliseconds: 260),
     ),
 
     // =========================
@@ -94,7 +104,8 @@ class AppPages {
       name: AppRoutes.category,
       page: () => const MainShell(initialIndex: 1),
       transition: Transition.fadeIn,
-      transitionDuration: const Duration(milliseconds: 180),
+      curve: Curves.easeInOut,
+      transitionDuration: const Duration(milliseconds: 260),
     ),
 
     // =========================
@@ -103,8 +114,9 @@ class AppPages {
     GetPage(
       name: AppRoutes.productList,
       page: () => const ProductListScreen(),
-      transition: Transition.fadeIn,
-      transitionDuration: const Duration(milliseconds: 180),
+      transition: Transition.rightToLeftWithFade,
+      curve: Curves.easeOutCubic,
+      transitionDuration: const Duration(milliseconds: 320),
     ),
 
     // =========================
@@ -114,8 +126,9 @@ class AppPages {
       name: AppRoutes.productDetail,
       page: () => const ProductDetailScreen(),
       binding: ProductBinding(),
-      transition: Transition.fadeIn,
-      transitionDuration: const Duration(milliseconds: 180),
+      transition: Transition.rightToLeftWithFade,
+      curve: Curves.easeOutCubic,
+      transitionDuration: const Duration(milliseconds: 320),
     ),
 
     // =========================
@@ -125,7 +138,8 @@ class AppPages {
       name: AppRoutes.cart,
       page: () => const MainShell(initialIndex: 2),
       transition: Transition.fadeIn,
-      transitionDuration: const Duration(milliseconds: 180),
+      curve: Curves.easeInOut,
+      transitionDuration: const Duration(milliseconds: 260),
     ),
 
     // =========================
@@ -135,8 +149,9 @@ class AppPages {
       name: AppRoutes.checkout,
       page: () => const CheckoutScreen(),
       binding: CheckoutBinding(),
-      transition: Transition.fadeIn,
-      transitionDuration: const Duration(milliseconds: 180),
+      transition: Transition.rightToLeftWithFade,
+      curve: Curves.easeOutCubic,
+      transitionDuration: const Duration(milliseconds: 320),
     ),
 
     // =========================
@@ -146,7 +161,8 @@ class AppPages {
       name: AppRoutes.wishlist,
       page: () => const MainShell(initialIndex: 3),
       transition: Transition.fadeIn,
-      transitionDuration: const Duration(milliseconds: 180),
+      curve: Curves.easeInOut,
+      transitionDuration: const Duration(milliseconds: 260),
     ),
 
     // =========================
@@ -156,7 +172,8 @@ class AppPages {
       name: AppRoutes.profile,
       page: () => const MainShell(initialIndex: 4),
       transition: Transition.fadeIn,
-      transitionDuration: const Duration(milliseconds: 180),
+      curve: Curves.easeInOut,
+      transitionDuration: const Duration(milliseconds: 260),
     ),
 
     // =========================
@@ -165,8 +182,9 @@ class AppPages {
     GetPage(
       name: AppRoutes.orders,
       page: () => const OrdersScreen(),
-      transition: Transition.fadeIn,
-      transitionDuration: const Duration(milliseconds: 180),
+      transition: Transition.rightToLeftWithFade,
+      curve: Curves.easeOutCubic,
+      transitionDuration: const Duration(milliseconds: 320),
     ),
 
     // =========================
@@ -175,8 +193,9 @@ class AppPages {
     GetPage(
       name: AppRoutes.orderDetail,
       page: () => const OrderDetailScreen(),
-      transition: Transition.fadeIn,
-      transitionDuration: const Duration(milliseconds: 180),
+      transition: Transition.rightToLeftWithFade,
+      curve: Curves.easeOutCubic,
+      transitionDuration: const Duration(milliseconds: 320),
     ),
 
     // =========================
@@ -186,7 +205,8 @@ class AppPages {
       name: AppRoutes.orderSuccess,
       page: () => const OrderSuccessScreen(),
       transition: Transition.fadeIn,
-      transitionDuration: const Duration(milliseconds: 180),
+      curve: Curves.easeInOut,
+      transitionDuration: const Duration(milliseconds: 260),
     ),
 
     // =========================
@@ -195,8 +215,9 @@ class AppPages {
     GetPage(
       name: AppRoutes.addresses,
       page: () => const AddressScreen(),
-      transition: Transition.fadeIn,
-      transitionDuration: const Duration(milliseconds: 180),
+      transition: Transition.rightToLeftWithFade,
+      curve: Curves.easeOutCubic,
+      transitionDuration: const Duration(milliseconds: 320),
     ),
 
     // =========================
@@ -205,8 +226,9 @@ class AppPages {
     GetPage(
       name: AppRoutes.addressForm,
       page: () => const AddressFormScreen(),
-      transition: Transition.fadeIn,
-      transitionDuration: const Duration(milliseconds: 180),
+      transition: Transition.rightToLeftWithFade,
+      curve: Curves.easeOutCubic,
+      transitionDuration: const Duration(milliseconds: 320),
     ),
 
     // =========================
@@ -215,8 +237,9 @@ class AppPages {
     GetPage(
       name: AppRoutes.paymentMethods,
       page: () => const PaymentMethodsScreen(),
-      transition: Transition.fadeIn,
-      transitionDuration: const Duration(milliseconds: 180),
+      transition: Transition.rightToLeftWithFade,
+      curve: Curves.easeOutCubic,
+      transitionDuration: const Duration(milliseconds: 320),
     ),
 
     // =========================
@@ -225,8 +248,9 @@ class AppPages {
     GetPage(
       name: AppRoutes.notifications,
       page: () => const NotificationsScreen(),
-      transition: Transition.fadeIn,
-      transitionDuration: const Duration(milliseconds: 180),
+      transition: Transition.rightToLeftWithFade,
+      curve: Curves.easeOutCubic,
+      transitionDuration: const Duration(milliseconds: 320),
     ),
 
     // =========================
@@ -235,8 +259,9 @@ class AppPages {
     GetPage(
       name: AppRoutes.help,
       page: () => const HelpScreen(),
-      transition: Transition.fadeIn,
-      transitionDuration: const Duration(milliseconds: 180),
+      transition: Transition.rightToLeftWithFade,
+      curve: Curves.easeOutCubic,
+      transitionDuration: const Duration(milliseconds: 320),
     ),
 
     // =========================
@@ -245,8 +270,9 @@ class AppPages {
     GetPage(
       name: AppRoutes.settings,
       page: () => const SettingsScreen(),
-      transition: Transition.fadeIn,
-      transitionDuration: const Duration(milliseconds: 180),
+      transition: Transition.rightToLeftWithFade,
+      curve: Curves.easeOutCubic,
+      transitionDuration: const Duration(milliseconds: 320),
     ),
 
     // =========================
@@ -255,8 +281,9 @@ class AppPages {
     GetPage(
       name: AppRoutes.editProfile,
       page: () => const EditProfileScreen(),
-      transition: Transition.fadeIn,
-      transitionDuration: const Duration(milliseconds: 180),
+      transition: Transition.rightToLeftWithFade,
+      curve: Curves.easeOutCubic,
+      transitionDuration: const Duration(milliseconds: 320),
     ),
   ];
 }

@@ -77,6 +77,7 @@ class ProductImageGallery extends GetView<ProductController> {
                       Positioned.fill(
                         child: ProductImage(
                           url: mainUrl,
+                          cacheWidth: 1000,
                           iconSize: 140,
                         ),
                       ),

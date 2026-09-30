@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -45,6 +47,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
   final TextEditingController _searchController =
   TextEditingController();
   final FocusNode _searchFocus = FocusNode();
+  Timer? _searchDebounce;
 
   List<ProductModel> _products = [];
 
@@ -88,9 +91,16 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   @override
   void dispose() {
+    _searchDebounce?.cancel();
     _searchController.dispose();
     _searchFocus.dispose();
     super.dispose();
+  }
+
+  /// Reloads 300ms after the last key press instead of on every letter.
+  void _onSearchChanged(String _) {
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 300), _load);
   }
 
   Future<void> _load() async {
@@ -428,7 +438,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
               controller: _searchController,
               focusNode: _searchFocus,
               textInputAction: TextInputAction.search,
-              onChanged: (_) => _load(),
+              onChanged: _onSearchChanged,
               decoration: InputDecoration(
                 hintText: 'Search products...',
                 prefixIcon: const Icon(
@@ -486,7 +496,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
         16,
       ),
       physics: const BouncingScrollPhysics(),
-      cacheExtent: 700,
+      cacheExtent: 350,
       keyboardDismissBehavior:
       ScrollViewKeyboardDismissBehavior.onDrag,
       gridDelegate:

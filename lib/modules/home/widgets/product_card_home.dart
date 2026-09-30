@@ -7,6 +7,7 @@ import '../../../app/routes/app_routes.dart';
 import '../../../data/model/product_model.dart';
 import '../../../modules/cart/controllers/cart_controller.dart';
 import '../../../modules/wishlist/controllers/wishlist_controller.dart';
+import '../../../widgets/pressable_scale.dart';
 
 class ProductCardHome extends StatelessWidget {
   final ProductModel product;
@@ -22,7 +23,8 @@ class ProductCardHome extends StatelessWidget {
     final wishCtrl = Get.find<WishlistController>();
 
     return RepaintBoundary(
-      child: GestureDetector(
+      child: PressableScale(
+        scale: 0.96,
         onTap: () => Get.toNamed(
           AppRoutes.productDetail,
           arguments: product,

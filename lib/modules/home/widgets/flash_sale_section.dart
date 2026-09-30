@@ -56,7 +56,7 @@ class FlashSaleSection extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             physics: const BouncingScrollPhysics(),
-            cacheExtent: 500,
+            cacheExtent: 300,
             itemCount: products.length,
             separatorBuilder: (_, __) =>
             const SizedBox(width: 14),

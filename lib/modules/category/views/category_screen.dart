@@ -77,7 +77,7 @@ class CategoryScreen extends GetView<CategoryController> {
           return GridView.builder(
             padding: const EdgeInsets.all(16),
             physics: const BouncingScrollPhysics(),
-            cacheExtent: 800,
+            cacheExtent: 300,
             keyboardDismissBehavior:
             ScrollViewKeyboardDismissBehavior.onDrag,
             gridDelegate:

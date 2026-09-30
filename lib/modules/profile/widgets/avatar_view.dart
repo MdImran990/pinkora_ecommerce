@@ -57,6 +57,7 @@ class AvatarView extends StatelessWidget {
         ),
       );
     }
+
     return Container(
       width: size,
       height: size,

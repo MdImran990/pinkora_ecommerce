@@ -26,6 +26,7 @@ class ProductImage extends StatelessWidget {
     this.iconSize = 32,
     this.backgroundColor = AppColors.primaryLight,
     this.iconColor = AppColors.primary,
+    this.cacheWidth,
   });
 
   final String url;
@@ -37,6 +38,27 @@ class ProductImage extends StatelessWidget {
   final double iconSize;
   final Color backgroundColor;
   final Color iconColor;
+
+  /// Width (in pixels) the picture is decoded at. Left empty it is worked
+  /// out from [width]/[height]. Decoding a 1000px photo just to show it in
+  /// a 150px card wastes memory and makes scrolling stutter.
+  final int? cacheWidth;
+
+  int get _decodeWidth {
+    final override = cacheWidth;
+
+    if (override != null) return override;
+
+    var logical = 160.0;
+
+    if (width != null && width!.isFinite) {
+      logical = width!;
+    } else if (height != null && height!.isFinite) {
+      logical = height! * 1.3;
+    }
+
+    return (logical * 3).clamp(150, 900).toInt();
+  }
 
   Widget _placeholder() {
     return Container(
@@ -54,8 +76,12 @@ class ProductImage extends StatelessWidget {
     return CachedNetworkImage(
       imageUrl: urls.first,
       fit: fit,
-      memCacheWidth: 700,
-      fadeInDuration: const Duration(milliseconds: 180),
+      memCacheWidth: _decodeWidth,
+      filterQuality: FilterQuality.low,
+      // The package default is a 1 second fade-out of the placeholder, which
+      // keeps two layers painting on top of each other for every image.
+      fadeInDuration: const Duration(milliseconds: 150),
+      fadeOutDuration: const Duration(milliseconds: 80),
       placeholder: (context, _) => _placeholder(),
       errorWidget: (context, _, error) {
         // Shown in the debug console so a broken link is easy to find.
@@ -93,6 +119,7 @@ class ProductImage extends StatelessWidget {
       content = Image.file(
         File(urls.first),
         fit: fit,
+        cacheWidth: _decodeWidth,
         errorBuilder: (context, error, stackTrace) => _placeholder(),
       );
     } else {

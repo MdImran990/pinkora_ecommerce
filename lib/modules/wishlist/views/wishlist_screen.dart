@@ -6,6 +6,7 @@ import '../../../app/theme/app_colors.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../widgets/product_image.dart';
 import '../../main/controllers/main_controller.dart';
+import '../../../widgets/pressable_scale.dart';
 
 class WishlistScreen extends StatelessWidget {
   const WishlistScreen({super.key});
@@ -71,7 +72,7 @@ class WishlistScreen extends StatelessWidget {
           return ListView(
             padding: const EdgeInsets.all(16),
             physics: const BouncingScrollPhysics(),
-            cacheExtent: 700,
+            cacheExtent: 300,
             keyboardDismissBehavior:
             ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
@@ -435,8 +436,8 @@ class _WishlistItemState extends State<_WishlistItem>
       opacity: _fadeAnimation,
       child: SlideTransition(
         position: _slideAnimation,
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
+        child: PressableScale(
+          scale: 0.98,
           onTap: () => Get.toNamed(
             AppRoutes.productDetail,
             arguments: product,

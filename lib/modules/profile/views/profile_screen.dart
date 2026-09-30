@@ -22,7 +22,34 @@ class ProfileScreen extends GetView<ProfileController> {
       appBar: AppBar(
         backgroundColor: AppColors.scaffoldBg,
         elevation: 0,
-        automaticallyImplyLeading: false,
+        centerTitle: true,
+        leading: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => Get.find<MainController>().setIndex(0),
+          child: Container(
+            margin: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: AppColors.border,
+              ),
+            ),
+            child: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              size: 16,
+              color: AppColors.black,
+            ),
+          ),
+        ),
+        title: const Text(
+          'Profile',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: AppColors.black,
+          ),
+        ),
         actions: const [
           Padding(
             padding: EdgeInsets.only(right: 16),

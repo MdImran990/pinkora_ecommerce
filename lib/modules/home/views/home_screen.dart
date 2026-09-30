@@ -10,6 +10,7 @@ import '../../../app/routes/app_routes.dart';
 import '../../notifications/controllers/notification_controller.dart';
 import '../../../widgets/skeletons.dart';
 import '../../../core/services/location_controller.dart';
+import '../../../widgets/pressable_scale.dart';
 
 class HomeScreen extends GetView<HomeController> {
   const HomeScreen({super.key});
@@ -30,8 +31,8 @@ class HomeScreen extends GetView<HomeController> {
                 child: Row(
                   children: [
                     Expanded(
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
+                      child: PressableScale(
+                        scale: 0.97,
                         onTap: () =>
                             Get.find<LocationController>().handleTap(),
                         child: Obx(
@@ -84,8 +85,8 @@ class HomeScreen extends GetView<HomeController> {
                         ),
                       ),
                     ),
-                    GestureDetector(
-                      behavior: HitTestBehavior.opaque,
+                    PressableScale(
+                      scale: 0.88,
                       onTap: () => Get.toNamed(AppRoutes.notifications),
                       child: Stack(
                         clipBehavior: Clip.none,
@@ -161,8 +162,8 @@ class HomeScreen extends GetView<HomeController> {
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
+                child: PressableScale(
+                  scale: 0.98,
                   onTap: () => Get.toNamed(
                     AppRoutes.productList,
                     arguments: {'focusSearch': true},

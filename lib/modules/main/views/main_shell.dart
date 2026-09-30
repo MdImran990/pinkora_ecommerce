@@ -94,7 +94,18 @@ class _MainShellState extends State<MainShell> {
             backgroundColor: AppColors.scaffoldBg,
             body: IndexedStack(
               index: current,
-              children: List.generate(5, _tab),
+              // Hidden tabs stay alive (instant switching) but their
+              // animations are paused, so only the visible tab uses the GPU.
+              children: List.generate(
+                5,
+                    (i) => _TabTransition(
+                  active: i == current,
+                  child: TickerMode(
+                    enabled: i == current,
+                    child: _tab(i),
+                  ),
+                ),
+              ),
             ),
             bottomNavigationBar: PinkoraBottomNav(
               currentIndex: current,
@@ -103,6 +114,80 @@ class _MainShellState extends State<MainShell> {
           ),
         );
       },
+    );
+  }
+}
+
+/// Plays a short fade + rise every time its tab becomes the visible one.
+///
+/// The tabs are kept alive (IndexedStack) so switching is instant and keeps
+/// scroll position - which also means their own entrance animations only
+/// run once. This wrapper gives every switch a smooth entrance instead.
+class _TabTransition extends StatefulWidget {
+  const _TabTransition({
+    required this.active,
+    required this.child,
+  });
+
+  final bool active;
+  final Widget child;
+
+  @override
+  State<_TabTransition> createState() => _TabTransitionState();
+}
+
+class _TabTransitionState extends State<_TabTransition>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _fade;
+  late final Animation<Offset> _slide;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 280),
+    );
+
+    final curved = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutCubic,
+    );
+
+    _fade = curved;
+    _slide = Tween<Offset>(
+      begin: const Offset(0, 0.025),
+      end: Offset.zero,
+    ).animate(curved);
+
+    if (widget.active) _controller.forward();
+  }
+
+  @override
+  void didUpdateWidget(covariant _TabTransition oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.active && !oldWidget.active) {
+      _controller.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _fade,
+      child: SlideTransition(
+        position: _slide,
+        child: widget.child,
+      ),
     );
   }
 }

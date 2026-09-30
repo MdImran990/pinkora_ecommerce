@@ -11,6 +11,7 @@ import '../../../widgets/pinkora_app_bar.dart';
 import '../../../widgets/product_image.dart';
 import '../controllers/orders_controller.dart';
 import '../widgets/order_status_chip.dart';
+import '../../../widgets/pressable_scale.dart';
 
 class OrdersScreen extends StatelessWidget {
   const OrdersScreen({super.key});
@@ -143,7 +144,8 @@ class _OrderCard extends StatelessWidget {
 
     final extra = order.items.length - 1;
 
-    return GestureDetector(
+    return PressableScale(
+      scale: 0.98,
       onTap: () => Get.toNamed(
         AppRoutes.orderDetail,
         arguments: order.id,

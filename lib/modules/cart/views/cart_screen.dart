@@ -6,6 +6,8 @@ import '../../../data/model/cart_item_model.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../widgets/product_image.dart';
 import '../../main/controllers/main_controller.dart';
+import '../../../widgets/pressable_scale.dart';
+import '../../../app/routes/app_routes.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -90,7 +92,7 @@ class CartScreen extends StatelessWidget {
             keyboardDismissBehavior:
             ScrollViewKeyboardDismissBehavior.onDrag,
             physics: const BouncingScrollPhysics(),
-            cacheExtent: 600,
+            cacheExtent: 300,
             slivers: [
               const SliverPadding(
                 padding: EdgeInsets.fromLTRB(
@@ -452,7 +454,13 @@ class _CartItemCardState extends State<_CartItemCard>
       opacity: _fadeAnimation,
       child: SlideTransition(
         position: _slideAnimation,
-        child: Container(
+        child: PressableScale(
+          scale: 0.98,
+          onTap: () => Get.toNamed(
+            AppRoutes.productDetail,
+            arguments: item.product,
+          ),
+          child: Container(
           margin: const EdgeInsets.only(bottom: 12),
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
@@ -688,6 +696,7 @@ class _CartItemCardState extends State<_CartItemCard>
               ),
             ],
           ),
+        ),
         ),
       ),
     );

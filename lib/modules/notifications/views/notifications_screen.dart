@@ -7,6 +7,7 @@ import '../../../data/model/notification_model.dart';
 import '../../../widgets/empty_state.dart';
 import '../../../widgets/pinkora_app_bar.dart';
 import '../controllers/notification_controller.dart';
+import '../../../widgets/pressable_scale.dart';
 
 class NotificationsScreen extends StatelessWidget {
   const NotificationsScreen({super.key});
@@ -112,7 +113,8 @@ class _NotificationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return PressableScale(
+      scale: 0.98,
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),

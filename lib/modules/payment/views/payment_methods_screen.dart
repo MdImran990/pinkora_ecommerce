@@ -7,6 +7,7 @@ import '../../../widgets/app_card.dart';
 import '../../../widgets/custom_snackbar.dart';
 import '../../../widgets/pinkora_app_bar.dart';
 import '../../../widgets/payment_badge.dart';
+import '../../../widgets/pressable_scale.dart';
 
 /// Choose the payment method that is pre-selected at checkout.
 /// Real payment (bKash / Nagad / card gateway) is connected with the backend.
@@ -84,7 +85,8 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
           ),
           const SizedBox(height: 12),
           for (final method in _methods)
-            GestureDetector(
+            PressableScale(
+              scale: 0.98,
               onTap: () => _select(method.id),
               child: AppCard(
                 margin: const EdgeInsets.only(bottom: 12),
